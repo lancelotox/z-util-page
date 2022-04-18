@@ -1,0 +1,21 @@
+{
+  "name": "z-util-page",
+  "version": "0.2.0",
+  "description": "一个菜鸟的工具包",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "push": "npm publish"
+  },
+  "keywords": [
+    "js",
+    "utils"
+  ],
+  "author": "周峰",
+  "license": "ISC",
+  "dependencies": {
+    "js-md5": "^0.7.3",
+    "xlsx": "^0.18.3",
+    "xlsx-style": "^0.8.13"
+  }
+}
