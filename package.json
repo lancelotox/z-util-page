@@ -1,6 +1,6 @@
 {
   "name": "z-util-page",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "一个菜鸟的工具包",
   "main": "index.js",
   "type": "module",
