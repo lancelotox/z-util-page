@@ -1,10 +1,9 @@
-exports.__esModule = true;
 //url为资源链接或者blob对象
-function fileSave(url, saveName, callback) {
-    if (typeof url === 'object' && url instanceof Blob) {
+export default function fileSave(url: string | Blob, saveName: string, callback: Function) {
+    if(typeof url === 'object' && url instanceof Blob){
         url = URL.createObjectURL(url);
     }
-    var alink = document.createElement('a');
+    let alink = document.createElement('a');
     alink.href = url;
     alink.download = saveName || '';
     //过时写法
@@ -15,9 +14,8 @@ function fileSave(url, saveName, callback) {
     //     event.initMouseEvent('click', true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0 ,null)
     // }
     // alink.dispatchEvent(event);
+
     //h5新写法
     alink.click();
-    if (callback && callback instanceof Function)
-        callback();
+    if(callback && callback instanceof Function) callback();
 }
-exports["default"] = fileSave;

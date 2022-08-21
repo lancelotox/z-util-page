@@ -2,11 +2,11 @@
  * 节点类
  */
 export class Node{
-    before = null;
-    param = '';
-    index = null;
-    after = null;
-    constructor(param){
+    before: Node | null = null;
+    param: any = '';
+    index: number | null = null;
+    after: Node | null = null;
+    constructor(param: any){
         this.param = param;
     }
 }
@@ -22,7 +22,7 @@ export class Index {
     /**
      * 尾部插入节点
      */
-    push(node){
+    push(node: Node){
         if(node){
             if(this.Length === 0){
                 node.after = node;
