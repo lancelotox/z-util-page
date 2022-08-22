@@ -1,19 +1,18 @@
-// Generated using webpack-cli https://github.com/webpack/webpack-cli
-
 const path = require('path');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const OutputTsFile = require('./plugins/outputTsFIle');
 
 const isProduction = process.env.NODE_ENV == 'production';
 
-
 const stylesHandler = isProduction ? MiniCssExtractPlugin.loader : 'style-loader';
-
-
 
 const config = {
     entry: './lib/index.ts',
     output: {
         path: path.resolve(__dirname, 'dist'),
+        filename: 'zUtilPages.umd.js',
+        libraryTarget: 'umd',
+        library: 'ZUtilPages'
     },
     devServer: {
         open: true,
@@ -46,15 +45,13 @@ const config = {
     resolve: {
         extensions: ['.tsx', '.ts', '.jsx', '.js', '...'],
     },
+    plugins: [new OutputTsFile({outDir: './dist'})]
 };
 
 module.exports = () => {
     if (isProduction) {
         config.mode = 'production';
-        
         config.plugins.push(new MiniCssExtractPlugin());
-        
-        
     } else {
         config.mode = 'development';
     }

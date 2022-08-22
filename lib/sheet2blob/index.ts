@@ -30,5 +30,5 @@ export default function sheet2blob(sheetList, sheetNameList, options) {
         for (let i = 0; i != s.length ; ++i) view[i] = s.charCodeAt(i) & 0xFF;
         return buf;
     }
-    return blob
+    return blob;
 }

@@ -1,3 +1,2 @@
-import md5 from "../lib/jsMd5/index.js";
+let alink = document.createElement('link');
 
-console.log(md5('12345'));
