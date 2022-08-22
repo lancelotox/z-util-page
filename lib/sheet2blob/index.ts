@@ -1,5 +1,5 @@
-import * as XLSX from 'xlsx'
-import XLSXStyle from 'xlsx-style'
+import * as XLSX from 'xlsx';
+import XLSXStyle from 'xlsx-style';
 
 export default function sheet2blob(sheetList, sheetNameList, options) {
     let workbook = {
