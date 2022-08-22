@@ -5,6 +5,8 @@
 ### 1. 文件下载保存
 
 ``` javascript
+import { fileSave } from 'z-util-page'
+fileSave('https://www.baidu.com', '百度.html')
 ```
 
 

@@ -1,2 +1,2 @@
-let alink = document.createElement('link');
+ZUtilPages.fileSave('https://www.baidu.com', '百度.html');
 
