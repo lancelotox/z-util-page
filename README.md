@@ -1,18 +1,38 @@
 # z-utils
 
-### Describe
+### 描述:
 
 ### 1. 文件下载保存
 
 ``` javascript
 import { fileSave } from 'z-util-page'
-fileSave('https://www.baidu.com', '百度.html')
+fileSave(new Blob([JSON.stringify({a: '身体和心灵，总有一个在路上。'}, null, 2)], {type : 'application/json'}), 'test.json');
 ```
 
+### 2. MD5加密
 
+``` javascript
+import { MD5 } from 'z-util-page'
+MD5('身体和心灵，总有一个在路上。');
+```
+
+### 3.  将XLSX生成的sheet转化为Blob对象
+
+``` javascript
+import { sheet2blob } from 'z-util-page'
+sheet2blob(sheets, names, option);
+```
+
+### 4.  生成UUID  或  GUID
+
+``` javascript
+import { uuidFactory } from 'z-util-page'
+uuidFactory.uuid();
+uuidFactory.guid();
+```
 
 ---
-### 提醒
+### 提醒:
 
 #### 1. XLSX-STYLE报错解决
 

@@ -1,2 +1,2 @@
-ZUtilPages.fileSave('https://www.baidu.com', '百度.html');
+// ZUtilPages.fileSave(new Blob([JSON.stringify({a: '测试'}, null, 2)], {type : 'application/json'}), 'test.json');
 
