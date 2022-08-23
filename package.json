@@ -7,14 +7,8 @@
   "types": "./lib/global.d.ts",
   "scripts": {
     "push": "npm publish",
-    "tsBuild": "tsc -d",
-    "tsWatch": "tsc -w -d",
     "wpBuild": "webpack",
-    "wpWatch": "webpack --watch",
-    "wpServe": "webpack serve",
-    "build": "webpack --mode=production --node-env=production",
-    "build:dev": "webpack --mode=development",
-    "build:prod": "webpack --mode=production --node-env=production"
+    "wpWatch": "webpack --watch"
   },
   "keywords": [
     "js",
