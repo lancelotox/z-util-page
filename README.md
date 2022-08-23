@@ -113,6 +113,13 @@ let newValue = deepClone({
 });
 ```
 
+### 7. 获取类型名
+
+``` javascript
+import { getType } from 'z-util-page'
+getType(value);
+```
+
 
 
 ---
