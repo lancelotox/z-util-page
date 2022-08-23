@@ -7,6 +7,7 @@
     "strict": true,
     "skipLibCheck": true,
     "moduleResolution": "Node",
+    "sourceMap": false,
     "declaration": true,
     "paths": {
       "*": ["./types/*"]

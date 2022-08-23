@@ -8,16 +8,21 @@ interface WorkbookMap {
     }
 }
 
-export default function sheet2blob(sheetList: Array<WorkSheet>, sheetNameList: Array<string>, options: WritingOptions): Blob {
+/**
+ * 将XLSX库转化出的sheet数据转化为Blob对象
+ * @param sheetList 单个sheet或者sheet数组
+ * @param sheetNameList 单个name或者name数组
+ * @param options XLSX配置
+ * @returns 
+ */
+export default function sheet2blob(sheetList: Array<WorkSheet> | WorkSheet, sheetNameList: Array<string> | string, options: WritingOptions): Blob {
     let workbook: WorkbookMap = {
         SheetNames: [],
         Sheets: {}
     }
-    if (!Array.isArray(sheetNameList))
-        sheetNameList = [sheetNameList];
-    if (!Array.isArray(sheetList))
-        sheetList = [sheetList];
-    sheetList.forEach((item, i) => {
+    if (!Array.isArray(sheetNameList)) sheetNameList = [sheetNameList];
+    if (!Array.isArray(sheetList)) sheetList = new Array<WorkSheet>(sheetList);
+    if (Array.isArray(sheetList)) sheetList.forEach((item, i) => {
         workbook.SheetNames[i] = sheetNameList[i] || ('sheet' + (i + 1));
         workbook.Sheets[workbook.SheetNames[i]] = item;
     })
