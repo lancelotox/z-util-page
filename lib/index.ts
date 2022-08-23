@@ -5,7 +5,7 @@ import sheet2blob from "./sheet2blob/index";
 import uuidFactory from "./uuidFactory/index";
 import debounce from "./debounce/index";
 import throttle from "./throttle/index";
-import deepClone from "./deepClone/index";
+import { deepClone, getType } from "./deepClone/index";
 
 export {
     fileSave, 
@@ -15,5 +15,6 @@ export {
     uuidFactory, 
     debounce, 
     throttle,
-    deepClone
+    deepClone,
+    getType
 }

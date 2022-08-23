@@ -1,5 +1,4 @@
-
-
+import { deepClone } from '../deepClone/index';
 //leading: 开始是否执行
 //trailing: 结束是否执行
 interface throttleOptions {
@@ -18,8 +17,8 @@ const defaultConfig: throttleOptions = {
  * @param wait 函数执行最短间隔时间
  */
 function throttle(func: Function, wait: number, options: throttleOptions) {
-    options = Object.assign(defaultConfig, options);
-    if(options.leading === false && options.trailing === false) throw('leading, trailing不能同时为false');
+    options = Object.assign(deepClone(defaultConfig), options);
+    if (options.leading === false && options.trailing === false) throw ('leading, trailing不能同时为false');
     let timeout: NodeJS.Timeout | null = null, args: IArguments, content: any, res: any;
     const throttled = function (this: any) {
         args = arguments;
@@ -27,9 +26,9 @@ function throttle(func: Function, wait: number, options: throttleOptions) {
         if (!timeout) {
             timeout = setTimeout(function () {
                 timeout = null;
-                if(options.trailing) func.apply(content, args);
+                if (options.trailing) func.apply(content, args);
             }, wait);
-            if(options.leading) res = func.apply(content, args);
+            if (options.leading) res = func.apply(content, args);
         }
         return res;
     }

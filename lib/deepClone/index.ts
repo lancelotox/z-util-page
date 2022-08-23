@@ -104,5 +104,8 @@ function getType(value: any): string {
     }
 }
 
-export default deepClone;
+export {
+    deepClone,
+    getType
+};
 
