@@ -1,6 +1,6 @@
 {
   "name": "z-util-page",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "一个菜鸟的工具包",
   "type": "commonjs",
   "main": "./lib/index.js",
@@ -12,7 +12,15 @@
   },
   "keywords": [
     "js",
-    "utils"
+    "utils",
+    "fileSave",
+    "MD5",
+    "uuid",
+    "sheet2blob",
+    "debounce",
+    "throttle",
+    "deepClone",
+    "getType"
   ],
   "author": "周峰",
   "license": "ISC",
