@@ -120,9 +120,21 @@ import { getType } from 'z-util-page'
 getType(value);
 ```
 
+### 8. 文件选择
+
+~~~ javascript
+import { chooseFile } from 'z-util-page'
+chooseFile({
+    accept: ".doc,.docx,application/msword",
+    capture: "user",
+    multiple: true
+},function(files){
+    console.log(files);
+});
+~~~
+
+
+
 
 
 ---
-### 
-
-#### 

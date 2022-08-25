@@ -1,3 +1,4 @@
+import { clickElement } from '../helper/index';
 /**
  * H5文件下载方法
  * @param url 资源链接或者blob对象
@@ -10,12 +11,5 @@ export function fileSave(url: string | Blob, saveFileName: string) {
     let alink = document.createElement('a');
     alink.href = url;
     alink.download = saveFileName || '';
-    if (alink.click && alink.click instanceof Function) alink.click();
-    else if (window.MouseEvent) {
-        alink.dispatchEvent(new MouseEvent('click'));
-    } else {
-        let event = document.createEvent('MouseEvents');
-        event.initMouseEvent('click', true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0 ,null);
-        alink.dispatchEvent(event);
-    }
+    clickElement(alink);
 }

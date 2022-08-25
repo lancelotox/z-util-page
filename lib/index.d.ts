@@ -6,4 +6,5 @@ import uuidFactory from "./uuidFactory/index";
 import debounce from "./debounce/index";
 import throttle from "./throttle/index";
 import { deepClone, getType } from "./deepClone/index";
-export { fileSave, MD5, linkedList, sheet2blob, uuidFactory, debounce, throttle, deepClone, getType };
+import chooseFile from "./chooseFile/index";
+export { fileSave, MD5, linkedList, sheet2blob, uuidFactory, debounce, throttle, deepClone, getType, chooseFile };

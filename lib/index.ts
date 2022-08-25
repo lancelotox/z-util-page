@@ -6,6 +6,7 @@ import uuidFactory from "./uuidFactory/index";
 import debounce from "./debounce/index";
 import throttle from "./throttle/index";
 import { deepClone, getType } from "./deepClone/index";
+import chooseFile from "./chooseFile/index";
 
 export {
     fileSave, 
@@ -16,5 +17,6 @@ export {
     debounce, 
     throttle,
     deepClone,
-    getType
+    getType,
+    chooseFile
 }
