@@ -6,6 +6,7 @@ import debounce from "./debounce/index";
 import throttle from "./throttle/index";
 import { deepClone, getType } from "./deepClone/index";
 import { chooseFile, saveFile, readFile } from "./file/index";
+import http from "./http/index"
 
 export {
     MD5,
@@ -18,5 +19,6 @@ export {
     getType,
     chooseFile,
     readFile,
-    saveFile
+    saveFile,
+    http
 }
