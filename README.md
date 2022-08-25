@@ -156,3 +156,6 @@ file.getResult();
 
 
 ---
+## 说明
+
+为了统一文件操作命名，文件下载api由 fileSave 更名为  saveFile
