@@ -35,8 +35,8 @@ import { fileSave, MD5 } from 'z-util-page'
 ### 1. 文件下载保存
 
 ``` javascript
-import { fileSave } from 'z-util-page'
-fileSave(new Blob([JSON.stringify({a: '身体和心灵，总有一个在路上。'}, null, 2)], {type : 'application/json'}), 'test.json');
+import { saveFile } from 'z-util-page'
+saveFile(new Blob([JSON.stringify({a: '身体和心灵，总有一个在路上。'}, null, 2)], {type : 'application/json'}), 'test.json');
 ```
 
 ### 2. MD5加密
@@ -131,6 +131,24 @@ chooseFile({
 },function(files){
     console.log(files);
 });
+~~~
+
+### 9. 文件读取
+
+~~~ javascript
+import { readFile } from 'z-util-page'
+
+//start方法参数类型："ArrayBuffer" | "BinaryString" | "DataURL" | "Text"
+const file = ZUtilPages.readFile(file).loadend(function (res) {
+    console.log(res);
+}).error(function(err){
+    console.log(err);
+}).start('Text');
+
+file.stop();
+file.getStatus();
+file.getResult();
+
 ~~~
 
 
