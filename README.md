@@ -151,6 +151,14 @@ file.getResult();
 
 ~~~
 
+### 10. Ajax
+
+~~~ javascript
+
+
+
+~~~
+
 
 
 
