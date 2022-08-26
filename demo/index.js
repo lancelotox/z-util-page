@@ -1,11 +1,10 @@
 function doing() {
     const url = ['/addModule', '/webserver/SisManager/index.html']
     const http = new ZUtilPages.Http({
-        baseUrl: 'http://127.0.0.1:40800'
+        baseUrl: 'http://127.0.0.1:3000'
     });
     return http.ajax({
-        url: url[0],
-        type: "json",
+        url: '/',
         method: "POST",
         data: {
             'moduleName': '周峰',

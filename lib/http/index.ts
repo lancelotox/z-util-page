@@ -63,15 +63,16 @@ class PromiseHandle {
     }
 }
 
-function warp(this: Http, xhr: XMLHttpRequest, param: Param) {
+function warp(this: Http, xhr: XMLHttpRequest, param: Param, isInitHeader: boolean = true) {
     xhr.timeout = param.timeout || this.options.timeout;
     xhr.responseType = param.type || this.options.responseType;
-    const header = param.header || {};
-    Object.keys(header).forEach(key => {
-        xhr.setRequestHeader(key, header[key]);
-    });
-    if (!header['Content-Type']) xhr.setRequestHeader("Content-Type", this.options.contentType);
-
+    if (isInitHeader) {
+        const header = param.header || {};
+        Object.keys(header).forEach(key => {
+            xhr.setRequestHeader(key, header[key]);
+        });
+        if (!header['Content-Type']) xhr.setRequestHeader("Content-Type", this.options.contentType);
+    }
     xhr.addEventListener('abort', function () {
         console.warn('HTTP请求被中止');
     });
@@ -95,10 +96,10 @@ function submit(this: Http, xhr: XMLHttpRequest, param: Param) {
         warp.call(this, xhr, param);
     } else {
         xhr.open(param.method, this.options.baseUrl + (param.url || ''), true);
-        warp.call(this, xhr, param);
         let type = this.options.contentType;
         if (param.header && param.header['Content-Type']) type = param.header['Content-Type'];
         const excute = Reflect.get(HttpHandle, type) || Reflect.get(HttpHandle, this.options.contentType);
+        warp.call(this, xhr, param, type !== "multipart/form-data");
         excute.call(this, xhr, param);
     }
 }
@@ -128,7 +129,13 @@ const HttpHandle = {
         });
     },
     'multipart/form-data': function (this: Http, xhr: XMLHttpRequest, param: Param) {
+        const header = param.header || {};
+        Object.keys(header).forEach(key => {
+            if (key === "Content-Type") return;
+            xhr.setRequestHeader(key, header[key]);
+        });
         if (window.FormData) {
+            xhr.setRequestHeader("Content-Type", header['Content-Type'] || this.options.contentType);
             const formData = new FormData();
             Object.keys(param.data || {}).forEach(key => {
                 formData.append(key, param.data[key]);
@@ -147,29 +154,43 @@ const HttpHandle = {
             let index = 0;
             let boundary = "---------------------------" + Date.now().toString(16);
             xhr.setRequestHeader("Content-Type", "multipart\/form-data; boundary=" + boundary);
-            if (param.file && getType(param.file) === "Object") Object.keys(param.file).forEach(key => {
-                let file = param.file![key];
-                let type = getType(file);
-                index++;
-                if (type === "File" || type === "Blob") readFile(file).load(function (res) {
-                    result.push("Content-Disposition: form-data; name=\"" +
-                        key + "\"; filename=\"" + res.name +
-                        "\"\r\nContent-Type: " + res.type + "\r\n\r\n");
-                }).loadend(function () {
-                    index--;
-                    if (index === 0) {
-                        let combineResult = "--" + boundary + "\r\n" + result.join("--" + boundary + "\r\n") + "--" + boundary + "--\r\n";
-                        let nBytes = combineResult.length, ui8Data = new Uint8Array(nBytes);
-                        for (let i = 0; i < nBytes; i++) {
-                            ui8Data[i] = combineResult.charCodeAt(i) & 0xff;
-                        }
-                        Promise.resolve().then(() => {
-                            xhr.send(ui8Data);
-                        });
+            if (param.file && getType(param.file) === "Object") {
+                Object.keys(param.file).forEach(key => {
+                    let file = param.file![key];
+                    let type = getType(file);
+                    if (type === "File" || type === "Blob") {
+                        index++;
+                        readFile(file).load(function (res) {
+                            let name = (window.File && file instanceof File) ? file.name : (key + '.blob');
+                            result.push("Content-Disposition: form-data; name=\"" +
+                                key + "\"; filename=\"" + name +
+                                "\"\r\nContent-Type: " + file.type + "\r\n\r\n" + res.result + "\r\n");
+                        }).loadend(function () {
+                            index--;
+                            if (index === 0) {
+                                let combineResult = "--" + boundary + "\r\n" + result.join("--" + boundary + "\r\n") + "--" + boundary + "--\r\n";
+                                Promise.resolve().then(() => {
+                                    xhr.send(string2Uint8Array(combineResult));
+                                });
+                            }
+                        }).start("BinaryString");
                     }
-                }).start("BinaryString");
-            });
+                })
+            }
+            if (index === 0) {
+                Promise.resolve().then(() => {
+                    xhr.send(string2Uint8Array("--" + boundary + "\r\n" + result.join("--" + boundary + "\r\n") + "--" + boundary + "--\r\n"));
+                });
+            }
         }
     }
+}
+
+function string2Uint8Array(value: string) {
+    let nBytes = value.length, ui8Data = new Uint8Array(nBytes);
+    for (let i = 0; i < nBytes; i++) {
+        ui8Data[i] = value.charCodeAt(i) & 0xff;
+    }
+    return ui8Data;
 }
 
