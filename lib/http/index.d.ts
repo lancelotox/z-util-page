@@ -2,7 +2,7 @@ export default class Http {
     options: HttpOptions;
     constructor(options?: object);
     ajax(param: Param): PromiseHandle;
-    ajaxAsync(param: Param): string;
+    ajaxAsync(param: Param): any;
 }
 declare class PromiseHandle {
     private xhr;

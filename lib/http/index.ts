@@ -5,7 +5,7 @@ export default class Http {
     public options: HttpOptions = {
         timeout: 10000,
         baseUrl: "",
-        contentType: 'application/x-www-form-urlencoded',
+        contentType: 'application/json',
         responseType: 'json'
     }
     constructor(options: object = {}) {
@@ -18,9 +18,8 @@ export default class Http {
     }
     public ajaxAsync(param: Param) {
         const xhr = new XMLHttpRequest();
-        xhr.open(param.method || "GET", this.options.baseUrl + param.url, false);
-        xhr.send(null);
-        return xhr.responseText;
+        submit.call(this, xhr, param, true);
+        return xhr.response;
     }
 }
 
@@ -63,9 +62,7 @@ class PromiseHandle {
     }
 }
 
-function warp(this: Http, xhr: XMLHttpRequest, param: Param, isInitHeader: boolean = true) {
-    xhr.timeout = param.timeout || this.options.timeout;
-    xhr.responseType = param.type || this.options.responseType;
+function warp(this: Http, xhr: XMLHttpRequest, param: Param, isInitHeader: boolean = true, isAsync: boolean = false) {
     if (isInitHeader) {
         const header = param.header || {};
         Object.keys(header).forEach(key => {
@@ -73,18 +70,22 @@ function warp(this: Http, xhr: XMLHttpRequest, param: Param, isInitHeader: boole
         });
         if (!header['Content-Type']) xhr.setRequestHeader("Content-Type", this.options.contentType);
     }
-    xhr.addEventListener('abort', function () {
-        console.warn('HTTP请求被中止');
-    });
-    xhr.addEventListener('error', function () {
-        console.warn(xhr.statusText);
-    });
-    xhr.addEventListener('timeout', function () {
-        console.warn('HTTP请求超时');
-    });
+    if (!isAsync) {
+        xhr.timeout = param.timeout || this.options.timeout;
+        xhr.responseType = param.type || this.options.responseType;
+        xhr.addEventListener('abort', function () {
+            console.warn('HTTP请求被中止');
+        });
+        xhr.addEventListener('error', function () {
+            console.warn(xhr.statusText);
+        });
+        xhr.addEventListener('timeout', function () {
+            console.warn('HTTP请求超时');
+        });
+    }
 }
 
-function submit(this: Http, xhr: XMLHttpRequest, param: Param) {
+function submit(this: Http, xhr: XMLHttpRequest, param: Param, isAsync: boolean = false) {
     if (!param.method || (param.method && param.method.toUpperCase() === "GET")) {
         let url = this.options.baseUrl + (param.url || '');
         let suffix = url.match(/(?:\?.*)?$/);
@@ -93,13 +94,13 @@ function submit(this: Http, xhr: XMLHttpRequest, param: Param) {
             paramString += (encodeURIComponent(key) + "=" + encodeURIComponent(param.data[key].toString()) + "&");
         });
         xhr.open("GET", url + paramString, true);
-        warp.call(this, xhr, param);
+        warp.call(this, xhr, param, true, isAsync);
     } else {
         xhr.open(param.method, this.options.baseUrl + (param.url || ''), true);
         let type = this.options.contentType;
         if (param.header && param.header['Content-Type']) type = param.header['Content-Type'];
         const excute = Reflect.get(HttpHandle, type) || Reflect.get(HttpHandle, this.options.contentType);
-        warp.call(this, xhr, param, type !== "multipart/form-data");
+        warp.call(this, xhr, param, type !== "multipart/form-data", isAsync);
         excute.call(this, xhr, param);
     }
 }
@@ -134,8 +135,7 @@ const HttpHandle = {
             if (key === "Content-Type") return;
             xhr.setRequestHeader(key, header[key]);
         });
-        if (window.FormData) {
-            xhr.setRequestHeader("Content-Type", header['Content-Type'] || this.options.contentType);
+        if (!window.FormData) {
             const formData = new FormData();
             Object.keys(param.data || {}).forEach(key => {
                 formData.append(key, param.data[key]);
@@ -164,13 +164,13 @@ const HttpHandle = {
                             let name = (window.File && file instanceof File) ? file.name : (key + '.blob');
                             result.push("Content-Disposition: form-data; name=\"" +
                                 key + "\"; filename=\"" + name +
-                                "\"\r\nContent-Type: " + file.type + "\r\n\r\n" + res.result + "\r\n");
+                                "\"\r\nContent-Type: " + (file.type ? file.type : "octet-stream") + "\r\n\r\n" + res.result + "\r\n");
                         }).loadend(function () {
                             index--;
                             if (index === 0) {
                                 let combineResult = "--" + boundary + "\r\n" + result.join("--" + boundary + "\r\n") + "--" + boundary + "--\r\n";
                                 Promise.resolve().then(() => {
-                                    xhr.send(string2Uint8Array(combineResult));
+                                    xhr.send(combineResult);
                                 });
                             }
                         }).start("BinaryString");
@@ -179,18 +179,12 @@ const HttpHandle = {
             }
             if (index === 0) {
                 Promise.resolve().then(() => {
-                    xhr.send(string2Uint8Array("--" + boundary + "\r\n" + result.join("--" + boundary + "\r\n") + "--" + boundary + "--\r\n"));
+                    xhr.send("--" + boundary + "\r\n" + result.join("--" + boundary + "\r\n") + "--" + boundary + "--\r\n");
                 });
             }
         }
     }
 }
 
-function string2Uint8Array(value: string) {
-    let nBytes = value.length, ui8Data = new Uint8Array(nBytes);
-    for (let i = 0; i < nBytes; i++) {
-        ui8Data[i] = value.charCodeAt(i) & 0xff;
-    }
-    return ui8Data;
-}
+
 
