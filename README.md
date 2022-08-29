@@ -125,7 +125,7 @@ getType(value);
 ~~~ javascript
 import { chooseFile } from 'z-util-page'
 chooseFile({
-    accept: ".doc,.docx,application/msword",
+    accept: [".doc",".docx","application/msword"],
     capture: "user",
     multiple: true
 },function(files){
