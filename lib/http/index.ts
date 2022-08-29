@@ -8,18 +8,24 @@ export default class Http {
         contentType: 'application/json',
         responseType: 'json'
     }
-    constructor(options: object = {}) {
+    public constructor(options: object = {}) {
         Object.assign(this.options, options);
     }
+    //XMLHttpRequest异步请求
     public ajax(param: Param) {
         const xhr = new XMLHttpRequest();
         submit.call(this, xhr, param);
         return new PromiseHandle(xhr);
     }
+    //XMLHttpRequest同步请求，绝大多数情况下只能在work进程内使用。
     public ajaxAsync(param: Param) {
         const xhr = new XMLHttpRequest();
         submit.call(this, xhr, param, true);
         return xhr.response;
+    }
+    //fetch
+    public fetch(param: Param){
+
     }
 }
 
