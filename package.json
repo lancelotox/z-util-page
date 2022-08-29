@@ -1,10 +1,10 @@
 {
   "name": "z-util-page",
-  "version": "1.1.1",
+  "version": "1.1.8",
   "description": "一个菜鸟的工具包",
   "type": "commonjs",
   "main": "./lib/index.js",
-  "types": "./lib/global.d.ts",
+  "types": "./lib/index.d.ts",
   "scripts": {
     "push": "npm publish",
     "wpBuild": "webpack",

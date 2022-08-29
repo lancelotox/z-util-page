@@ -31,7 +31,7 @@ export declare function readFile(file: File | Blob): FileReaderDecorate;
  * @param callback 回调函数, 参数为选择文件列表
  */
 interface chooseOption {
-    accept?: string;
+    accept?: Array<string>;
     capture?: "user" | "environment";
     multiple?: boolean;
 }

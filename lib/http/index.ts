@@ -1,5 +1,8 @@
 import { getType } from '../deepClone/index';
 import { readFile } from '../file/index';
+import { Message, UploadMessage } from './message';
+
+import type { ResponseMessage } from './message';
 
 export default class Http {
     public options: HttpOptions = {
@@ -24,7 +27,7 @@ export default class Http {
         return xhr.response;
     }
     //fetch
-    public fetch(param: Param){
+    public fetch(param: Param) {
 
     }
 }
@@ -40,25 +43,30 @@ class PromiseHandle {
     }
     then(callback: Callback) {
         this.xhr.addEventListener('load', () => {
-            callback(this.xhr.response);
+            callback(new Message(this.xhr));
         });
         return this;
     }
     catch(callback: Callback) {
         this.xhr.addEventListener('error', () => {
-            callback(this.xhr.statusText);
+            callback(new Message(this.xhr));
         });
         return this;
     }
     finally(callback: Callback) {
         this.xhr.addEventListener('loadend', () => {
-            callback(this.xhr);
+            callback(new Message(this.xhr));
         });
         return this;
     }
     progress(callback: Callback) {
-        this.xhr.addEventListener('progress', (e) => {
-            callback(e);
+        this.xhr.upload.addEventListener('progress', (e) => {
+            if (e.lengthComputable) {
+                var percentComplete = e.loaded / e.total;
+                callback(new UploadMessage(this.xhr, '上传中', percentComplete.toFixed(4)));
+            } else {
+                callback(new UploadMessage(this.xhr, '无法计算进度', null));
+            }
         });
         return this;
     }
@@ -115,7 +123,8 @@ const HttpHandle = {
     'application/x-www-form-urlencoded': function (this: Http, xhr: XMLHttpRequest, param: Param) {
         let result: Array<string> = [];
         Object.keys(param.data || {}).forEach(key => {
-            result.push(encodeURIComponent(key) + "=" + encodeURIComponent(param.data[key].toString()));
+            let val = param.data[key];
+            result.push(encodeURIComponent(key) + "=" + encodeURIComponent(val ? val.toString() : val));
         });
         Promise.resolve().then(() => {
             xhr.send(result.join("&"));
@@ -124,7 +133,8 @@ const HttpHandle = {
     'text/plain': function (this: Http, xhr: XMLHttpRequest, param: Param) {
         let result: Array<string> = [];
         Object.keys(param.data || {}).forEach(key => {
-            result.push(key.replace(/[\s\=\\]/g, "\\$&") + "=" + param.data[key].toString().replace(/[\s\=\\]/g, "\\$&"));
+            let val = param.data[key];
+            result.push(key.replace(/[\s\=\\]/g, "\\$&") + "=" + (val ? val.toString().replace(/[\s\=\\]/g, "\\$&") : val));
         });
         Promise.resolve().then(() => {
             xhr.send(result.join("\r\n"));
@@ -141,7 +151,7 @@ const HttpHandle = {
             if (key === "Content-Type") return;
             xhr.setRequestHeader(key, header[key]);
         });
-        if (!window.FormData) {
+        if (window.FormData) {
             const formData = new FormData();
             Object.keys(param.data || {}).forEach(key => {
                 formData.append(key, param.data[key]);
@@ -155,7 +165,8 @@ const HttpHandle = {
         } else {
             let result: Array<string> = [];
             Object.keys(param.data || {}).forEach(key => {
-                result.push("Content-Disposition: form-data; name=\"" + key + "\"\r\n\r\n" + param.data[key].toString() + "\r\n");
+                let val = param.data[key];
+                result.push("Content-Disposition: form-data; name=\"" + key + "\"\r\n\r\n" + (val ? val.toString() : val) + "\r\n");
             });
             let index = 0;
             let boundary = "---------------------------" + Date.now().toString(16);
@@ -192,5 +203,42 @@ const HttpHandle = {
     }
 }
 
+interface HttpOptions {
+    //通用超时等待时间(ms)
+    timeout: number
+    //通用根域名
+    baseUrl: string
+    //通用请求数据格式
+    contentType: ContentType
+    //通用响应数据格式
+    responseType: XMLHttpRequestResponseType
+}
+
+interface Param {
+    url: string
+    method?: 'GET' | 'HEAD' | 'POST' | 'PUT' | 'DELETE'
+    type?: XMLHttpRequestResponseType
+    timeout?: number
+    data?: any
+    header?: Head,
+    file?: {
+        [propName: string]: File | Blob
+    }
+}
+
+interface Head {
+    Accept?: string
+    'Content-Type'?: ContentType
+    [propName: string]: any
+}
+
+type Callback = (res: ResponseMessage) => void;
+
+type ContentType = "application/x-www-form-urlencoded" |
+    "text/plain" |
+    "multipart/form-data" |
+    "application/json"
+
+type RequestBody = null | undefined | ArrayBuffer | ArrayBufferView | Blob | Document | FormData | String
 
 
