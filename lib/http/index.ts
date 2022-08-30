@@ -59,7 +59,18 @@ class PromiseHandle {
         });
         return this;
     }
-    progress(callback: Callback) {
+    downProgress(callback: Callback) {
+        this.xhr.addEventListener('progress', (e) => {
+            if (e.lengthComputable) {
+                var percentComplete = e.loaded / e.total;
+                callback(new UploadMessage(this.xhr, '下载中', percentComplete.toFixed(4)));
+            } else {
+                callback(new UploadMessage(this.xhr, '无法计算进度', null));
+            }
+        });
+        return this;
+    }
+    upProgress(callback: Callback) {
         this.xhr.upload.addEventListener('progress', (e) => {
             if (e.lengthComputable) {
                 var percentComplete = e.loaded / e.total;
