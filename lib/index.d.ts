@@ -7,4 +7,5 @@ import throttle from "./throttle/index";
 import { deepClone, getType } from "./deepClone/index";
 import { chooseFile, saveFile, readFile } from "./file/index";
 import Http from "./http/index";
-export { MD5, linkedList, sheet2blob, uuidFactory, debounce, throttle, deepClone, getType, chooseFile, readFile, saveFile, Http };
+import { ForkPromise } from "./promise/index";
+export { MD5, linkedList, sheet2blob, uuidFactory, debounce, throttle, deepClone, getType, chooseFile, readFile, saveFile, Http, ForkPromise };

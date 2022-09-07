@@ -6,7 +6,8 @@ import debounce from "./debounce/index";
 import throttle from "./throttle/index";
 import { deepClone, getType } from "./deepClone/index";
 import { chooseFile, saveFile, readFile } from "./file/index";
-import Http from "./http/index"
+import Http from "./http/index";
+import { ForkPromise } from "./promise/index";
 
 export {
     MD5,
@@ -20,5 +21,6 @@ export {
     chooseFile,
     readFile,
     saveFile,
-    Http
+    Http,
+    ForkPromise
 }

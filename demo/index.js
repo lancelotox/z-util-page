@@ -9,10 +9,35 @@ function doing() {
             'moduleName': 'lancelot',
             'moduleType': 'man'
         },
-        file:{
+        file: {
             vvs: document.querySelector('#file').files[0]
         }
-    }).finally(function(res){
+    }).finally(function (res) {
+        console.log(res);
+    });
+}
+
+function mockFetch(fn) {
+    setTimeout(() => {
+        fn('请求成功');
+    }, 1000);
+}
+
+function p() {
+    let x = new ZUtilPages.ForkPromise(resolve => {
+        mockFetch(function (res) {
+            resolve(res);
+        });
+    })
+    x.then(function (res) {
+        console.log(res);
+        return new ZUtilPages.ForkPromise(resolve1 => {
+            mockFetch(function (res1) {
+                resolve1(res + res1);
+            });
+        })
+    })
+    x.then(function(res){
         console.log(res);
     });
 }
