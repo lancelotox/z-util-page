@@ -28,18 +28,37 @@ function p() {
         mockFetch(function (res) {
             resolve(res);
         });
-    })
-    x.then(function (res) {
+    }).then(function (res) {
         console.log(res);
         return new ZUtilPages.ForkPromise(resolve1 => {
             mockFetch(function (res1) {
                 resolve1(res + res1);
             });
         })
+    }).then(function(res){
+        console.log(res);
+        res.ajax();
+    }).catch(function(err){
+        console.log(err);
+    });
+}
+function q() {
+    // let Promise = ZUtilPages.ForkPromise;
+    let x = new Promise((resolve, reject) => {
+        mockFetch(function (res) {
+            console.log(reject(res));
+            console.log(resolve(res));
+        });
     })
     x.then(function(res){
-        console.log(res);
+        console.log(x);
+        // res.ajax();
     });
+    x.catch(function(err){
+        console.log(err);
+        console.log(x);
+    });
+    
 }
 
 let ta = new Proxy([1,2,3], {
