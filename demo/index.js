@@ -61,10 +61,6 @@ function q() {
     
 }
 
-let ta = new Proxy([1,2,3], {
-    set(target, p, value){
-        console.log(p);
-    }
-});
-
-ta[1] = 0;
+let x = { x: 1 };
+let obj = ZUtilPages.React.reactive([x, 1, '2']);
+console,log(obj.includes(1));

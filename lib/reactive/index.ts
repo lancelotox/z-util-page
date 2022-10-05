@@ -1,5 +1,21 @@
-import type { Ref, DepsMap, Effect, EffectOptions } from './type.d';
-import { TriggerType } from './type.d';
+interface Ref<T> {
+    value: T
+}
+
+type DepsMap = Map<string | symbol, Set<Effect>>
+
+interface Effect {
+    (): any
+    deps: Array<Set<Effect>>
+    options: EffectOptions
+}
+
+type EffectOptions = {
+    schedule?: Function
+    lazy?: boolean
+    immediate?: boolean
+    flush?: 'post' | ''
+}
 
 const bucket = new WeakMap<object, DepsMap>();
 const reactiveMap = new Map<object, object>();
@@ -9,13 +25,22 @@ const source: symbol = Symbol();
 
 let activeEffect: Effect | null = null;
 
-const arrayInstrumentations = {
-    includes: function(...args: Array<any>): boolean | number{
-        let res: boolean | number = Array.prototype.includes.apply(this, args);
-        if(res === false || res === -1) res = Array.prototype.includes.apply(this.source, args);
-        return res;
-    }
+enum TriggerType {
+    SET,
+    ADD,
+    DELETE
 }
+
+const arrayInstrumentations = {};
+
+['includes', 'indexOf', 'lastIndexOf'].forEach(method => {
+    const originMethod = Reflect.get(Array.prototype, method);
+    Reflect.set(arrayInstrumentations, method, function(this: any, ...args: [searchElement: any, fromIndex?: number | undefined]): boolean | number {
+        let res: boolean | number = originMethod.apply(this, args);
+        if(res === false || res === -1) res = originMethod.apply(Reflect.get(this, source), args);
+        return res;
+    });
+});
 
 function track(target: object, p: string | symbol): void {
     if (!activeEffect){
@@ -90,12 +115,12 @@ function cleanup(effectFn: Effect): void {
     effectFn.deps.length = 0;
 }
 
-function ref(value: any, isReadonly = false) {
-    return reactive({value}, true, isReadonly);
+function ref<T>(value: T, isReadonly = false): Ref<T> {
+    return reactive<Ref<T>>({ value }, true, isReadonly);
 }
 
-function reactive(value: object, isShadow = false, isReadonly = false) {
-    return new Proxy(value, {
+function reactive<T extends object>(value: T, isShadow = false, isReadonly = false): T {
+    return new Proxy<T>(value, {
         get(target, p, reciver) {
             if (p === source) return target;
             if (Array.isArray(target) && arrayInstrumentations.hasOwnProperty(p)){
@@ -138,7 +163,7 @@ function reactive(value: object, isShadow = false, isReadonly = false) {
                 console.log(target, `对象是只读的`);
                 return false;
             }
-            const oldValue = target[p];
+            const oldValue = Reflect.get(target, p);
             const type = Array.isArray(target)
                 ? Number(p) < target.length ? TriggerType.SET : TriggerType.ADD
                 : Object.prototype.hasOwnProperty.call(target, p) ? TriggerType.SET : TriggerType.ADD;
@@ -153,7 +178,7 @@ function reactive(value: object, isShadow = false, isReadonly = false) {
     });
 }
 
-function effect(func, options: EffectOptions = {}) {
+function effect(func: Function, options: EffectOptions = {}) {
     let effectFn = <Effect>function () {
         cleanup(effectFn);
         activeEffect = effectFn;
@@ -207,8 +232,8 @@ function watch(source: Function | object, cb: Function, options: EffectOptions =
     let getter: Function;
     if (typeof source === 'function') getter = source;
     else getter = () => traverse(source);
-    let oldValue, newValue, cleanup;
-    function onInvalidate(fn) {
+    let oldValue: any, newValue, cleanup: Function;
+    function onInvalidate(fn: Function) {
         cleanup = fn;
     }
     const job = () => {
