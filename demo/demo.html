@@ -6,47 +6,31 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <style>
+        .helf{
+            width: 40%;
+            height: 100px;
+        }
+        .helf::after{
+            content: "";
+            width: 200%;
+            height: 200%;
+            border: 1px solid black;
+        }
+        .red{
+            background-color: red;
+        }
+        .blue{
+            background-color: blue;
+        }
+    </style>
 </head>
 
 <body>
-    <form id="form" action="http://127.0.0.1:3000" method="post" enctype="multipart/form-data" onsubmit="AJAXSubmit(this); return false;">
-        <fieldset>
-            <legend>Upload example</legend>
-            <p>
-                First name: <input type="text" name="firstname" /><br />
-                Last name: <input type="text" name="lastname" /><br />
-                Sex:
-                <input id="sex_male" type="radio" name="sex" value="male" />
-                <label for="sex_male">Male</label>
-                <input id="sex_female" type="radio" name="sex" value="female" />
-                <label for="sex_female">Female</label><br />
-                Password: <input type="password" name="secret" /><br />
-                What do you prefer:
-                <select name="image_type">
-                    <option>Books</option>
-                    <option>Cinema</option>
-                    <option>TV</option>
-                </select>
-            </p>
-            <p>
-                Post your photos:
-                <input id="file" type="file" multiple name="photos[]">
-            </p>
-            <p>
-                <input id="vehicle_bike" type="checkbox" name="vehicle[]" value="Bike" />
-                <label for="vehicle_bike">I have a bike</label><br />
-                <input id="vehicle_car" type="checkbox" name="vehicle[]" value="Car" />
-                <label for="vehicle_car">I have a car</label>
-            </p>
-            <p>
-                Describe yourself:<br />
-                <textarea name="description" cols="50" rows="8"></textarea>
-            </p>
-            <p>
-                <input type="submit" value="Submit" />
-            </p>
-        </fieldset>
-    </form>
+    <div class="helf red">
+        123
+    </div>
+    
     <script src="../dist/zUtilPages.umd.js"></script>
     <script src="./index.js"></script>
 </body>

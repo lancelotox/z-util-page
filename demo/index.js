@@ -41,3 +41,11 @@ function p() {
         console.log(res);
     });
 }
+
+let ta = new Proxy([1,2,3], {
+    set(target, p, value){
+        console.log(p);
+    }
+});
+
+ta[1] = 0;

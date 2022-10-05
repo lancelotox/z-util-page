@@ -1,25 +1,31 @@
-import type { Ref, DepsMap, Effect } from './type.d'
+import type { Ref, DepsMap, Effect, EffectOptions } from './type.d';
+import { TriggerType } from './type.d';
 
-const bucket: WeakMap<object, DepsMap> = new WeakMap();
-const reactiveMap = new Map();
-let activeEffect: Effect | undefined = undefined;
-const effecrStack = [];
-const ITERATE_KEY = Symbol();
-const source = Symbol();
-const TriggerType = {
-    SET: 'SET',
-    ADD: 'ADD',
-    DELETE: 'DELETE'
+const bucket = new WeakMap<object, DepsMap>();
+const reactiveMap = new Map<object, object>();
+const effectStack = new Array<Effect>();
+const ITERATE_KEY: symbol = Symbol();
+const source: symbol = Symbol();
+
+let activeEffect: Effect | null = null;
+
+const arrayInstrumentations = {
+    includes: function(...args: Array<any>): boolean | number{
+        let res: boolean | number = Array.prototype.includes.apply(this, args);
+        if(res === false || res === -1) res = Array.prototype.includes.apply(this.source, args);
+        return res;
+    }
 }
 
-function track(target, p) {
-    if (!activeEffect)
+function track(target: object, p: string | symbol): void {
+    if (!activeEffect){
         return;
-    let depsMap = bucket.get(target);
+    }
+    let depsMap: DepsMap | undefined = bucket.get(target);
     if (!depsMap) {
         bucket.set(target, (depsMap = new Map()));
     }
-    let deps = depsMap.get(p);
+    let deps: Set<Effect> | undefined = depsMap.get(p);
     if (!deps) {
         depsMap.set(p, (deps = new Set()));
     }
@@ -27,12 +33,13 @@ function track(target, p) {
     activeEffect.deps.push(deps);
 }
 
-function trigger(target, p, type, value) {
-    let depsMap = bucket.get(target);
-    if (!depsMap)
+function trigger(target: object, p: string | symbol, type: TriggerType, value: any): boolean {
+    let depsMap: DepsMap | undefined = bucket.get(target);
+    if (!depsMap){
         return true;
-    let effects = depsMap.get(p);
-    let effectsToRun = new Set();
+    }
+    let effects: Set<Effect> | undefined = depsMap.get(p);
+    let effectsToRun = new Set<Effect>();
     effects && effects.forEach(effectFn => {
         if (effectFn !== activeEffect)
             effectsToRun.add(effectFn);
@@ -53,7 +60,7 @@ function trigger(target, p, type, value) {
     }
     if (Array.isArray(target) && p === 'length') {
         depsMap.forEach((effects, key) => {
-            if (key >= value) {
+            if (Number(key) >= Number(value)) {
                 effects.forEach(effectFn => {
                     if (effectFn !== activeEffect)
                         effectsToRun.add(effectFn);
@@ -76,31 +83,24 @@ function trigger(target, p, type, value) {
     return true;
 }
 
-function cleanup(effectFn) {
+function cleanup(effectFn: Effect): void {
     effectFn.deps.forEach(deps => {
         deps.delete(effectFn);
     });
     effectFn.deps.length = 0;
 }
 
-function ref(value) {
-    let proxy = new Proxy({ value }, {
-        get(target, p) {
-            track(target, p);
-            return Reflect.get(target, p);
-        },
-        set(target, p, value) {
-            Reflect.set(target, p, value);
-            return trigger(target, p);
-        }
-    });
-    return proxy;
+function ref(value: any, isReadonly = false) {
+    return reactive({value}, true, isReadonly);
 }
 
-function reactive(value, isShadow = false, isReadonly = false) {
+function reactive(value: object, isShadow = false, isReadonly = false) {
     return new Proxy(value, {
         get(target, p, reciver) {
             if (p === source) return target;
+            if (Array.isArray(target) && arrayInstrumentations.hasOwnProperty(p)){
+                return Reflect.get(arrayInstrumentations, p, reciver);
+            }
             if (!isReadonly && typeof p !== 'symbol') track(target, p);
             const res = Reflect.get(target, p, reciver);
             if (isShadow) return res;
@@ -118,50 +118,49 @@ function reactive(value, isShadow = false, isReadonly = false) {
             return Reflect.has(target, p);
         },
         ownKeys(target) {
-            if (!isReadonly) track(target, Array.isArray(target) ? 'length' : ITERATE_KEY
-
-            );
+            if (!isReadonly) track(target, Array.isArray(target) ? 'length' : ITERATE_KEY);
             return Reflect.ownKeys(target);
         },
         deleteProperty(target, p) {
             if (isReadonly) {
-                console.log(`属性${p}是只读的`);
-                return;
+                console.log(target, `对象是只读的`);
+                return false;
             }
             const hadKey = Object.prototype.hasOwnProperty.call(target, p);
             const res = Reflect.deleteProperty(target, p);
             if (res && hadKey) {
-                trigger(target, p, 'DELETE');
+                trigger(target, p, TriggerType.DELETE, 0);
             }
-            return res;
+            return true;
         },
         set(target, p, value, reciver) {
             if (isReadonly) {
-                console.log(`属性${p}是只读的`);
-                return;
+                console.log(target, `对象是只读的`);
+                return false;
             }
             const oldValue = target[p];
             const type = Array.isArray(target)
-                ? Number(p) < target.length ? 'SET' : 'ADD'
-                : Object.prototype.hasOwnProperty.call(target, p) ? 'SET' : 'ADD';
+                ? Number(p) < target.length ? TriggerType.SET : TriggerType.ADD
+                : Object.prototype.hasOwnProperty.call(target, p) ? TriggerType.SET : TriggerType.ADD;
             const res = Reflect.set(target, p, value, reciver);
             if (target === reciver[source]) {
-                if (oldValue !== value && (oldValue === oldValue || value === value))
+                if (oldValue !== value && (oldValue === oldValue || value === value)){
                     trigger(target, p, type, value);
+                }   
             }
-            return res;
+            return true;
         }
     });
 }
 
-function effect(func, options = {}) {
-    let effectFn = function () {
+function effect(func, options: EffectOptions = {}) {
+    let effectFn = <Effect>function () {
         cleanup(effectFn);
         activeEffect = effectFn;
-        effecrStack.push(effectFn);
+        effectStack.push(effectFn);
         const res = func();
-        effecrStack.pop();
-        activeEffect = effecrStack[effecrStack.length - 1];
+        effectStack.pop();
+        activeEffect = effectStack[effectStack.length - 1];
         return res;
     };
     effectFn.deps = [];
@@ -170,15 +169,15 @@ function effect(func, options = {}) {
     return effectFn;
 }
 
-function computed(getter) {
-    let value;
+function computed(getter: Function) {
+    let value: any;
     let dirty = true;
     const effectFn = effect(getter, {
         lazy: true,
         schedule() {
             if (!dirty) {
                 dirty = true;
-                trigger(obj, 'value');
+                trigger(obj, 'value', TriggerType.SET, 0);
             }
         }
     });
@@ -195,7 +194,7 @@ function computed(getter) {
     return obj;
 }
 
-function traverse(value, seen = new Set()) {
+function traverse(value: any, seen = new Set()): any {
     if (typeof value !== 'object' || value === null || seen.has(value)) return;
     seen.add(value);
     for (const k in value) {
@@ -204,8 +203,8 @@ function traverse(value, seen = new Set()) {
     return value;
 }
 
-function watch(source, cb, options = {}) {
-    let getter;
+function watch(source: Function | object, cb: Function, options: EffectOptions = {}) {
+    let getter: Function;
     if (typeof source === 'function') getter = source;
     else getter = () => traverse(source);
     let oldValue, newValue, cleanup;
@@ -231,4 +230,8 @@ function watch(source, cb, options = {}) {
     });
     if (options.immediate) job();
     else oldValue = effectFn();
+}
+
+export default {
+    ref, reactive, effect, computed, watch
 }
