@@ -115,11 +115,11 @@ function cleanup(effectFn: Effect): void {
     effectFn.deps.length = 0;
 }
 
-function ref<T>(value: T, isReadonly = false): Ref<T> {
+export function ref<T>(value: T, isReadonly = false): Ref<T> {
     return reactive<Ref<T>>({ value }, true, isReadonly);
 }
 
-function reactive<T extends object>(value: T, isShadow = false, isReadonly = false): T {
+export function reactive<T extends object>(value: T, isShadow = false, isReadonly = false): T {
     return new Proxy<T>(value, {
         get(target, p, reciver) {
             if (p === source) return target;
@@ -178,7 +178,7 @@ function reactive<T extends object>(value: T, isShadow = false, isReadonly = fal
     });
 }
 
-function effect(func: Function, options: EffectOptions = {}) {
+export function effect(func: Function, options: EffectOptions = {}) {
     let effectFn = <Effect>function () {
         cleanup(effectFn);
         activeEffect = effectFn;
@@ -194,7 +194,7 @@ function effect(func: Function, options: EffectOptions = {}) {
     return effectFn;
 }
 
-function computed(getter: Function) {
+export function computed(getter: Function) {
     let value: any;
     let dirty = true;
     const effectFn = effect(getter, {
@@ -228,7 +228,7 @@ function traverse(value: any, seen = new Set()): any {
     return value;
 }
 
-function watch(source: Function | object, cb: Function, options: EffectOptions = {}) {
+export function watch(source: Function | object, cb: Function, options: EffectOptions = {}) {
     let getter: Function;
     if (typeof source === 'function') getter = source;
     else getter = () => traverse(source);
@@ -255,8 +255,4 @@ function watch(source: Function | object, cb: Function, options: EffectOptions =
     });
     if (options.immediate) job();
     else oldValue = effectFn();
-}
-
-export default {
-    ref, reactive, effect, computed, watch
 }
