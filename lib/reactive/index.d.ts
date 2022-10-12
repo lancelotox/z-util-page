@@ -12,18 +12,11 @@ declare type EffectOptions = {
     immediate?: boolean;
     flush?: 'post' | '';
 };
-declare function ref<T>(value: T, isReadonly?: boolean): Ref<T>;
-declare function reactive<T extends object>(value: T, isShadow?: boolean, isReadonly?: boolean): T;
-declare function effect(func: Function, options?: EffectOptions): Effect;
-declare function computed(getter: Function): {
+export declare function ref<T>(value: T, isReadonly?: boolean): Ref<T>;
+export declare function reactive<T extends object>(value: T, isShadow?: boolean, isReadonly?: boolean): T;
+export declare function effect(func: Function, options?: EffectOptions): Effect;
+export declare function computed(getter: Function): {
     readonly value: any;
 };
-declare function watch(source: Function | object, cb: Function, options?: EffectOptions): void;
-declare const _default: {
-    ref: typeof ref;
-    reactive: typeof reactive;
-    effect: typeof effect;
-    computed: typeof computed;
-    watch: typeof watch;
-};
-export default _default;
+export declare function watch(source: Function | object, cb: Function, options?: EffectOptions): void;
+export {};

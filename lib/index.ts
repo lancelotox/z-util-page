@@ -8,7 +8,7 @@ import { deepClone, getType } from "./deepClone/index";
 import { chooseFile, saveFile, readFile } from "./file/index";
 import Http from "./http/index";
 import { ForkPromise } from "./promise/index";
-import React from "./reactive/index";
+import * as React from "./reactive/index";
 
 export {
     MD5,

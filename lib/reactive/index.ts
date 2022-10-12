@@ -24,6 +24,7 @@ const ITERATE_KEY: symbol = Symbol();
 const source: symbol = Symbol();
 
 let activeEffect: Effect | null = null;
+let shouldTrack: boolean = true;
 
 enum TriggerType {
     SET,
@@ -42,8 +43,18 @@ const arrayInstrumentations = {};
     });
 });
 
+['push', 'pop', 'shift', 'unshift', 'splice'].forEach(method => {
+    const originMethod = Reflect.get(Array.prototype, method);
+    Reflect.set(arrayInstrumentations, method, function(this: any, ...args: [searchElement: any, fromIndex?: number | undefined]): boolean | number {
+        shouldTrack = false;
+        let res: any = originMethod.apply(this, args);
+        shouldTrack = true;
+        return res;
+    });
+});
+
 function track(target: object, p: string | symbol): void {
-    if (!activeEffect){
+    if (!activeEffect || !shouldTrack){
         return;
     }
     let depsMap: DepsMap | undefined = bucket.get(target);
