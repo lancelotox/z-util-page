@@ -27,7 +27,7 @@ export default {
 	},
 	_uuid: function(len: number, radix: number) {
 	     var  chars =  '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz' .split( '' );
-	     var  uuid = [], i;
+	     var  uuid: Array<string> = [], i;
 	     radix = radix || chars.length;
 	 
 	     if  (len) {

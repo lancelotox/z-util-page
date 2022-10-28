@@ -1,17 +1,18 @@
-export interface ResponseMessage {
+interface ResponseMessage {
     status: number;
     message: string;
     data: any;
 }
-export declare class Message implements ResponseMessage {
+declare class Message implements ResponseMessage {
     status: number;
     message: string;
     data: any;
     constructor(xhr: XMLHttpRequest);
 }
-export declare class UploadMessage implements ResponseMessage {
+declare class UploadMessage implements ResponseMessage {
     status: number;
     message: string;
     data: any;
     constructor(xhr: XMLHttpRequest, message: string, data: any);
 }
+export { UploadMessage, Message, ResponseMessage };

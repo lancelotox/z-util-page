@@ -1,10 +1,10 @@
 import { getType } from '../deepClone/index';
-import { readFile } from '../file/index';
+import FileHelper from '../file/index';
 import { Message, UploadMessage } from './message';
 
 import type { ResponseMessage } from './message';
 
-export default class Http {
+class Http {
     public options: HttpOptions = {
         timeout: 10000,
         baseUrl: "",
@@ -188,7 +188,7 @@ const HttpHandle = {
                     let type = getType(file);
                     if (type === "File" || type === "Blob") {
                         index++;
-                        readFile(file).load(function (res) {
+                        FileHelper.read(file).load(function (res) {
                             let name = (window.File && file instanceof File) ? file.name : (key + '.blob');
                             result.push("Content-Disposition: form-data; name=\"" +
                                 key + "\"; filename=\"" + name +
@@ -252,4 +252,5 @@ type ContentType = "application/x-www-form-urlencoded" |
 
 type RequestBody = null | undefined | ArrayBuffer | ArrayBufferView | Blob | Document | FormData | String
 
+export default Http;
 

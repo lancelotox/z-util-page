@@ -1,10 +1,10 @@
-export interface ResponseMessage {
+interface ResponseMessage {
     status: number
     message: string
     data: any
 }
 
-export class Message implements ResponseMessage {
+class Message implements ResponseMessage {
     status: number
     message: string
     data: any
@@ -15,7 +15,7 @@ export class Message implements ResponseMessage {
     }
 }
 
-export class UploadMessage implements ResponseMessage {
+class UploadMessage implements ResponseMessage {
     status: number
     message: string
     data: any
@@ -24,4 +24,10 @@ export class UploadMessage implements ResponseMessage {
         this.message = message;
         this.data = data;
     }
+}
+
+export {
+    UploadMessage,
+    Message,
+    ResponseMessage
 }

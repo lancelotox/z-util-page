@@ -1,11 +1,11 @@
 /**
  * 节点类
  */
-export class Node {
-    before: Node | null = null;
+class LinkNode {
+    before: LinkNode | null = null;
     param: any = '';
     index: number | null = null;
-    after: Node | null = null;
+    after: LinkNode | null = null;
     constructor(param: any) {
         this.param = param;
     }
@@ -14,15 +14,15 @@ export class Node {
 /**
  * 链表操作类
  */
-export class LinkedList {
+class LinkedList {
     Length: number = 0;
-    node: Node | null = null;
-    head: Node | null = null;
+    node: LinkNode | null = null;
+    head: LinkNode | null = null;
     constructor() { }
     /**
      * 尾部插入节点
      */
-    push(node: Node) {
+    push(node: LinkNode) {
         if (node) {
             if (this.head === null) {
                 node.after = node;
@@ -44,7 +44,7 @@ export class LinkedList {
     /**
      * 指定位置插入节点
      */
-    insert(param: any, node: Node, location: 'before' | 'after') {
+    insert(param: any, node: LinkNode, location: 'before' | 'after') {
         let temp = this.find(param);
         if (temp && location === 'before') {
             node.index = this.Length;
@@ -124,4 +124,9 @@ export class LinkedList {
     size() {
         return this.Length;
     }
+}
+
+export default {
+    LinkNode,
+    LinkedList
 }

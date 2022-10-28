@@ -5,7 +5,7 @@ import { clickElement } from '../helper/index';
  * @param url 资源链接或者blob对象
  * @param saveFileName 保存文件名
  */
-export function saveFile(url: string | Blob, saveFileName: string) {
+function saveFile(url: string | Blob, saveFileName: string) {
     if (typeof url === 'object' && url instanceof Blob) {
         url = URL.createObjectURL(url);
     }
@@ -88,7 +88,7 @@ class FileReaderDecorate {
         return this;
     }
 }
-export function readFile(file: File | Blob) {
+function readFile(file: File | Blob) {
     return new FileReaderDecorate(file);
 }
 
@@ -106,7 +106,7 @@ interface chooseOption {
     //是否允许多选
     multiple?: boolean
 }
-export function chooseFile(options: chooseOption = {}, callback: Function) {
+function chooseFile(options: chooseOption = {}, callback: Function) {
     const input = document.createElement('input');
     input.setAttribute('type', 'file');
     input.setAttribute('accept', (options.accept || []).join(','));
@@ -116,4 +116,10 @@ export function chooseFile(options: chooseOption = {}, callback: Function) {
         callback(input.files);
     });
     clickElement(input);
+}
+
+export default {
+    write: saveFile,
+    read: readFile,
+    choose: chooseFile
 }

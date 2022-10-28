@@ -2,3 +2,7 @@
 .git/
 node_modules/
 .gitignore
+lib/sheet2blob
+lib/promise
+lib/linkedList
+coverage/

@@ -1,35 +1,31 @@
 {
   "name": "z-util-page",
-  "version": "1.1.8",
-  "description": "一个菜鸟的工具包",
+  "version": "1.9.1",
+  "description": "javascript utils",
   "type": "commonjs",
   "main": "./lib/index.js",
   "types": "./lib/index.d.ts",
   "scripts": {
     "push": "npm publish",
-    "test": "jest --watchAll",
-    "wpBuild": "webpack",
-    "wpWatch": "webpack --watch"
+    "build": "webpack --mode production",
+    "build:watch": "webpack --mode production --watch",
+    "test": "jest",
+    "test:watch": "jest --watchAll"
   },
   "keywords": [
     "js",
     "ts",
     "utils",
-    "MD5",
     "uuid",
-    "sheet2blob",
     "debounce",
     "throttle",
     "deepClone",
     "getType",
-    "file"
+    "WebFileHelper",
+    "Http"
   ],
-  "author": "周峰",
+  "author": "zhou feng",
   "license": "ISC",
-  "dependencies": {
-    "js-md5": "^0.7.3",
-    "xlsx": "^0.18.3"
-  },
   "devDependencies": {
     "@babel/core": "^7.19.3",
     "@babel/preset-env": "^7.19.3",
@@ -37,12 +33,12 @@
     "@types/jest": "^29.1.1",
     "@webpack-cli/generators": "^2.5.0",
     "babel": "^6.23.0",
+    "babel-loader": "^8.2.5",
+    "core-js": "^3.26.0",
     "jest": "^29.1.2",
-    "mini-css-extract-plugin": "^2.6.1",
     "ts-loader": "^9.3.1",
     "typescript": "^4.7.4",
     "webpack": "^5.74.0",
-    "webpack-cli": "^4.10.0",
-    "webpack-dev-server": "^4.10.0"
+    "webpack-cli": "^4.10.0"
   }
 }

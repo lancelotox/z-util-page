@@ -107,5 +107,5 @@ function getType(value: any): string {
 export {
     deepClone,
     getType
-};
+}
 

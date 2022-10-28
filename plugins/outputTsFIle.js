@@ -1,4 +1,4 @@
-class OutputTsFile {
+module.exports = class OutputTsFile {
     constructor(options) {
         this.options = { ...options };
     }
@@ -15,5 +15,3 @@ class OutputTsFile {
         })
     }
 }
-
-module.exports = OutputTsFile;

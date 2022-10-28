@@ -1,5 +1,5 @@
 import type { ResponseMessage } from './message';
-export default class Http {
+declare class Http {
     options: HttpOptions;
     constructor(options?: object);
     ajax(param: Param): PromiseHandle;
@@ -41,4 +41,4 @@ interface Head {
 }
 declare type Callback = (res: ResponseMessage) => void;
 declare type ContentType = "application/x-www-form-urlencoded" | "text/plain" | "multipart/form-data" | "application/json";
-export {};
+export default Http;

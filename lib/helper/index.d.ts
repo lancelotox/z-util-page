@@ -1,1 +1,2 @@
-export declare function clickElement(el: HTMLElement): void;
+declare function clickElement(el: HTMLElement): void;
+export { clickElement };

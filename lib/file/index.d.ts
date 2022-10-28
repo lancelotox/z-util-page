@@ -3,7 +3,7 @@
  * @param url 资源链接或者blob对象
  * @param saveFileName 保存文件名
  */
-export declare function saveFile(url: string | Blob, saveFileName: string): void;
+declare function saveFile(url: string | Blob, saveFileName: string): void;
 /**
  * 文件读取
  * @param file File对象或Blob对象
@@ -24,7 +24,7 @@ declare class FileReaderDecorate {
     start(type: "ArrayBuffer" | "BinaryString" | "DataURL" | "Text"): this;
     stop(): this;
 }
-export declare function readFile(file: File | Blob): FileReaderDecorate;
+declare function readFile(file: File | Blob): FileReaderDecorate;
 /**
  * 文件选择
  * @param options 文件选择配置
@@ -35,5 +35,10 @@ interface chooseOption {
     capture?: "user" | "environment";
     multiple?: boolean;
 }
-export declare function chooseFile(options: chooseOption | undefined, callback: Function): void;
-export {};
+declare function chooseFile(options: chooseOption | undefined, callback: Function): void;
+declare const _default: {
+    write: typeof saveFile;
+    read: typeof readFile;
+    choose: typeof chooseFile;
+};
+export default _default;
