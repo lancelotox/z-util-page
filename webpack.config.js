@@ -1,37 +1,35 @@
 const path = require('path');
-const OutputTsFile = require('./plugins/outputTsFIle.js');
-const ParseScriptParam = require('./hooks/parseScriptParam.js');
-
-const isProduction = ParseScriptParam().mode === "production";
 
 const config = {
-    entry: './lib/index.ts',
+    entry: './ts/index.ts',
     output: {
-        path: path.resolve(path.resolve(), 'dist'),
-        filename: 'zUtilPages.umd.js',
-        libraryTarget: 'umd',
-        library: 'Utils'
+        path: path.resolve(__dirname, 'dist'),
+        filename: 'zutilpage.js',
+        library: {
+            name: 'Utils',
+            type: 'umd'
+        }
+    },
+    resolve: {
+        extensions: [".ts", ".tsx", ".js", "..."],
+        extensionAlias: {
+            ".js": [".js", ".ts"],
+            ".cjs": [".cjs", ".cts"],
+            ".mjs": [".mjs", ".mts"]
+        }
     },
     module: {
         rules: [
             {
                 test: /\.(ts)$/i,
                 exclude: ['/node_modules/'],
-                use: ['babel-loader', 'ts-loader']
+                use: ['babel-loader', {
+                    loader: 'ts-loader'
+                }]
             }
         ]
     },
-    resolve: {
-        extensions: ['.ts', '...']
-    },
-    plugins: [new OutputTsFile({outDir: './dist'})]
+    mode: 'none'
 }
 
-module.exports = () => {
-    if (isProduction) {
-        config.mode = 'production';
-    } else {
-        config.mode = 'development';
-    }
-    return config;
-}
+module.exports = config;

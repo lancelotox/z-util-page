@@ -1,14 +1,13 @@
 {
   "name": "z-util-page",
-  "version": "1.9.1",
+  "version": "1.9.2",
   "description": "javascript utils",
   "type": "commonjs",
-  "main": "./lib/index.js",
-  "types": "./lib/index.d.ts",
+  "main": "./lib/zutilpage.js",
+  "types": "./types/index.d.ts",
   "scripts": {
     "push": "npm publish",
-    "build": "webpack --mode production",
-    "build:watch": "webpack --mode production --watch",
+    "build": "node build.js && tsc",
     "test": "jest",
     "test:watch": "jest --watchAll"
   },

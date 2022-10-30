@@ -1,51 +1,21 @@
 "use strict";
-
-var __importDefault = this && this.__importDefault || function (mod) {
-  return mod && mod.__esModule ? mod : {
-    "default": mod
-  };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
 };
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
+Object.defineProperty(exports, "__esModule", { value: true });
 exports.Reactive = exports.FileHelper = exports.UuidFactory = exports.Http = exports.getType = exports.deepClone = exports.throttle = exports.debounce = void 0;
-
 var index_1 = __importDefault(require("./debounce/index"));
-
 exports.debounce = index_1.default;
-
 var index_2 = __importDefault(require("./throttle/index"));
-
 exports.throttle = index_2.default;
-
 var index_3 = require("./deepClone/index");
-
-Object.defineProperty(exports, "deepClone", {
-  enumerable: true,
-  get: function () {
-    return index_3.deepClone;
-  }
-});
-Object.defineProperty(exports, "getType", {
-  enumerable: true,
-  get: function () {
-    return index_3.getType;
-  }
-});
-
+Object.defineProperty(exports, "deepClone", { enumerable: true, get: function () { return index_3.deepClone; } });
+Object.defineProperty(exports, "getType", { enumerable: true, get: function () { return index_3.getType; } });
 var index_4 = __importDefault(require("./uuidFactory/index"));
-
 exports.UuidFactory = index_4.default;
-
 var index_5 = __importDefault(require("./file/index"));
-
 exports.FileHelper = index_5.default;
-
 var index_6 = __importDefault(require("./http/index"));
-
 exports.Http = index_6.default;
-
 var index_7 = __importDefault(require("./reactive/index"));
-
 exports.Reactive = index_7.default;

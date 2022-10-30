@@ -7,11 +7,12 @@
     "strict": true,
     "skipLibCheck": true,
     "moduleResolution": "Node",
+    "isolatedModules": false,
+    "noEmit": false,
     "sourceMap": false,
     "declaration": true,
-    "paths": {
-      "*": ["./types/*"]
-    }
+    "declarationDir": "./types",
+    "outDir": "src"
   },
-  "include": ["./lib/index.ts"]
+  "include": ["./ts/index.ts"]
 }
