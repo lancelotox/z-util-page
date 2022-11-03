@@ -1,5 +1,5 @@
 import { getType } from '../deepClone/index';
-import FileHelper from '../file/index';
+import * as FileHelper from '../file/index';
 import { Message, UploadMessage } from './message';
 
 import type { ResponseMessage } from './message';

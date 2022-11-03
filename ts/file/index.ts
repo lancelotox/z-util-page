@@ -118,8 +118,8 @@ function chooseFile(options: chooseOption = {}, callback: Function) {
     clickElement(input);
 }
 
-export default {
-    write: saveFile,
-    read: readFile,
-    choose: chooseFile
+export {
+    saveFile as write,
+    readFile as read,
+    chooseFile as choose
 }

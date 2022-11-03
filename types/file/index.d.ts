@@ -36,9 +36,4 @@ interface chooseOption {
     multiple?: boolean;
 }
 declare function chooseFile(options: chooseOption | undefined, callback: Function): void;
-declare const _default: {
-    write: typeof saveFile;
-    read: typeof readFile;
-    choose: typeof chooseFile;
-};
-export default _default;
+export { saveFile as write, readFile as read, chooseFile as choose };

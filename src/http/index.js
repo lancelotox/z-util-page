@@ -1,10 +1,30 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var index_1 = require("../deepClone/index");
-var index_2 = __importDefault(require("../file/index"));
+var FileHelper = __importStar(require("../file/index"));
 var message_1 = require("./message");
 var Http = /** @class */ (function () {
     function Http(options) {
@@ -194,7 +214,7 @@ var HttpHandle = {
                 var val = param.data[key];
                 result_1.push("Content-Disposition: form-data; name=\"" + key + "\"\r\n\r\n" + (val ? val.toString() : val) + "\r\n");
             });
-            var index_3 = 0;
+            var index_2 = 0;
             var boundary_1 = "---------------------------" + Date.now().toString(16);
             xhr.setRequestHeader("Content-Type", "multipart\/form-data; boundary=" + boundary_1);
             if (param.file && (0, index_1.getType)(param.file) === "Object") {
@@ -202,15 +222,15 @@ var HttpHandle = {
                     var file = param.file[key];
                     var type = (0, index_1.getType)(file);
                     if (type === "File" || type === "Blob") {
-                        index_3++;
-                        index_2.default.read(file).load(function (res) {
+                        index_2++;
+                        FileHelper.read(file).load(function (res) {
                             var name = (window.File && file instanceof File) ? file.name : (key + '.blob');
                             result_1.push("Content-Disposition: form-data; name=\"" +
                                 key + "\"; filename=\"" + name +
                                 "\"\r\nContent-Type: " + (file.type ? file.type : "octet-stream") + "\r\n\r\n" + res.result + "\r\n");
                         }).loadend(function () {
-                            index_3--;
-                            if (index_3 === 0) {
+                            index_2--;
+                            if (index_2 === 0) {
                                 var combineResult_1 = "--" + boundary_1 + "\r\n" + result_1.join("--" + boundary_1 + "\r\n") + "--" + boundary_1 + "--\r\n";
                                 Promise.resolve().then(function () {
                                     xhr.send(combineResult_1);
@@ -220,7 +240,7 @@ var HttpHandle = {
                     }
                 });
             }
-            if (index_3 === 0) {
+            if (index_2 === 0) {
                 Promise.resolve().then(function () {
                     xhr.send("--" + boundary_1 + "\r\n" + result_1.join("--" + boundary_1 + "\r\n") + "--" + boundary_1 + "--\r\n");
                 });

@@ -5,6 +5,7 @@ const config = {
     output: {
         path: path.resolve(__dirname, 'dist'),
         filename: 'zutilpage.js',
+        globalObject: 'this',
         library: {
             name: 'Utils',
             type: 'umd'

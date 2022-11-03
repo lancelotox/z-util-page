@@ -4,7 +4,7 @@
  * @param wait 函数执行延迟时间
  * @param immediatel 是否立刻执行
  */
-function debounce(func: Function, wait: number, immediatel: boolean) {
+function debounce(func: Function, wait: number, immediatel?: boolean) {
     let timeout: NodeJS.Timeout | null, content: any, args: IArguments, callbacks: Array<Function> = [], res: any;
     const debounced = function (this: any) {
         content = this;

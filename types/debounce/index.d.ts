@@ -4,7 +4,7 @@
  * @param wait 函数执行延迟时间
  * @param immediatel 是否立刻执行
  */
-declare function debounce(func: Function, wait: number, immediatel: boolean): {
+declare function debounce(func: Function, wait: number, immediatel?: boolean): {
     (this: any): any;
     cancel(): void;
     then(callback: Function): any;

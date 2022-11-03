@@ -1,4 +1,4 @@
-import { Reactive } from '../lib/index';
+import { Reactive } from '../ts/index';
 
 test('副作用函数执行', () => {
     const a = {

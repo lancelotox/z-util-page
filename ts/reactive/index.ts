@@ -268,7 +268,7 @@ function watch(source: Function | object, cb: Function, options: EffectOptions =
     else oldValue = effectFn();
 }
 
-export default {
+export {
     ref,
     reactive,
     effect,

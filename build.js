@@ -21,7 +21,8 @@ function bulidCmd(){
     return new Promise(resolve=>{
         config.output.path = path.resolve(__dirname, 'lib');
         config.output.filename = 'zutilpage.js';
-        config.output.library.type = 'commonjs2';
+        config.output.library.type = 'commonjs';
+        delete config.output.library.name;
         config.optimization = {
             minimize: false
         }

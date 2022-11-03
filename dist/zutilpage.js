@@ -7,7 +7,7 @@
 		exports["Utils"] = factory();
 	else
 		root["Utils"] = factory();
-})(self, () => {
+})(this, () => {
 return /******/ (() => { // webpackBootstrap
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ([
@@ -15,6 +15,44 @@ return /******/ (() => { // webpackBootstrap
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 
+
+var __createBinding = this && this.__createBinding || (Object.create ? function (o, m, k, k2) {
+  if (k2 === undefined) k2 = k;
+  var desc = Object.getOwnPropertyDescriptor(m, k);
+
+  if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+    desc = {
+      enumerable: true,
+      get: function () {
+        return m[k];
+      }
+    };
+  }
+
+  Object.defineProperty(o, k2, desc);
+} : function (o, m, k, k2) {
+  if (k2 === undefined) k2 = k;
+  o[k2] = m[k];
+});
+
+var __setModuleDefault = this && this.__setModuleDefault || (Object.create ? function (o, v) {
+  Object.defineProperty(o, "default", {
+    enumerable: true,
+    value: v
+  });
+} : function (o, v) {
+  o["default"] = v;
+});
+
+var __importStar = this && this.__importStar || function (mod) {
+  if (mod && mod.__esModule) return mod;
+  var result = {};
+  if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+
+  __setModuleDefault(result, mod);
+
+  return result;
+};
 
 var __importDefault = this && this.__importDefault || function (mod) {
   return mod && mod.__esModule ? mod : {
@@ -54,17 +92,17 @@ var index_4 = __importDefault(__webpack_require__(4));
 
 exports.UuidFactory = index_4.default;
 
-var index_5 = __importDefault(__webpack_require__(5));
+var FileHelper = __importStar(__webpack_require__(5));
 
-exports.FileHelper = index_5.default;
+exports.FileHelper = FileHelper;
 
-var index_6 = __importDefault(__webpack_require__(7));
+var index_5 = __importDefault(__webpack_require__(7));
 
-exports.Http = index_6.default;
+exports.Http = index_5.default;
 
-var index_7 = __importDefault(__webpack_require__(9));
+var Reactive = __importStar(__webpack_require__(9));
 
-exports.Reactive = index_7.default;
+exports.Reactive = Reactive;
 
 /***/ }),
 /* 1 */
@@ -381,6 +419,7 @@ exports["default"] = {
 Object.defineProperty(exports, "__esModule", ({
   value: true
 }));
+exports.choose = exports.read = exports.write = void 0;
 
 var index_1 = __webpack_require__(6);
 /**
@@ -400,6 +439,8 @@ function saveFile(url, saveFileName) {
   alink.download = saveFileName || '';
   (0, index_1.clickElement)(alink);
 }
+
+exports.write = saveFile;
 
 var FileReaderDecorate =
 /** @class */
@@ -499,6 +540,8 @@ function readFile(file) {
   return new FileReaderDecorate(file);
 }
 
+exports.read = readFile;
+
 function chooseFile(options, callback) {
   if (options === void 0) {
     options = {};
@@ -515,11 +558,7 @@ function chooseFile(options, callback) {
   (0, index_1.clickElement)(input);
 }
 
-exports["default"] = {
-  write: saveFile,
-  read: readFile,
-  choose: chooseFile
-};
+exports.choose = chooseFile;
 
 /***/ }),
 /* 6 */
@@ -550,10 +589,42 @@ exports.clickElement = clickElement;
 
 
 
-var __importDefault = this && this.__importDefault || function (mod) {
-  return mod && mod.__esModule ? mod : {
-    "default": mod
-  };
+var __createBinding = this && this.__createBinding || (Object.create ? function (o, m, k, k2) {
+  if (k2 === undefined) k2 = k;
+  var desc = Object.getOwnPropertyDescriptor(m, k);
+
+  if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+    desc = {
+      enumerable: true,
+      get: function () {
+        return m[k];
+      }
+    };
+  }
+
+  Object.defineProperty(o, k2, desc);
+} : function (o, m, k, k2) {
+  if (k2 === undefined) k2 = k;
+  o[k2] = m[k];
+});
+
+var __setModuleDefault = this && this.__setModuleDefault || (Object.create ? function (o, v) {
+  Object.defineProperty(o, "default", {
+    enumerable: true,
+    value: v
+  });
+} : function (o, v) {
+  o["default"] = v;
+});
+
+var __importStar = this && this.__importStar || function (mod) {
+  if (mod && mod.__esModule) return mod;
+  var result = {};
+  if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+
+  __setModuleDefault(result, mod);
+
+  return result;
 };
 
 Object.defineProperty(exports, "__esModule", ({
@@ -562,7 +633,7 @@ Object.defineProperty(exports, "__esModule", ({
 
 var index_1 = __webpack_require__(3);
 
-var index_2 = __importDefault(__webpack_require__(5));
+var FileHelper = __importStar(__webpack_require__(5));
 
 var message_1 = __webpack_require__(8);
 
@@ -784,7 +855,7 @@ var HttpHandle = {
         var val = param.data[key];
         result_1.push("Content-Disposition: form-data; name=\"" + key + "\"\r\n\r\n" + (val ? val.toString() : val) + "\r\n");
       });
-      var index_3 = 0;
+      var index_2 = 0;
       var boundary_1 = "---------------------------" + Date.now().toString(16);
       xhr.setRequestHeader("Content-Type", "multipart\/form-data; boundary=" + boundary_1);
 
@@ -794,14 +865,14 @@ var HttpHandle = {
           var type = (0, index_1.getType)(file);
 
           if (type === "File" || type === "Blob") {
-            index_3++;
-            index_2.default.read(file).load(function (res) {
+            index_2++;
+            FileHelper.read(file).load(function (res) {
               var name = window.File && file instanceof File ? file.name : key + '.blob';
               result_1.push("Content-Disposition: form-data; name=\"" + key + "\"; filename=\"" + name + "\"\r\nContent-Type: " + (file.type ? file.type : "octet-stream") + "\r\n\r\n" + res.result + "\r\n");
             }).loadend(function () {
-              index_3--;
+              index_2--;
 
-              if (index_3 === 0) {
+              if (index_2 === 0) {
                 var combineResult_1 = "--" + boundary_1 + "\r\n" + result_1.join("--" + boundary_1 + "\r\n") + "--" + boundary_1 + "--\r\n";
                 Promise.resolve().then(function () {
                   xhr.send(combineResult_1);
@@ -812,7 +883,7 @@ var HttpHandle = {
         });
       }
 
-      if (index_3 === 0) {
+      if (index_2 === 0) {
         Promise.resolve().then(function () {
           xhr.send("--" + boundary_1 + "\r\n" + result_1.join("--" + boundary_1 + "\r\n") + "--" + boundary_1 + "--\r\n");
         });
@@ -870,6 +941,7 @@ exports.UploadMessage = UploadMessage;
 Object.defineProperty(exports, "__esModule", ({
   value: true
 }));
+exports.watch = exports.computed = exports.effect = exports.reactive = exports.ref = void 0;
 var bucket = new WeakMap();
 var reactiveMap = new Map();
 var effectStack = new Array();
@@ -1005,6 +1077,8 @@ function ref(value, isReadonly) {
   }, true, isReadonly);
 }
 
+exports.ref = ref;
+
 function reactive(value, isShadow, isReadonly) {
   if (isShadow === void 0) {
     isShadow = false;
@@ -1080,6 +1154,8 @@ function reactive(value, isShadow, isReadonly) {
   });
 }
 
+exports.reactive = reactive;
+
 function effect(func, options) {
   if (options === void 0) {
     options = {};
@@ -1100,6 +1176,8 @@ function effect(func, options) {
   if (!options.lazy) effectFn();
   return effectFn;
 }
+
+exports.effect = effect;
 
 function computed(getter) {
   var value;
@@ -1127,6 +1205,8 @@ function computed(getter) {
   };
   return obj;
 }
+
+exports.computed = computed;
 
 function traverse(value, seen) {
   if (seen === void 0) {
@@ -1181,13 +1261,7 @@ function watch(source, cb, options) {
   if (options.immediate) job();else oldValue = effectFn();
 }
 
-exports["default"] = {
-  ref: ref,
-  reactive: reactive,
-  effect: effect,
-  computed: computed,
-  watch: watch
-};
+exports.watch = watch;
 
 /***/ })
 /******/ 	]);

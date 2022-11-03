@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.watch = exports.computed = exports.effect = exports.reactive = exports.ref = void 0;
 var bucket = new WeakMap();
 var reactiveMap = new Map();
 var effectStack = new Array();
@@ -115,6 +116,7 @@ function ref(value, isReadonly) {
     if (isReadonly === void 0) { isReadonly = false; }
     return reactive({ value: value }, true, isReadonly);
 }
+exports.ref = ref;
 function reactive(value, isShadow, isReadonly) {
     if (isShadow === void 0) { isShadow = false; }
     if (isReadonly === void 0) { isReadonly = false; }
@@ -181,6 +183,7 @@ function reactive(value, isShadow, isReadonly) {
         }
     });
 }
+exports.reactive = reactive;
 function effect(func, options) {
     if (options === void 0) { options = {}; }
     var effectFn = function () {
@@ -198,6 +201,7 @@ function effect(func, options) {
         effectFn();
     return effectFn;
 }
+exports.effect = effect;
 function computed(getter) {
     var value;
     var dirty = true;
@@ -222,6 +226,7 @@ function computed(getter) {
     };
     return obj;
 }
+exports.computed = computed;
 function traverse(value, seen) {
     if (seen === void 0) { seen = new Set(); }
     if (typeof value !== 'object' || value === null || seen.has(value))
@@ -267,10 +272,4 @@ function watch(source, cb, options) {
     else
         oldValue = effectFn();
 }
-exports.default = {
-    ref: ref,
-    reactive: reactive,
-    effect: effect,
-    computed: computed,
-    watch: watch,
-};
+exports.watch = watch;

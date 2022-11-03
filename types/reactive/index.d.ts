@@ -19,11 +19,4 @@ declare function computed(getter: Function): {
     readonly value: any;
 };
 declare function watch(source: Function | object, cb: Function, options?: EffectOptions): void;
-declare const _default: {
-    ref: typeof ref;
-    reactive: typeof reactive;
-    effect: typeof effect;
-    computed: typeof computed;
-    watch: typeof watch;
-};
-export default _default;
+export { ref, reactive, effect, computed, watch, };
