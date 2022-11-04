@@ -36,15 +36,18 @@ const typeHandleMap: HandleMap = {
         });
         return cloneTarget;
     },
-    'Symbol': function (value: any) {
+    'Symbol': function (value: Symbol) {
         return Object(Symbol.prototype.valueOf.call(value));
     },
-    'HTMLElement': function (value: any) {
-        return value.cloneNode();
+    'HTMLElement': function (value: HTMLElement) {
+        return value.cloneNode(true);
+    },
+    'Error': function(value: any){
+        return new value.constructor(value.message);
     }
 }
 const baseTypeList = ['boolean', 'number', 'string', 'undefined', "function", "symbol", 'Null', "Math", "Json", "Global"];
-const simpleTypeList = ["Boolean", "Number", 'String', 'Date', 'Error', "Regexp"];
+const simpleTypeList = ["Boolean", "Number", 'String', 'Date', "Regexp"];
 function deepClone(value: any) {
     let type: string = typeof value;
     if (type === 'object') type = getType(value);

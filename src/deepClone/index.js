@@ -1,6 +1,3 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.getType = exports.deepClone = void 0;
 /**
  * 深拷贝
  * @param value 待克隆值
@@ -39,11 +36,14 @@ var typeHandleMap = {
         return Object(Symbol.prototype.valueOf.call(value));
     },
     'HTMLElement': function (value) {
-        return value.cloneNode();
+        return value.cloneNode(true);
+    },
+    'Error': function (value) {
+        return new value.constructor(value.message);
     }
 };
 var baseTypeList = ['boolean', 'number', 'string', 'undefined', "function", "symbol", 'Null', "Math", "Json", "Global"];
-var simpleTypeList = ["Boolean", "Number", 'String', 'Date', 'Error', "Regexp"];
+var simpleTypeList = ["Boolean", "Number", 'String', 'Date', "Regexp"];
 function deepClone(value) {
     var type = typeof value;
     if (type === 'object')
@@ -66,7 +66,6 @@ function deepClone(value) {
     clear();
     return cloneTarget;
 }
-exports.deepClone = deepClone;
 /**
  * 清理缓存
  */
@@ -107,4 +106,4 @@ function getType(value) {
         throw (e);
     }
 }
-exports.getType = getType;
+export { deepClone, getType };

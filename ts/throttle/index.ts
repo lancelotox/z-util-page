@@ -16,12 +16,12 @@ const defaultConfig: throttleOptions = {
  * @param func 待处理函数
  * @param wait 函数执行最短间隔时间
  */
-function throttle(func: Function, wait: number, options: throttleOptions) {
-    options = Object.assign(deepClone(defaultConfig), options);
+function throttle(func: Function, wait: number, option?: throttleOptions) {
+    let options = Object.assign(deepClone(defaultConfig), option || {});
     if (options.leading === false && options.trailing === false) throw ('leading, trailing不能同时为false');
-    let timeout: NodeJS.Timeout | null = null, args: IArguments, content: any, res: any;
-    const throttled = function (this: any) {
-        args = arguments;
+    let timeout: NodeJS.Timeout | null = null, args: any[], content: any, res: any;
+    const throttled = function (this: any, ...argList: any[]) {
+        args = argList;
         content = this;
         if (!timeout) {
             timeout = setTimeout(function () {

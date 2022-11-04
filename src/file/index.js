@@ -1,7 +1,4 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.choose = exports.read = exports.write = void 0;
-var index_1 = require("../helper/index");
+import { clickElement } from '../helper/index';
 /**
  * H5文件下载方法
  * @param url 资源链接或者blob对象
@@ -14,9 +11,8 @@ function saveFile(url, saveFileName) {
     var alink = document.createElement('a');
     alink.href = url;
     alink.download = saveFileName || '';
-    (0, index_1.clickElement)(alink);
+    clickElement(alink);
 }
-exports.write = saveFile;
 var FileReaderDecorate = /** @class */ (function () {
     function FileReaderDecorate(file) {
         this.reader = new FileReader();
@@ -94,7 +90,6 @@ var FileReaderDecorate = /** @class */ (function () {
 function readFile(file) {
     return new FileReaderDecorate(file);
 }
-exports.read = readFile;
 function chooseFile(options, callback) {
     if (options === void 0) { options = {}; }
     var input = document.createElement('input');
@@ -105,6 +100,6 @@ function chooseFile(options, callback) {
     input.addEventListener('change', function (e) {
         callback(input.files);
     });
-    (0, index_1.clickElement)(input);
+    clickElement(input);
 }
-exports.choose = chooseFile;
+export { saveFile as write, readFile as read, chooseFile as choose };

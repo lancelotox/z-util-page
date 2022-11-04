@@ -6,9 +6,8 @@
  */
 function debounce(func: Function, wait: number, immediatel?: boolean) {
     let timeout: NodeJS.Timeout | null, content: any, args: IArguments, callbacks: Array<Function> = [], res: any;
-    const debounced = function (this: any) {
+    const debounced = function (this: any, ...args: any[]) {
         content = this;
-        args = arguments;
         if(immediatel && !timeout){
             res = func.apply(content, args);
             let resolvedRes: any = res;

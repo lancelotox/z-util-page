@@ -1,5 +1,3 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * 函数防抖
  * @param func 待处理函数
@@ -9,8 +7,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 function debounce(func, wait, immediatel) {
     var timeout, content, args, callbacks = [], res;
     var debounced = function () {
+        var args = [];
+        for (var _i = 0; _i < arguments.length; _i++) {
+            args[_i] = arguments[_i];
+        }
         content = this;
-        args = arguments;
         if (immediatel && !timeout) {
             res = func.apply(content, args);
             var resolvedRes_1 = res;
@@ -39,4 +40,4 @@ function debounce(func, wait, immediatel) {
     };
     return debounced;
 }
-exports.default = debounce;
+export default debounce;

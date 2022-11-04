@@ -106,7 +106,7 @@ interface chooseOption {
     //是否允许多选
     multiple?: boolean
 }
-function chooseFile(options: chooseOption = {}, callback: Function) {
+function chooseFile(callback: Function, options: chooseOption = {}) {
     const input = document.createElement('input');
     input.setAttribute('type', 'file');
     input.setAttribute('accept', (options.accept || []).join(','));

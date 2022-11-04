@@ -5,7 +5,7 @@
  * @param immediatel 是否立刻执行
  */
 declare function debounce(func: Function, wait: number, immediatel?: boolean): {
-    (this: any): any;
+    (this: any, ...args: any[]): any;
     cancel(): void;
     then(callback: Function): any;
 };

@@ -1,31 +1,6 @@
-"use strict";
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-var index_1 = require("../deepClone/index");
-var FileHelper = __importStar(require("../file/index"));
-var message_1 = require("./message");
+import { getType } from '../deepClone/index';
+import * as FileHelper from '../file/index';
+import { Message, UploadMessage } from './message';
 var Http = /** @class */ (function () {
     function Http(options) {
         if (options === void 0) { options = {}; }
@@ -65,21 +40,21 @@ var PromiseHandle = /** @class */ (function () {
     PromiseHandle.prototype.then = function (callback) {
         var _this = this;
         this.xhr.addEventListener('load', function () {
-            callback(new message_1.Message(_this.xhr));
+            callback(new Message(_this.xhr));
         });
         return this;
     };
     PromiseHandle.prototype.catch = function (callback) {
         var _this = this;
         this.xhr.addEventListener('error', function () {
-            callback(new message_1.Message(_this.xhr));
+            callback(new Message(_this.xhr));
         });
         return this;
     };
     PromiseHandle.prototype.finally = function (callback) {
         var _this = this;
         this.xhr.addEventListener('loadend', function () {
-            callback(new message_1.Message(_this.xhr));
+            callback(new Message(_this.xhr));
         });
         return this;
     };
@@ -88,10 +63,10 @@ var PromiseHandle = /** @class */ (function () {
         this.xhr.addEventListener('progress', function (e) {
             if (e.lengthComputable) {
                 var percentComplete = e.loaded / e.total;
-                callback(new message_1.UploadMessage(_this.xhr, '下载中', percentComplete.toFixed(4)));
+                callback(new UploadMessage(_this.xhr, '下载中', percentComplete.toFixed(4)));
             }
             else {
-                callback(new message_1.UploadMessage(_this.xhr, '无法计算进度', null));
+                callback(new UploadMessage(_this.xhr, '无法计算进度', null));
             }
         });
         return this;
@@ -101,10 +76,10 @@ var PromiseHandle = /** @class */ (function () {
         this.xhr.upload.addEventListener('progress', function (e) {
             if (e.lengthComputable) {
                 var percentComplete = e.loaded / e.total;
-                callback(new message_1.UploadMessage(_this.xhr, '上传中', percentComplete.toFixed(4)));
+                callback(new UploadMessage(_this.xhr, '上传中', percentComplete.toFixed(4)));
             }
             else {
-                callback(new message_1.UploadMessage(_this.xhr, '无法计算进度', null));
+                callback(new UploadMessage(_this.xhr, '无法计算进度', null));
             }
         });
         return this;
@@ -214,23 +189,23 @@ var HttpHandle = {
                 var val = param.data[key];
                 result_1.push("Content-Disposition: form-data; name=\"" + key + "\"\r\n\r\n" + (val ? val.toString() : val) + "\r\n");
             });
-            var index_2 = 0;
+            var index_1 = 0;
             var boundary_1 = "---------------------------" + Date.now().toString(16);
             xhr.setRequestHeader("Content-Type", "multipart\/form-data; boundary=" + boundary_1);
-            if (param.file && (0, index_1.getType)(param.file) === "Object") {
+            if (param.file && getType(param.file) === "Object") {
                 Object.keys(param.file).forEach(function (key) {
                     var file = param.file[key];
-                    var type = (0, index_1.getType)(file);
+                    var type = getType(file);
                     if (type === "File" || type === "Blob") {
-                        index_2++;
+                        index_1++;
                         FileHelper.read(file).load(function (res) {
                             var name = (window.File && file instanceof File) ? file.name : (key + '.blob');
                             result_1.push("Content-Disposition: form-data; name=\"" +
                                 key + "\"; filename=\"" + name +
                                 "\"\r\nContent-Type: " + (file.type ? file.type : "octet-stream") + "\r\n\r\n" + res.result + "\r\n");
                         }).loadend(function () {
-                            index_2--;
-                            if (index_2 === 0) {
+                            index_1--;
+                            if (index_1 === 0) {
                                 var combineResult_1 = "--" + boundary_1 + "\r\n" + result_1.join("--" + boundary_1 + "\r\n") + "--" + boundary_1 + "--\r\n";
                                 Promise.resolve().then(function () {
                                     xhr.send(combineResult_1);
@@ -240,7 +215,7 @@ var HttpHandle = {
                     }
                 });
             }
-            if (index_2 === 0) {
+            if (index_1 === 0) {
                 Promise.resolve().then(function () {
                     xhr.send("--" + boundary_1 + "\r\n" + result_1.join("--" + boundary_1 + "\r\n") + "--" + boundary_1 + "--\r\n");
                 });
@@ -248,4 +223,4 @@ var HttpHandle = {
         }
     }
 };
-exports.default = Http;
+export default Http;

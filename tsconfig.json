@@ -3,6 +3,7 @@
     "target": "ES5",
     "module": "CommonJS",
     "moduleResolution": "Node",
+    "lib": ["DOM","DOM.Iterable"],
     "allowJs": false,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,

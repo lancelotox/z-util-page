@@ -1,6 +1,3 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.clickElement = void 0;
 function clickElement(el) {
     if (el.click && el.click instanceof Function)
         el.click();
@@ -13,4 +10,4 @@ function clickElement(el) {
         el.dispatchEvent(event_1);
     }
 }
-exports.clickElement = clickElement;
+export { clickElement };
