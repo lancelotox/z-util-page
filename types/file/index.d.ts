@@ -35,5 +35,5 @@ interface chooseOption {
     capture?: "user" | "environment";
     multiple?: boolean;
 }
-declare function chooseFile(options: chooseOption | undefined, callback: Function): void;
+declare function chooseFile(callback: Function, options?: chooseOption): void;
 export { saveFile as write, readFile as read, chooseFile as choose };

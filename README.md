@@ -106,12 +106,12 @@ UuidFactory.guid();
 import { FileHelper } from 'z-util-page';
 
 //文件选择
-FileHelper.choose({
+FileHelper.choose(function(files){
+    console.log(files);
+},{
     accept: [".doc",".docx","application/msword"],
     capture: "user",
     multiple: true
-},function(files){
-    console.log(files);
 });
 
 //文件读取

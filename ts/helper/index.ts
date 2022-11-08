@@ -1,3 +1,7 @@
+/**
+ * 触发dom对象点击事件
+ * @param el dom对象
+ */
 function clickElement(el: HTMLElement) {
     if (el.click && el.click instanceof Function) el.click();
     else if (window.MouseEvent) {

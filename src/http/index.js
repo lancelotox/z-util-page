@@ -12,13 +12,21 @@ var Http = /** @class */ (function () {
         };
         Object.assign(this.options, options);
     }
-    //XMLHttpRequest异步请求
+    /**
+     * //XMLHttpRequest异步请求
+     * @param param
+     * @returns
+     */
     Http.prototype.ajax = function (param) {
         var xhr = new XMLHttpRequest();
         submit.call(this, xhr, param);
         return new PromiseHandle(xhr);
     };
-    //XMLHttpRequest同步请求，绝大多数情况下只能在work进程内使用。
+    /**
+     * XMLHttpRequest同步请求，绝大多数情况下只能在work进程内使用。
+     * @param param
+     * @returns
+     */
     Http.prototype.ajaxAsync = function (param) {
         var xhr = new XMLHttpRequest();
         submit.call(this, xhr, param, true);

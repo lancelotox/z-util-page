@@ -90,7 +90,7 @@ var FileReaderDecorate = /** @class */ (function () {
 function readFile(file) {
     return new FileReaderDecorate(file);
 }
-function chooseFile(options, callback) {
+function chooseFile(callback, options) {
     if (options === void 0) { options = {}; }
     var input = document.createElement('input');
     input.setAttribute('type', 'file');

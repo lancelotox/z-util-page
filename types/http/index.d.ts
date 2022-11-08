@@ -2,7 +2,17 @@ import type { ResponseMessage } from './message';
 declare class Http {
     options: HttpOptions;
     constructor(options?: object);
+    /**
+     * //XMLHttpRequest异步请求
+     * @param param
+     * @returns
+     */
     ajax(param: Param): PromiseHandle;
+    /**
+     * XMLHttpRequest同步请求，绝大多数情况下只能在work进程内使用。
+     * @param param
+     * @returns
+     */
     ajaxAsync(param: Param): any;
     fetch(param: Param): void;
 }
