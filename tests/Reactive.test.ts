@@ -10,7 +10,7 @@ describe('常规', () => {
             innerHTML: ""
         });
         //创建副作用函数
-        Reactive.effect(function(){
+        Reactive.effect(function () {
             a.innerHTML = b.innerHTML;
         });
         //修改响应式对象属性
@@ -21,12 +21,12 @@ describe('常规', () => {
 });
 
 describe('数组', () => {
-    test('数组栈操作API导致副作用函数栈溢出', ()=>{
+    test('数组栈操作API导致副作用函数栈溢出', () => {
         const a = Reactive.reactive<Array<number>>([]);
-        Reactive.effect(function(){
+        Reactive.effect(function () {
             a.push(1);
         });
-        Reactive.effect(function(){
+        Reactive.effect(function () {
             a.push(1);
         });
         expect(a.length).toBe(2);
@@ -34,19 +34,60 @@ describe('数组', () => {
 });
 
 describe('Map&Set', () => {
-    let rMap = Reactive.reactive(new Map());
-    let resulet = '';
-    rMap.set('test', 'test');
-    Reactive.effect(function(){
-       resulet = rMap.get('test');
-    });
-    test('赋值', () => {
+    test('修改', () => {
+        let rMap = Reactive.reactive(new Map<any, any>([
+            ['r', { a: '1' }],
+            ['test', 'test']
+        ]));
+        let resulet: string | undefined = '';
+        Reactive.effect(function () {
+            resulet = rMap.get('test');
+        });
         rMap.set('test', 'yes');
         expect(resulet).toBe('yes');
     });
     test('删除', () => {
+        let rMap = Reactive.reactive(new Map<any, any>([
+            ['r', { a: '1' }],
+            ['test', 'test']
+        ]));
+        let resulet: string | undefined = '';
+        Reactive.effect(function () {
+            resulet = rMap.get('test');
+        });
         rMap.delete('test');
         expect(resulet).toBeUndefined();
+    });
+    test('新增', () => {
+        let rMap = Reactive.reactive(new Map<any, any>([
+            ['r', { a: '1' }],
+            ['test', 'test']
+        ]));
+        let loopCount = 0;
+        Reactive.effect(function () {
+            // rMap.forEach((value, key, m)=>{
+            //     loopCount++;
+            // });
+            for (const [val, key] of rMap) {
+                loopCount++;
+            }
+        });
+        rMap.set('test1', 'test1');
+        expect(loopCount).toBe(5);
+    });
+    test('Map.keys相关副作用函数不会在值变化时触发', () => {
+        let rMap = Reactive.reactive(new Map<any, any>([
+            ['r', { a: '1' }],
+            ['test', 'test']
+        ]));
+        let loopCount = 0;
+        Reactive.effect(function () {
+            for (const [key] of rMap.keys()) {
+                loopCount++;
+            }
+        });
+        rMap.set('test', 'test1');
+        expect(loopCount).toBe(2);
     });
 });
 

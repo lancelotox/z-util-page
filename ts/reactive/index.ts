@@ -1,5 +1,6 @@
 import { Ref, Effect, DepsMap, EffectOptions, TriggerType, Instrumentations, ReactiveOptions } from './type';
-import { getSourceValue } from './util';
+import { getSourceValue, wrapValue } from './util';
+import { getType } from '../deepClone/index';
 
 //对象-副作用函数映射关系字典
 const bucket = new WeakMap<object, DepsMap>();
@@ -7,11 +8,14 @@ const bucket = new WeakMap<object, DepsMap>();
 const reactiveMap = new Map<object, ReactiveOptions>();
 //副作用函数执行栈
 const effectStack = new Array<Effect>();
-//对象迭代统一key
+//对象迭代标识
 const ITERATE_KEY: symbol = Symbol();
+//MapKey迭代标识
+const MAP_KEY_ITERATE_KEY: symbol = Symbol();
 //取原始对象key
 const source: symbol = Symbol();
 const getSource = getSourceValue.bind({ source });
+const wrap = wrapValue.bind({ reactive });
 
 //活动副作用函数
 let activeEffect: Effect | null = null;
@@ -20,21 +24,21 @@ let shouldTrack: boolean = true;
 
 //数组原型方法代理
 const arrayInstrumentations: Instrumentations = {};
-(function(){
+(function () {
     //在数组执行查找的原型方法时，在原始对象中进行查找，解决原始值与代理值不一致问题
     ['includes', 'indexOf', 'lastIndexOf'].forEach(method => {
         const originMethod = Reflect.get(Array.prototype, method);
-        Reflect.set(arrayInstrumentations, method, function(this: any, ...args: [searchElement: any, fromIndex?: number | undefined]): boolean | number {
+        Reflect.set(arrayInstrumentations, method, function (this: any, ...args: [searchElement: any, fromIndex?: number | undefined]): boolean | number {
             let res: boolean | number = originMethod.apply(this, args);
-            if(res === false || res === -1) res = originMethod.apply(Reflect.get(this, source), args);
+            if (res === false || res === -1) res = originMethod.apply(Reflect.get(this, source), args);
             return res;
         });
     });
-    
+
     //在数组执行删除等涉及length属性修改的原型方法时，关闭依赖追踪
     ['pop', 'shift', 'splice'].forEach(method => {
         const originMethod = Reflect.get(Array.prototype, method);
-        Reflect.set(arrayInstrumentations, method, function(this: any, ...args: [searchElement: any, fromIndex?: number | undefined]): boolean | number {
+        Reflect.set(arrayInstrumentations, method, function (this: any, ...args: [searchElement: any, fromIndex?: number | undefined]): boolean | number {
             shouldTrack = false;
             let res: any = originMethod.apply(this, args);
             shouldTrack = true;
@@ -45,9 +49,9 @@ const arrayInstrumentations: Instrumentations = {};
     //在数组执行增加等涉及length属性修改的原型方法时，关闭依赖追踪
     ['push', 'unshift'].forEach(method => {
         const originMethod = Reflect.get(Array.prototype, method);
-        Reflect.set(arrayInstrumentations, method, function(this: any, ...args: Array<any>): boolean | number {
+        Reflect.set(arrayInstrumentations, method, function (this: any, ...args: Array<any>): boolean | number {
             shouldTrack = false;
-            let res: any = originMethod.apply(this, args.map((arg)=>{
+            let res: any = originMethod.apply(this, args.map((arg) => {
                 return getSource(arg);
             }));
             shouldTrack = true;
@@ -58,8 +62,80 @@ const arrayInstrumentations: Instrumentations = {};
 
 //Set-Map原型方法代理
 const mutableInstrumentations: Instrumentations = {};
-(function(){
-    mutableInstrumentations.add = function(key: any){
+(function () {
+    function iterationMethod(this: any) {
+        //获取原始对象
+        const target = Reflect.get(this, source);
+        //获取迭代器对象
+        const itr = target[Symbol.iterator]();
+        //建立响应
+        track(target, ITERATE_KEY);
+        //返回自定义迭代器
+        return {
+            //迭代器协议
+            next() {
+                //获取原始数据
+                const { value, done } = itr.next();
+                return {
+                    value: value ? [wrap(value[0]), wrap(value[1])] : value,
+                    done
+                }
+            },
+            //可迭代协议
+            [Symbol.iterator]() {
+                return this;
+            }
+        }
+    }
+    function valuesIterationMethod(this: any) {
+        //获取原始对象
+        const target = Reflect.get(this, source);
+        //获取迭代器对象
+        const itr = target.values();
+        //建立响应
+        track(target, ITERATE_KEY);
+        //返回自定义迭代器
+        return {
+            //迭代器协议
+            next() {
+                //获取原始数据
+                const { value, done } = itr.next();
+                return {
+                    value: wrap(value),
+                    done
+                }
+            },
+            //可迭代协议
+            [Symbol.iterator]() {
+                return this;
+            }
+        }
+    }
+    function keysIterationMethod(this: any) {
+        //获取原始对象
+        const target = Reflect.get(this, source);
+        //获取迭代器对象
+        const itr = target.keys();
+        //建立响应
+        track(target, MAP_KEY_ITERATE_KEY);
+        //返回自定义迭代器
+        return {
+            //迭代器协议
+            next() {
+                //获取原始数据
+                const { value, done } = itr.next();
+                return {
+                    value: wrap(value),
+                    done
+                }
+            },
+            //可迭代协议
+            [Symbol.iterator]() {
+                return this;
+            }
+        }
+    }
+    mutableInstrumentations.add = function (key: any) {
         //获取原始对象
         const target = Reflect.get(this, source);
         //是否只读
@@ -74,10 +150,10 @@ const mutableInstrumentations: Instrumentations = {};
         const hadkey = target.has(orgin);
         const res = target.add(orgin);
         //当值不存在时触发副作用函数
-        if(!hadkey) trigger(target, orgin, TriggerType.ADD);
+        if (!hadkey) trigger(target, orgin, TriggerType.ADD);
         return res;
     }
-    mutableInstrumentations.get = function(key: any){
+    mutableInstrumentations.get = function (key: any) {
         //获取原始对象
         const target = Reflect.get(this, source);
         //是否浅代理、只读
@@ -98,7 +174,7 @@ const mutableInstrumentations: Instrumentations = {};
         //否则返回基本类型值
         return res;
     }
-    mutableInstrumentations.set = function(key: any, value: any){
+    mutableInstrumentations.set = function (key: any, value: any) {
         //获取原始对象
         const target = Reflect.get(this, source);
         //是否浅代理、只读
@@ -116,13 +192,13 @@ const mutableInstrumentations: Instrumentations = {};
         const oldValue = target.get(orginKey);
         //非浅代理时设置原始对象而非响应对象
         const res = target.set(orginKey, orginValue);
-        if(!hadKey) trigger(target, orginKey, TriggerType.ADD);
-        else if (oldValue !== orginValue && (oldValue === oldValue || orginValue === orginValue)){
+        if (!hadKey) trigger(target, orginKey, TriggerType.ADD);
+        else if (oldValue !== orginValue && (oldValue === oldValue || orginValue === orginValue)) {
             trigger(target, orginKey, TriggerType.SET);
-        } 
+        }
         return res;
     }
-    mutableInstrumentations.delete = function(key: any){
+    mutableInstrumentations.delete = function (key: any) {
         //获取原始对象
         const target = Reflect.get(this, source);
         //取原始值
@@ -131,13 +207,27 @@ const mutableInstrumentations: Instrumentations = {};
         const hadkey = target.has(orgin);
         const res = target.delete(orgin);
         //当值存在时触发副作用函数
-        if(hadkey) trigger(target, orgin, TriggerType.DELETE);
+        if (hadkey) trigger(target, orgin, TriggerType.DELETE);
         return res;
     }
+    mutableInstrumentations.forEach = function (cb: Function, thisArg: any) {
+        //获取原始对象
+        const target = Reflect.get(this, source);
+        //与迭代key建立响应
+        track(target, ITERATE_KEY);
+        //调用原函数
+        target.forEach((value: any, key: any) => {
+            cb.call(thisArg, wrap(value), wrap(key), this);
+        });
+    }
+    mutableInstrumentations.entries = iterationMethod;
+    mutableInstrumentations.values = valuesIterationMethod;
+    mutableInstrumentations.keys = keysIterationMethod;
+    mutableInstrumentations[Symbol.iterator] = iterationMethod;
 })();
 
 function track(target: object, p: any): void {
-    if (!activeEffect || !shouldTrack){
+    if (!activeEffect || !shouldTrack) {
         return;
     }
     let depsMap: DepsMap | undefined = bucket.get(target);
@@ -154,7 +244,7 @@ function track(target: object, p: any): void {
 
 function trigger(target: object, p: any, type: TriggerType, value?: any): boolean {
     let depsMap: DepsMap | undefined = bucket.get(target);
-    if (!depsMap){
+    if (!depsMap) {
         return true;
     }
     //取出所有与key直接相关的副作用函数
@@ -166,9 +256,17 @@ function trigger(target: object, p: any, type: TriggerType, value?: any): boolea
         if (effectFn !== activeEffect)
             effectsToRun.add(effectFn);
     });
-    //type为ADD或者DELETE时，取出迭代相关副作用函数执行
-    if (type === TriggerType.ADD || type === TriggerType.DELETE) {
+    //type为ADD或者DELETE或为Map类型设置值时，取出迭代相关副作用函数执行
+    if (type === TriggerType.ADD || type === TriggerType.DELETE || (type === TriggerType.SET && getType(target) === 'Map')) {
         let iterateEffects = depsMap.get(ITERATE_KEY);
+        iterateEffects && iterateEffects.forEach(effectFn => {
+            if (effectFn !== activeEffect)
+                effectsToRun.add(effectFn);
+        });
+    }
+    //type为ADD或者DELETE且target为Map时，取出迭代相关副作用函数执行
+    if ((type === TriggerType.ADD || type === TriggerType.DELETE) && getType(target) === 'Map') {
+        let iterateEffects = depsMap.get(MAP_KEY_ITERATE_KEY);
         iterateEffects && iterateEffects.forEach(effectFn => {
             if (effectFn !== activeEffect)
                 effectsToRun.add(effectFn);
@@ -223,7 +321,38 @@ function cleanup(effectFn: Effect): void {
  * @returns { value: T }
  */
 function ref<T>(value: T, isReadonly = false): Ref<T> {
+    const wrapper = {
+        value
+    }
+    //定义变量标识对象为Ref对象
+    Object.defineProperty(wrapper, '__isRef', {
+        value: true
+    });
     return reactive<Ref<T>>({ value }, true, isReadonly);
+}
+
+function toRef(val: any, key: string | symbol) {
+    const wrapper = {
+        get value(){
+            return val[key];
+        },
+        set value(value){
+            val[key] = value;
+        }
+    }
+    //定义变量标识对象为Ref对象
+    Object.defineProperty(wrapper, '__isRef', {
+        value: true
+    });
+    return wrapper;
+}
+
+function toRefs(obj: any) {
+    const ret = {};
+    for (const key in obj) {
+        Reflect.set(ret, key, toRef(obj, key));
+    }
+    return ret;
 }
 
 /**
@@ -238,13 +367,13 @@ function reactive<T extends object>(value: T, isShadow = false, isReadonly = fal
         get(target, p, reciver) {
             if (p === source) return target;
             //数组原型方法代理
-            if (Array.isArray(target) && arrayInstrumentations.hasOwnProperty(p)){
+            if (Array.isArray(target) && arrayInstrumentations.hasOwnProperty(p)) {
                 return Reflect.get(arrayInstrumentations, p, reciver);
             }
             //Set.Map 访问器属性size代理
             if (target instanceof Map || target instanceof Set) {
-                if(mutableInstrumentations.hasOwnProperty(p)) return Reflect.get(mutableInstrumentations, p, reciver);
-                if(p === 'size') track(target, ITERATE_KEY);
+                if (mutableInstrumentations.hasOwnProperty(p)) return Reflect.get(mutableInstrumentations, p, reciver);
+                if (p === 'size') track(target, ITERATE_KEY);
                 return Reflect.get(target, p, target);
             }
             //只读对象或者key为symbol时不进行追踪
@@ -298,9 +427,9 @@ function reactive<T extends object>(value: T, isShadow = false, isReadonly = fal
             //非浅代理时设置原始对象而非响应对象
             const res = Reflect.set(target, p, orgin, reciver);
             if (target === Reflect.get(reciver, source)) {
-                if (oldValue !== value && (oldValue === oldValue || value === value)){
+                if (oldValue !== value && (oldValue === oldValue || value === value)) {
                     trigger(target, p, type, value);
-                }   
+                }
             }
             return res;
         }
@@ -412,6 +541,8 @@ function watch(source: Function | object, cb: Function, options: EffectOptions =
 
 export {
     ref,
+    toRef,
+    toRefs,
     reactive,
     effect,
     computed,

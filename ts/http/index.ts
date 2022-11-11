@@ -34,10 +34,6 @@ class Http {
         submit.call(this, xhr, param, true);
         return xhr.response;
     }
-    //fetch
-    public fetch(param: Param) {
-
-    }
 }
 
 class PromiseHandle {
@@ -223,13 +219,13 @@ const HttpHandle = {
 }
 
 interface HttpOptions {
-    //通用超时等待时间(ms)
+    //超时等待时间(ms)
     timeout: number
-    //通用根域名
+    //根域名
     baseUrl: string
-    //通用请求数据格式
+    //请求数据格式
     contentType: ContentType
-    //通用响应数据格式
+    //响应数据格式
     responseType: XMLHttpRequestResponseType
 }
 

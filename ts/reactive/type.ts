@@ -24,7 +24,7 @@ export type EffectOptions = {
 }
 
 export type Instrumentations = {
-    [propName: string]: Function;
+    [propName: string | symbol]: Function;
 }
 
 export type ReactiveOptions = {

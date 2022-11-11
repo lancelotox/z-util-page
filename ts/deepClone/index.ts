@@ -98,6 +98,7 @@ function forEach(list: Array<any>, handle: Function) {
 /**
  * 获取数据类型
  * @param value 
+ * @returns 类型字符串, 'String'、'Map'
  */
 function getType(value: any): string {
     try {
