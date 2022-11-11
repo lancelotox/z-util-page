@@ -32,9 +32,6 @@ var Http = /** @class */ (function () {
         submit.call(this, xhr, param, true);
         return xhr.response;
     };
-    //fetch
-    Http.prototype.fetch = function (param) {
-    };
     return Http;
 }());
 var PromiseHandle = /** @class */ (function () {

@@ -14,7 +14,6 @@ declare class Http {
      * @returns
      */
     ajaxAsync(param: Param): any;
-    fetch(param: Param): void;
 }
 declare class PromiseHandle {
     private xhr;

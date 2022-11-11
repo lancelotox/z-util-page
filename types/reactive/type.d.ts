@@ -1,3 +1,8 @@
+export declare enum TriggerType {
+    SET = 0,
+    ADD = 1,
+    DELETE = 2
+}
 export interface Ref<T> {
     value: T;
 }
@@ -12,4 +17,12 @@ export declare type EffectOptions = {
     lazy?: boolean;
     immediate?: boolean;
     flush?: 'post' | '';
+};
+export declare type Instrumentations = {
+    [propName: string | symbol]: Function;
+};
+export declare type ReactiveOptions = {
+    value: any;
+    isShadow: boolean;
+    isReadonly: boolean;
 };
