@@ -11,7 +11,7 @@ class Http {
         contentType: 'application/json',
         responseType: 'json'
     }
-    public constructor(options: object = {}) {
+    public constructor(options: CustomHttpOptions = {}) {
         Object.assign(this.options, options);
     }
     /**
@@ -117,13 +117,14 @@ function warp(this: Http, xhr: XMLHttpRequest, param: Param, isInitHeader: boole
 function submit(this: Http, xhr: XMLHttpRequest, param: Param, isAsync: boolean = false) {
     if (!param.method || (param.method && param.method.toUpperCase() === "GET")) {
         let url = this.options.baseUrl + (param.url || '');
-        let suffix = url.match(/(?:\?.*)?$/);
+        let suffix = url.match(/(?:\?.*)$/);
         let paramString = suffix === null ? "?" : "&";
         Object.keys(param.data || {}).forEach(key => {
             paramString += (encodeURIComponent(key) + "=" + encodeURIComponent(param.data[key].toString()) + "&");
         });
         xhr.open("GET", url + paramString, true);
         warp.call(this, xhr, param, true, isAsync);
+        xhr.send(null);
     } else {
         xhr.open(param.method, this.options.baseUrl + (param.url || ''), true);
         let type = this.options.contentType;
@@ -227,6 +228,13 @@ interface HttpOptions {
     contentType: ContentType
     //响应数据格式
     responseType: XMLHttpRequestResponseType
+}
+
+interface CustomHttpOptions{
+    timeout?: number
+    baseUrl?: string
+    contentType?: ContentType
+    responseType?: XMLHttpRequestResponseType
 }
 
 interface Param {

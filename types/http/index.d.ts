@@ -1,7 +1,7 @@
 import type { ResponseMessage } from './message';
 declare class Http {
     options: HttpOptions;
-    constructor(options?: object);
+    constructor(options?: CustomHttpOptions);
     /**
      * //XMLHttpRequest异步请求
      * @param param
@@ -31,6 +31,12 @@ interface HttpOptions {
     baseUrl: string;
     contentType: ContentType;
     responseType: XMLHttpRequestResponseType;
+}
+interface CustomHttpOptions {
+    timeout?: number;
+    baseUrl?: string;
+    contentType?: ContentType;
+    responseType?: XMLHttpRequestResponseType;
 }
 interface Param {
     url: string;

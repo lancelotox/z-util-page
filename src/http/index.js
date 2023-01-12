@@ -124,13 +124,14 @@ function submit(xhr, param, isAsync) {
     if (isAsync === void 0) { isAsync = false; }
     if (!param.method || (param.method && param.method.toUpperCase() === "GET")) {
         var url = this.options.baseUrl + (param.url || '');
-        var suffix = url.match(/(?:\?.*)?$/);
+        var suffix = url.match(/(?:\?.*)$/);
         var paramString_1 = suffix === null ? "?" : "&";
         Object.keys(param.data || {}).forEach(function (key) {
             paramString_1 += (encodeURIComponent(key) + "=" + encodeURIComponent(param.data[key].toString()) + "&");
         });
         xhr.open("GET", url + paramString_1, true);
         warp.call(this, xhr, param, true, isAsync);
+        xhr.send(null);
     }
     else {
         xhr.open(param.method, this.options.baseUrl + (param.url || ''), true);
