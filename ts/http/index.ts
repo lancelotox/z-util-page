@@ -8,8 +8,8 @@ class Http {
     public options: HttpOptions = {
         timeout: 10000,
         baseUrl: "",
-        contentType: 'application/json',
-        responseType: 'json'
+        contentType: '',
+        responseType: ''
     }
     public constructor(options: CustomHttpOptions = {}) {
         Object.assign(this.options, options);
@@ -91,17 +91,18 @@ class PromiseHandle {
     }
 }
 
-function warp(this: Http, xhr: XMLHttpRequest, param: Param, isInitHeader: boolean = true, isAsync: boolean = false) {
+function warp(this: Http, xhr: XMLHttpRequest, param: Param, isInitHeader: boolean = true, isAsync: boolean = false, isGet: boolean = false) {
     if (isInitHeader) {
         const header = param.header || {};
         Object.keys(header).forEach(key => {
-            xhr.setRequestHeader(key, header[key]);
+            if(isGet && key === 'ContentType') return;
+            xhr.setRequestHeader(upperCase(key), header[key]);
         });
-        if (!header['Content-Type']) xhr.setRequestHeader("Content-Type", this.options.contentType);
+        if (!isGet && !header.ContentType) xhr.setRequestHeader("Content-Type", this.options.contentType);
     }
     if (!isAsync) {
         xhr.timeout = param.timeout || this.options.timeout;
-        xhr.responseType = param.type || this.options.responseType;
+        xhr.responseType = param.responseType || this.options.responseType;
         xhr.addEventListener('abort', function () {
             console.warn('HTTP请求被中止');
         });
@@ -117,22 +118,29 @@ function warp(this: Http, xhr: XMLHttpRequest, param: Param, isInitHeader: boole
 function submit(this: Http, xhr: XMLHttpRequest, param: Param, isAsync: boolean = false) {
     if (!param.method || (param.method && param.method.toUpperCase() === "GET")) {
         let url = this.options.baseUrl + (param.url || '');
-        let suffix = url.match(/(?:\?.*)$/);
-        let paramString = suffix === null ? "?" : "&";
-        Object.keys(param.data || {}).forEach(key => {
-            paramString += (encodeURIComponent(key) + "=" + encodeURIComponent(param.data[key].toString()) + "&");
-        });
+        let paramString = '';
+        if (param.data && Object.keys(param.data).length !== 0) {
+            let suffix = url.match(/(?:\?.*)$/);
+            paramString = suffix === null ? "?" : "&";
+            Object.keys(param.data || {}).forEach(key => {
+                paramString += (encodeURIComponent(key) + "=" + encodeURIComponent(param.data[key].toString()) + "&");
+            });
+        }
         xhr.open("GET", url + paramString, true);
-        warp.call(this, xhr, param, true, isAsync);
+        warp.call(this, xhr, param, true, isAsync, true);
         xhr.send(null);
     } else {
         xhr.open(param.method, this.options.baseUrl + (param.url || ''), true);
         let type = this.options.contentType;
-        if (param.header && param.header['Content-Type']) type = param.header['Content-Type'];
-        const excute = Reflect.get(HttpHandle, type) || Reflect.get(HttpHandle, this.options.contentType);
-        warp.call(this, xhr, param, type !== "multipart/form-data", isAsync);
+        if (param.header && param.header.ContentType) type = param.header.ContentType;
+        const excute = Reflect.get(HttpHandle, type) || Reflect.get(HttpHandle, 'text/plain');
+        warp.call(this, xhr, param, type !== "multipart/form-data", isAsync, false);
         excute.call(this, xhr, param);
     }
+}
+
+function upperCase(val: string) {
+    return val;
 }
 
 const HttpHandle = {
@@ -164,8 +172,8 @@ const HttpHandle = {
     'multipart/form-data': function (this: Http, xhr: XMLHttpRequest, param: Param) {
         const header = param.header || {};
         Object.keys(header).forEach(key => {
-            if (key === "Content-Type") return;
-            xhr.setRequestHeader(key, header[key]);
+            if (key === "ContentType") return;
+            xhr.setRequestHeader(upperCase(key), header[key]);
         });
         if (window.FormData) {
             const formData = new FormData();
@@ -186,7 +194,7 @@ const HttpHandle = {
             });
             let index = 0;
             let boundary = "---------------------------" + Date.now().toString(16);
-            xhr.setRequestHeader("Content-Type", "multipart\/form-data; boundary=" + boundary);
+            xhr.setRequestHeader("Content-Type", `multipart\/form-data; boundary=` + boundary);
             if (param.file && getType(param.file) === "Object") {
                 Object.keys(param.file).forEach(key => {
                     let file = param.file![key];
@@ -224,13 +232,13 @@ interface HttpOptions {
     timeout: number
     //根域名
     baseUrl: string
-    //请求数据格式
+    //请求数据类型
     contentType: ContentType
-    //响应数据格式
+    //响应数据类型
     responseType: XMLHttpRequestResponseType
 }
 
-interface CustomHttpOptions{
+interface CustomHttpOptions {
     timeout?: number
     baseUrl?: string
     contentType?: ContentType
@@ -240,7 +248,7 @@ interface CustomHttpOptions{
 interface Param {
     url: string
     method?: 'GET' | 'HEAD' | 'POST' | 'PUT' | 'DELETE'
-    type?: XMLHttpRequestResponseType
+    responseType?: XMLHttpRequestResponseType
     timeout?: number
     data?: any
     header?: Head,
@@ -251,13 +259,14 @@ interface Param {
 
 interface Head {
     Accept?: string
-    'Content-Type'?: ContentType
+    ContentType?: ContentType
     [propName: string]: any
 }
 
 type Callback = (res: ResponseMessage) => void;
 
-type ContentType = "application/x-www-form-urlencoded" |
+type ContentType = "" |
+    "application/x-www-form-urlencoded" |
     "text/plain" |
     "multipart/form-data" |
     "application/json"

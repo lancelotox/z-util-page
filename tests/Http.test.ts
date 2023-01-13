@@ -24,7 +24,7 @@ describe('Http请求', ()=>{
             http.ajax({
                 url: '/restore'
             }).then((res)=>{
-                result = res.data; 
+                result = res.data;
                 resolve();
             });
         }).then(()=>{
