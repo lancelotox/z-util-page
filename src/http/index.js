@@ -7,8 +7,8 @@ var Http = /** @class */ (function () {
         this.options = {
             timeout: 10000,
             baseUrl: "",
-            contentType: 'application/json',
-            responseType: 'json'
+            contentType: '',
+            responseType: ''
         };
         Object.assign(this.options, options);
     }
@@ -95,20 +95,23 @@ var PromiseHandle = /** @class */ (function () {
     };
     return PromiseHandle;
 }());
-function warp(xhr, param, isInitHeader, isAsync) {
+function warp(xhr, param, isInitHeader, isAsync, isGet) {
     if (isInitHeader === void 0) { isInitHeader = true; }
     if (isAsync === void 0) { isAsync = false; }
+    if (isGet === void 0) { isGet = false; }
     if (isInitHeader) {
         var header_1 = param.header || {};
         Object.keys(header_1).forEach(function (key) {
-            xhr.setRequestHeader(key, header_1[key]);
+            if (isGet && key === 'ContentType')
+                return;
+            xhr.setRequestHeader(upperCase(key), header_1[key]);
         });
-        if (!header_1['Content-Type'])
+        if (!isGet && !header_1.ContentType)
             xhr.setRequestHeader("Content-Type", this.options.contentType);
     }
     if (!isAsync) {
         xhr.timeout = param.timeout || this.options.timeout;
-        xhr.responseType = param.type || this.options.responseType;
+        xhr.responseType = param.responseType || this.options.responseType;
         xhr.addEventListener('abort', function () {
             console.warn('HTTP请求被中止');
         });
@@ -124,24 +127,30 @@ function submit(xhr, param, isAsync) {
     if (isAsync === void 0) { isAsync = false; }
     if (!param.method || (param.method && param.method.toUpperCase() === "GET")) {
         var url = this.options.baseUrl + (param.url || '');
-        var suffix = url.match(/(?:\?.*)$/);
-        var paramString_1 = suffix === null ? "?" : "&";
-        Object.keys(param.data || {}).forEach(function (key) {
-            paramString_1 += (encodeURIComponent(key) + "=" + encodeURIComponent(param.data[key].toString()) + "&");
-        });
+        var paramString_1 = '';
+        if (param.data && Object.keys(param.data).length !== 0) {
+            var suffix = url.match(/(?:\?.*)$/);
+            paramString_1 = suffix === null ? "?" : "&";
+            Object.keys(param.data || {}).forEach(function (key) {
+                paramString_1 += (encodeURIComponent(key) + "=" + encodeURIComponent(param.data[key].toString()) + "&");
+            });
+        }
         xhr.open("GET", url + paramString_1, true);
-        warp.call(this, xhr, param, true, isAsync);
+        warp.call(this, xhr, param, true, isAsync, true);
         xhr.send(null);
     }
     else {
         xhr.open(param.method, this.options.baseUrl + (param.url || ''), true);
         var type = this.options.contentType;
-        if (param.header && param.header['Content-Type'])
-            type = param.header['Content-Type'];
-        var excute = Reflect.get(HttpHandle, type) || Reflect.get(HttpHandle, this.options.contentType);
-        warp.call(this, xhr, param, type !== "multipart/form-data", isAsync);
+        if (param.header && param.header.ContentType)
+            type = param.header.ContentType;
+        var excute = Reflect.get(HttpHandle, type) || Reflect.get(HttpHandle, 'text/plain');
+        warp.call(this, xhr, param, type !== "multipart/form-data", isAsync, false);
         excute.call(this, xhr, param);
     }
+}
+function upperCase(val) {
+    return val;
 }
 var HttpHandle = {
     'application/x-www-form-urlencoded': function (xhr, param) {
@@ -172,9 +181,9 @@ var HttpHandle = {
     'multipart/form-data': function (xhr, param) {
         var header = param.header || {};
         Object.keys(header).forEach(function (key) {
-            if (key === "Content-Type")
+            if (key === "ContentType")
                 return;
-            xhr.setRequestHeader(key, header[key]);
+            xhr.setRequestHeader(upperCase(key), header[key]);
         });
         if (window.FormData) {
             var formData_1 = new FormData();
@@ -197,7 +206,7 @@ var HttpHandle = {
             });
             var index_1 = 0;
             var boundary_1 = "---------------------------" + Date.now().toString(16);
-            xhr.setRequestHeader("Content-Type", "multipart\/form-data; boundary=" + boundary_1);
+            xhr.setRequestHeader("Content-Type", "multipart/form-data; boundary=" + boundary_1);
             if (param.file && getType(param.file) === "Object") {
                 Object.keys(param.file).forEach(function (key) {
                     var file = param.file[key];

@@ -41,7 +41,7 @@ interface CustomHttpOptions {
 interface Param {
     url: string;
     method?: 'GET' | 'HEAD' | 'POST' | 'PUT' | 'DELETE';
-    type?: XMLHttpRequestResponseType;
+    responseType?: XMLHttpRequestResponseType;
     timeout?: number;
     data?: any;
     header?: Head;
@@ -51,9 +51,9 @@ interface Param {
 }
 interface Head {
     Accept?: string;
-    'Content-Type'?: ContentType;
+    ContentType?: ContentType;
     [propName: string]: any;
 }
 declare type Callback = (res: ResponseMessage) => void;
-declare type ContentType = "application/x-www-form-urlencoded" | "text/plain" | "multipart/form-data" | "application/json";
+declare type ContentType = "" | "application/x-www-form-urlencoded" | "text/plain" | "multipart/form-data" | "application/json";
 export default Http;
