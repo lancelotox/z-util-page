@@ -7,7 +7,7 @@ import type { ResponseMessage } from './message';
 class Http {
     public options: HttpOptions = {
         timeout: 10000,
-        baseUrl: "",
+        baseUrl: '',
         contentType: '',
         responseType: ''
     }
@@ -140,7 +140,13 @@ function submit(this: Http, xhr: XMLHttpRequest, param: Param, isAsync: boolean 
 }
 
 function upperCase(val: string) {
-    return val;
+    if(val.length < 1) return val;
+    let charts = val.split('');
+    charts[0] = charts[0].toLocaleUpperCase();
+    return charts.map((c, i)=>{
+        if(c.match(/[A-Z]/) !== null && i !== 0) return `-${c}`;
+        return c;
+    }).join('');
 }
 
 const HttpHandle = {

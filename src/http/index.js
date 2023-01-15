@@ -6,7 +6,7 @@ var Http = /** @class */ (function () {
         if (options === void 0) { options = {}; }
         this.options = {
             timeout: 10000,
-            baseUrl: "",
+            baseUrl: '',
             contentType: '',
             responseType: ''
         };
@@ -150,7 +150,15 @@ function submit(xhr, param, isAsync) {
     }
 }
 function upperCase(val) {
-    return val;
+    if (val.length < 1)
+        return val;
+    var charts = val.split('');
+    charts[0] = charts[0].toLocaleUpperCase();
+    return charts.map(function (c, i) {
+        if (c.match(/[A-Z]/) !== null && i !== 0)
+            return "-".concat(c);
+        return c;
+    }).join('');
 }
 var HttpHandle = {
     'application/x-www-form-urlencoded': function (xhr, param) {
