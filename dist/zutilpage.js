@@ -540,7 +540,7 @@ function chooseFile(callback, options) {
   input.setAttribute('type', 'file');
   input.setAttribute('accept', (options.accept || []).join(','));
   input.setAttribute('capture', options.capture || '');
-  input.setAttribute('multiple', (options.multiple || false).toString());
+  if (options.multiple) input.setAttribute('multiple', 'true');
   input.addEventListener('change', function (e) {
     callback(input.files);
   });
