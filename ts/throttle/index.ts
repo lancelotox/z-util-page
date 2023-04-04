@@ -15,6 +15,8 @@ const defaultConfig: throttleOptions = {
  * 函数节流
  * @param func 待处理函数
  * @param wait 函数执行最短间隔时间
+ * @param option.leading 首次是否执行
+ * @param option.trailing 结束是否执行
  */
 function throttle(func: Function, wait: number, option?: throttleOptions) {
     let options = Object.assign(deepClone(defaultConfig), option || {});
