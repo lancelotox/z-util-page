@@ -1,5 +1,16 @@
-interface URLWithParam extends URL {
-    param: {
+interface URLWithParam {
+    hash: string;
+    host: string;
+    hostname: string;
+    href: string;
+    origin: string;
+    password: string;
+    pathname: string;
+    port: string;
+    protocol: string;
+    search: string;
+    username: string;
+    searchParams: {
         [key: string]: any;
     };
 }

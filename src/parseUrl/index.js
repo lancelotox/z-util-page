@@ -7,7 +7,21 @@ function parseUrl(url) {
     var Url = null;
     var param = {};
     try {
-        Url = Object.assign(new URL(url), { param: param });
+        var temp = new URL(url);
+        Url = {
+            hash: temp.hash,
+            host: temp.host,
+            hostname: temp.hostname,
+            href: temp.href,
+            origin: temp.origin,
+            password: temp.password,
+            pathname: temp.pathname,
+            port: temp.port,
+            protocol: temp.protocol,
+            search: temp.search,
+            username: temp.username,
+            searchParams: param
+        };
     }
     catch (error) {
         console.log(error);

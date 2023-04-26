@@ -4,9 +4,18 @@ import { clickElement } from '../helper/index';
  * @param url 资源链接或者blob对象
  * @param saveFileName 保存文件名
  */
-function saveFile(url, saveFileName) {
-    if (typeof url === 'object' && url instanceof Blob) {
-        url = URL.createObjectURL(url);
+function saveFile(file, saveFileName) {
+    var url = '';
+    if (typeof file === 'string') {
+        url = file;
+    }
+    else {
+        try {
+            url = URL.createObjectURL(file);
+        }
+        catch (error) {
+            console.log(error);
+        }
     }
     var alink = document.createElement('a');
     alink.href = url;

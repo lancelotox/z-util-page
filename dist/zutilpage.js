@@ -384,9 +384,21 @@ function parseUrl(url) {
   var param = {};
 
   try {
-    Url = Object.assign(new URL(url), {
-      param: param
-    });
+    var temp = new URL(url);
+    Url = {
+      hash: temp.hash,
+      host: temp.host,
+      hostname: temp.hostname,
+      href: temp.href,
+      origin: temp.origin,
+      password: temp.password,
+      pathname: temp.pathname,
+      port: temp.port,
+      protocol: temp.protocol,
+      search: temp.search,
+      username: temp.username,
+      searchParams: param
+    };
   } catch (error) {
     console.log(error);
   }
@@ -464,9 +476,17 @@ var index_1 = __webpack_require__(7);
  */
 
 
-function saveFile(url, saveFileName) {
-  if (typeof url === 'object' && url instanceof Blob) {
-    url = URL.createObjectURL(url);
+function saveFile(file, saveFileName) {
+  var url = '';
+
+  if (typeof file === 'string') {
+    url = file;
+  } else {
+    try {
+      url = URL.createObjectURL(file);
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   var alink = document.createElement('a');

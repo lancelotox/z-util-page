@@ -3,7 +3,7 @@
  * @param url 资源链接或者blob对象
  * @param saveFileName 保存文件名
  */
-declare function saveFile(url: string | Blob, saveFileName: string): void;
+declare function saveFile(file: string | Blob, saveFileName: string): void;
 /**
  * 文件读取
  * @param file File对象或Blob对象
