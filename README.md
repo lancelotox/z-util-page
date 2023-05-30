@@ -10,7 +10,7 @@
 <script src="zutilpage.min.js"></script>
 ```
 
-这会添加一个全局变量 [ Utils ] 到Windowd对象;
+这会添加一个全局变量 [ Utils ] 到window对象;
 
 ``` javascript
 Utils.debounce(function(){
