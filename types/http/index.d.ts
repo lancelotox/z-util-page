@@ -22,6 +22,7 @@ declare class PromiseHandle {
     then(callback: Callback): this;
     catch(callback: Callback): this;
     finally(callback: Callback): this;
+    progress(callback: Callback): this;
     downProgress(callback: Callback): this;
     upProgress(callback: Callback): this;
     abort(): this;

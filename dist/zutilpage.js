@@ -779,6 +779,15 @@ function () {
     return this;
   };
 
+  PromiseHandle.prototype.progress = function (callback) {
+    var _this = this;
+
+    this.xhr.addEventListener('progress', function () {
+      callback(new message_1.Message(_this.xhr));
+    });
+    return this;
+  };
+
   PromiseHandle.prototype.downProgress = function (callback) {
     var _this = this;
 

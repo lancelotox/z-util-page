@@ -63,6 +63,12 @@ class PromiseHandle {
         });
         return this;
     }
+    progress(callback: Callback) {
+        this.xhr.addEventListener('progress', () => {
+            callback(new Message(this.xhr));
+        });
+        return this;
+    }
     downProgress(callback: Callback) {
         this.xhr.addEventListener('progress', (e) => {
             if (e.lengthComputable) {
