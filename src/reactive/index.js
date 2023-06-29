@@ -1,65 +1,56 @@
-import { TriggerType } from './type';
-import { getSourceValue, wrapValue } from './util';
-import { getType } from '../deepClone/index';
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.watch = exports.computed = exports.effect = exports.reactive = exports.toRefs = exports.toRef = exports.ref = void 0;
+const type_1 = require("./type");
+const util_1 = require("./util");
+const index_1 = require("../deepClone/index");
 //对象-副作用函数映射关系字典
-var bucket = new WeakMap();
+const bucket = new WeakMap();
 //对象-响应式对象字典
-var reactiveMap = new Map();
+const reactiveMap = new Map();
 //副作用函数执行栈
-var effectStack = new Array();
+const effectStack = new Array();
 //对象迭代标识
-var ITERATE_KEY = Symbol();
+const ITERATE_KEY = Symbol();
 //MapKey迭代标识
-var MAP_KEY_ITERATE_KEY = Symbol();
+const MAP_KEY_ITERATE_KEY = Symbol();
 //取原始对象key
-var source = Symbol();
-var getSource = getSourceValue.bind({ source: source });
-var wrap = wrapValue.bind({ reactive: reactive });
+const source = Symbol();
+const getSource = util_1.getSourceValue.bind({ source });
+const wrap = util_1.wrapValue.bind({ reactive });
 //活动副作用函数
-var activeEffect = null;
+let activeEffect = null;
 //是否进行依赖追踪
-var shouldTrack = true;
+let shouldTrack = true;
 //数组原型方法代理
-var arrayInstrumentations = {};
+const arrayInstrumentations = {};
 (function () {
     //在数组执行查找的原型方法时，在原始对象中进行查找，解决原始值与代理值不一致问题
-    ['includes', 'indexOf', 'lastIndexOf'].forEach(function (method) {
-        var originMethod = Reflect.get(Array.prototype, method);
-        Reflect.set(arrayInstrumentations, method, function () {
-            var args = [];
-            for (var _i = 0; _i < arguments.length; _i++) {
-                args[_i] = arguments[_i];
-            }
-            var res = originMethod.apply(this, args);
+    ['includes', 'indexOf', 'lastIndexOf'].forEach(method => {
+        const originMethod = Reflect.get(Array.prototype, method);
+        Reflect.set(arrayInstrumentations, method, function (...args) {
+            let res = originMethod.apply(this, args);
             if (res === false || res === -1)
                 res = originMethod.apply(Reflect.get(this, source), args);
             return res;
         });
     });
     //在数组执行删除等涉及length属性修改的原型方法时，关闭依赖追踪
-    ['pop', 'shift', 'splice'].forEach(function (method) {
-        var originMethod = Reflect.get(Array.prototype, method);
-        Reflect.set(arrayInstrumentations, method, function () {
-            var args = [];
-            for (var _i = 0; _i < arguments.length; _i++) {
-                args[_i] = arguments[_i];
-            }
+    ['pop', 'shift', 'splice'].forEach(method => {
+        const originMethod = Reflect.get(Array.prototype, method);
+        Reflect.set(arrayInstrumentations, method, function (...args) {
             shouldTrack = false;
-            var res = originMethod.apply(this, args);
+            let res = originMethod.apply(this, args);
             shouldTrack = true;
             return res;
         });
     });
     //在数组执行增加等涉及length属性修改的原型方法时，关闭依赖追踪
-    ['push', 'unshift'].forEach(function (method) {
-        var originMethod = Reflect.get(Array.prototype, method);
-        Reflect.set(arrayInstrumentations, method, function () {
-            var args = [];
-            for (var _i = 0; _i < arguments.length; _i++) {
-                args[_i] = arguments[_i];
-            }
+    ['push', 'unshift'].forEach(method => {
+        const originMethod = Reflect.get(Array.prototype, method);
+        Reflect.set(arrayInstrumentations, method, function (...args) {
             shouldTrack = false;
-            var res = originMethod.apply(this, args.map(function (arg) {
+            let res = originMethod.apply(this, args.map((arg) => {
                 return getSource(arg);
             }));
             shouldTrack = true;
@@ -68,123 +59,117 @@ var arrayInstrumentations = {};
     });
 })();
 //Set-Map原型方法代理
-var mutableInstrumentations = {};
+const mutableInstrumentations = {};
 (function () {
     function iterationMethod() {
-        var _a;
         //获取原始对象
-        var target = Reflect.get(this, source);
+        const target = Reflect.get(this, source);
         //获取迭代器对象
-        var itr = target[Symbol.iterator]();
+        const itr = target[Symbol.iterator]();
         //建立响应
         track(target, ITERATE_KEY);
         //返回自定义迭代器
-        return _a = {
-                //迭代器协议
-                next: function () {
-                    //获取原始数据
-                    var _a = itr.next(), value = _a.value, done = _a.done;
-                    return {
-                        value: value ? [wrap(value[0]), wrap(value[1])] : value,
-                        done: done
-                    };
-                }
+        return {
+            //迭代器协议
+            next() {
+                //获取原始数据
+                const { value, done } = itr.next();
+                return {
+                    value: value ? [wrap(value[0]), wrap(value[1])] : value,
+                    done
+                };
             },
             //可迭代协议
-            _a[Symbol.iterator] = function () {
+            [Symbol.iterator]() {
                 return this;
-            },
-            _a;
+            }
+        };
     }
     function valuesIterationMethod() {
-        var _a;
         //获取原始对象
-        var target = Reflect.get(this, source);
+        const target = Reflect.get(this, source);
         //获取迭代器对象
-        var itr = target.values();
+        const itr = target.values();
         //建立响应
         track(target, ITERATE_KEY);
         //返回自定义迭代器
-        return _a = {
-                //迭代器协议
-                next: function () {
-                    //获取原始数据
-                    var _a = itr.next(), value = _a.value, done = _a.done;
-                    return {
-                        value: wrap(value),
-                        done: done
-                    };
-                }
+        return {
+            //迭代器协议
+            next() {
+                //获取原始数据
+                const { value, done } = itr.next();
+                return {
+                    value: wrap(value),
+                    done
+                };
             },
             //可迭代协议
-            _a[Symbol.iterator] = function () {
+            [Symbol.iterator]() {
                 return this;
-            },
-            _a;
+            }
+        };
     }
     function keysIterationMethod() {
-        var _a;
         //获取原始对象
-        var target = Reflect.get(this, source);
+        const target = Reflect.get(this, source);
         //获取迭代器对象
-        var itr = target.keys();
+        const itr = target.keys();
         //建立响应
         track(target, MAP_KEY_ITERATE_KEY);
         //返回自定义迭代器
-        return _a = {
-                //迭代器协议
-                next: function () {
-                    //获取原始数据
-                    var _a = itr.next(), value = _a.value, done = _a.done;
-                    return {
-                        value: wrap(value),
-                        done: done
-                    };
-                }
+        return {
+            //迭代器协议
+            next() {
+                //获取原始数据
+                const { value, done } = itr.next();
+                return {
+                    value: wrap(value),
+                    done
+                };
             },
             //可迭代协议
-            _a[Symbol.iterator] = function () {
+            [Symbol.iterator]() {
                 return this;
-            },
-            _a;
+            }
+        };
     }
     mutableInstrumentations.add = function (key) {
         //获取原始对象
-        var target = Reflect.get(this, source);
+        const target = Reflect.get(this, source);
         //是否只读
-        var isReadonly = (reactiveMap.get(target) || {}).isReadonly;
+        const { isReadonly } = reactiveMap.get(target) || {};
         if (isReadonly) {
-            console.log(target, "\u5BF9\u8C61\u662F\u53EA\u8BFB\u7684");
+            console.log(target, `对象是只读的`);
             return false;
         }
         //取原始值
-        var orgin = getSource(key);
+        const orgin = getSource(key);
         //判断值是否已存在
-        var hadkey = target.has(orgin);
-        var res = target.add(orgin);
+        const hadkey = target.has(orgin);
+        const res = target.add(orgin);
         //当值不存在时触发副作用函数
         if (!hadkey)
-            trigger(target, orgin, TriggerType.ADD);
+            trigger(target, orgin, type_1.TriggerType.ADD);
         return res;
     };
     mutableInstrumentations.get = function (key) {
         var _a;
         //获取原始对象
-        var target = Reflect.get(this, source);
+        const target = Reflect.get(this, source);
         //是否浅代理、只读
-        var _b = reactiveMap.get(target) || {}, isShadow = _b.isShadow, isReadonly = _b.isReadonly;
+        const { isShadow, isReadonly } = reactiveMap.get(target) || {};
         //取原始值, 避免数据污染
-        var orginKey = getSource(key);
+        const orginKey = getSource(key);
         //只读对象或者key为symbol时不进行追踪
         if (!isReadonly)
             track(target, orginKey);
-        var res = target.get(orginKey);
+        const res = target.get(orginKey);
         //浅代理模式直接返回原始值
         if (isShadow)
             return res;
         //非浅代理模式，如果原始值不是基本类型进行响应式包装
         if (typeof res === 'object' && res != null) {
-            var existionProxy = (_a = reactiveMap.get(res)) === null || _a === void 0 ? void 0 : _a.value;
+            const existionProxy = (_a = reactiveMap.get(res)) === null || _a === void 0 ? void 0 : _a.value;
             if (existionProxy)
                 return existionProxy;
             return reactive(res, isShadow, isReadonly);
@@ -194,51 +179,50 @@ var mutableInstrumentations = {};
     };
     mutableInstrumentations.set = function (key, value) {
         //获取原始对象
-        var target = Reflect.get(this, source);
+        const target = Reflect.get(this, source);
         //是否浅代理、只读
-        var isReadonly = (reactiveMap.get(target) || {}).isReadonly;
+        const { isReadonly } = reactiveMap.get(target) || {};
         if (isReadonly) {
-            console.log(target, "\u5BF9\u8C61\u662F\u53EA\u8BFB\u7684");
+            console.log(target, `对象是只读的`);
             return false;
         }
         //取原始值, 避免数据污染
-        var orginKey = getSource(key);
-        var orginValue = getSource(value);
+        const orginKey = getSource(key);
+        const orginValue = getSource(value);
         //判断是否已存在
-        var hadKey = target.has(orginKey);
+        const hadKey = target.has(orginKey);
         //取出旧值
-        var oldValue = target.get(orginKey);
+        const oldValue = target.get(orginKey);
         //非浅代理时设置原始对象而非响应对象
-        var res = target.set(orginKey, orginValue);
+        const res = target.set(orginKey, orginValue);
         if (!hadKey)
-            trigger(target, orginKey, TriggerType.ADD);
+            trigger(target, orginKey, type_1.TriggerType.ADD);
         else if (oldValue !== orginValue && (oldValue === oldValue || orginValue === orginValue)) {
-            trigger(target, orginKey, TriggerType.SET);
+            trigger(target, orginKey, type_1.TriggerType.SET);
         }
         return res;
     };
     mutableInstrumentations.delete = function (key) {
         //获取原始对象
-        var target = Reflect.get(this, source);
+        const target = Reflect.get(this, source);
         //取原始值
-        var orgin = getSource(key);
+        const orgin = getSource(key);
         //判断值是否已存在
-        var hadkey = target.has(orgin);
-        var res = target.delete(orgin);
+        const hadkey = target.has(orgin);
+        const res = target.delete(orgin);
         //当值存在时触发副作用函数
         if (hadkey)
-            trigger(target, orgin, TriggerType.DELETE);
+            trigger(target, orgin, type_1.TriggerType.DELETE);
         return res;
     };
     mutableInstrumentations.forEach = function (cb, thisArg) {
-        var _this = this;
         //获取原始对象
-        var target = Reflect.get(this, source);
+        const target = Reflect.get(this, source);
         //与迭代key建立响应
         track(target, ITERATE_KEY);
         //调用原函数
-        target.forEach(function (value, key) {
-            cb.call(thisArg, wrap(value), wrap(key), _this);
+        target.forEach((value, key) => {
+            cb.call(thisArg, wrap(value), wrap(key), this);
         });
     };
     mutableInstrumentations.entries = iterationMethod;
@@ -250,11 +234,11 @@ function track(target, p) {
     if (!activeEffect || !shouldTrack) {
         return;
     }
-    var depsMap = bucket.get(target);
+    let depsMap = bucket.get(target);
     if (!depsMap) {
         bucket.set(target, (depsMap = new Map()));
     }
-    var deps = depsMap.get(p);
+    let deps = depsMap.get(p);
     if (!deps) {
         depsMap.set(p, (deps = new Set()));
     }
@@ -262,61 +246,61 @@ function track(target, p) {
     activeEffect.deps.push(deps);
 }
 function trigger(target, p, type, value) {
-    var depsMap = bucket.get(target);
+    let depsMap = bucket.get(target);
     if (!depsMap) {
         return true;
     }
     //取出所有与key直接相关的副作用函数
-    var effects = depsMap.get(p);
+    let effects = depsMap.get(p);
     //待执行副作用函数队列
-    var effectsToRun = new Set();
+    let effectsToRun = new Set();
     //排除正在运行的副作用函数
-    effects && effects.forEach(function (effectFn) {
+    effects && effects.forEach(effectFn => {
         if (effectFn !== activeEffect)
             effectsToRun.add(effectFn);
     });
     //type为ADD或者DELETE或为Map类型设置值时，取出迭代相关副作用函数执行
-    if (type === TriggerType.ADD || type === TriggerType.DELETE || (type === TriggerType.SET && getType(target) === 'Map')) {
-        var iterateEffects = depsMap.get(ITERATE_KEY);
-        iterateEffects && iterateEffects.forEach(function (effectFn) {
+    if (type === type_1.TriggerType.ADD || type === type_1.TriggerType.DELETE || (type === type_1.TriggerType.SET && (0, index_1.getType)(target) === 'Map')) {
+        let iterateEffects = depsMap.get(ITERATE_KEY);
+        iterateEffects && iterateEffects.forEach(effectFn => {
             if (effectFn !== activeEffect)
                 effectsToRun.add(effectFn);
         });
     }
     //type为ADD或者DELETE且target为Map时，取出迭代相关副作用函数执行
-    if ((type === TriggerType.ADD || type === TriggerType.DELETE) && getType(target) === 'Map') {
-        var iterateEffects = depsMap.get(MAP_KEY_ITERATE_KEY);
-        iterateEffects && iterateEffects.forEach(function (effectFn) {
+    if ((type === type_1.TriggerType.ADD || type === type_1.TriggerType.DELETE) && (0, index_1.getType)(target) === 'Map') {
+        let iterateEffects = depsMap.get(MAP_KEY_ITERATE_KEY);
+        iterateEffects && iterateEffects.forEach(effectFn => {
             if (effectFn !== activeEffect)
                 effectsToRun.add(effectFn);
         });
     }
     //type为ADD且target为数组时，取出数组迭代相关副作用函数执行（使用delete删除数组元素不会改变数组长度，故无需触发）
-    if (type === TriggerType.ADD && Array.isArray(target)) {
-        var lengthEffects = depsMap.get('length');
-        lengthEffects && lengthEffects.forEach(function (effectFn) {
+    if (type === type_1.TriggerType.ADD && Array.isArray(target)) {
+        let lengthEffects = depsMap.get('length');
+        lengthEffects && lengthEffects.forEach(effectFn => {
             if (effectFn !== activeEffect)
                 effectsToRun.add(effectFn);
         });
     }
     //target为数组且直接操作数组length属性时，取出大于新length值的副作用函数执行
     if (Array.isArray(target) && p === 'length') {
-        depsMap.forEach(function (effects, key) {
+        depsMap.forEach((effects, key) => {
             if (Number(key) >= Number(value)) {
-                effects.forEach(function (effectFn) {
+                effects.forEach(effectFn => {
                     if (effectFn !== activeEffect)
                         effectsToRun.add(effectFn);
                 });
             }
         });
-        var lengthEffects = depsMap.get('length');
-        lengthEffects && lengthEffects.forEach(function (effectFn) {
+        let lengthEffects = depsMap.get('length');
+        lengthEffects && lengthEffects.forEach(effectFn => {
             if (effectFn !== activeEffect)
                 effectsToRun.add(effectFn);
         });
     }
     //执行副作用函数
-    effectsToRun.forEach(function (fn) {
+    effectsToRun.forEach(fn => {
         if (typeof fn.options.schedule === 'function') {
             fn.options.schedule(fn);
         }
@@ -327,7 +311,7 @@ function trigger(target, p, type, value) {
     return true;
 }
 function cleanup(effectFn) {
-    effectFn.deps.forEach(function (deps) {
+    effectFn.deps.forEach(deps => {
         deps.delete(effectFn);
     });
     effectFn.deps.length = 0;
@@ -338,19 +322,19 @@ function cleanup(effectFn) {
  * @param isReadonly 是否只读
  * @returns { value: T }
  */
-function ref(value, isReadonly) {
-    if (isReadonly === void 0) { isReadonly = false; }
-    var wrapper = {
-        value: value
+function ref(value, isReadonly = false) {
+    const wrapper = {
+        value
     };
     //定义变量标识对象为Ref对象
     Object.defineProperty(wrapper, '__isRef', {
         value: true
     });
-    return reactive({ value: value }, true, isReadonly);
+    return reactive({ value }, true, isReadonly);
 }
+exports.ref = ref;
 function toRef(val, key) {
-    var wrapper = {
+    const wrapper = {
         get value() {
             return val[key];
         },
@@ -364,13 +348,15 @@ function toRef(val, key) {
     });
     return wrapper;
 }
+exports.toRef = toRef;
 function toRefs(obj) {
-    var ret = {};
-    for (var key in obj) {
+    const ret = {};
+    for (const key in obj) {
         Reflect.set(ret, key, toRef(obj, key));
     }
     return ret;
 }
+exports.toRefs = toRefs;
 /**
  * 代理对象值，返回响应式数据
  * @param value 对象值
@@ -378,11 +364,9 @@ function toRefs(obj) {
  * @param isReadonly 是否只读
  * @returns T
  */
-function reactive(value, isShadow, isReadonly) {
-    if (isShadow === void 0) { isShadow = false; }
-    if (isReadonly === void 0) { isReadonly = false; }
-    var proxy = new Proxy(value, {
-        get: function (target, p, reciver) {
+function reactive(value, isShadow = false, isReadonly = false) {
+    const proxy = new Proxy(value, {
+        get(target, p, reciver) {
             var _a;
             if (p === source)
                 return target;
@@ -401,13 +385,13 @@ function reactive(value, isShadow, isReadonly) {
             //只读对象或者key为symbol时不进行追踪
             if (!isReadonly && typeof p !== 'symbol')
                 track(target, p);
-            var res = Reflect.get(target, p, reciver);
+            const res = Reflect.get(target, p, reciver);
             //浅代理模式直接返回原始值
             if (isShadow)
                 return res;
             //非浅代理模式，如果原始值不是基本类型进行响应式包装
             if (typeof res === 'object' && res != null) {
-                var existionProxy = (_a = reactiveMap.get(res)) === null || _a === void 0 ? void 0 : _a.value;
+                const existionProxy = (_a = reactiveMap.get(res)) === null || _a === void 0 ? void 0 : _a.value;
                 if (existionProxy)
                     return existionProxy;
                 return reactive(res, isShadow, isReadonly);
@@ -415,44 +399,44 @@ function reactive(value, isShadow, isReadonly) {
             //否则返回基本类型值
             return res;
         },
-        has: function (target, p) {
+        has(target, p) {
             if (!isReadonly)
                 track(target, p);
             return Reflect.has(target, p);
         },
-        ownKeys: function (target) {
+        ownKeys(target) {
             if (!isReadonly)
                 track(target, Array.isArray(target) ? 'length' : ITERATE_KEY);
             return Reflect.ownKeys(target);
         },
-        deleteProperty: function (target, p) {
+        deleteProperty(target, p) {
             if (isReadonly) {
-                console.log(target, "\u5BF9\u8C61\u662F\u53EA\u8BFB\u7684");
+                console.log(target, `对象是只读的`);
                 return false;
             }
             //判断变量是否不处于对象原型上
-            var hadKey = Object.prototype.hasOwnProperty.call(target, p);
-            var res = Reflect.deleteProperty(target, p);
+            const hadKey = Object.prototype.hasOwnProperty.call(target, p);
+            const res = Reflect.deleteProperty(target, p);
             if (res && hadKey) {
-                trigger(target, p, TriggerType.DELETE);
+                trigger(target, p, type_1.TriggerType.DELETE);
             }
             return res;
         },
-        set: function (target, p, value, reciver) {
+        set(target, p, value, reciver) {
             if (isReadonly) {
-                console.log(target, "\u5BF9\u8C61\u662F\u53EA\u8BFB\u7684");
+                console.log(target, `对象是只读的`);
                 return false;
             }
             //取出旧值
-            var oldValue = Reflect.get(target, p);
+            const oldValue = Reflect.get(target, p);
             //判断操作类型
-            var type = Array.isArray(target)
-                ? Number(p) < target.length ? TriggerType.SET : TriggerType.ADD
-                : Object.prototype.hasOwnProperty.call(target, p) ? TriggerType.SET : TriggerType.ADD;
+            const type = Array.isArray(target)
+                ? Number(p) < target.length ? type_1.TriggerType.SET : type_1.TriggerType.ADD
+                : Object.prototype.hasOwnProperty.call(target, p) ? type_1.TriggerType.SET : type_1.TriggerType.ADD;
             //取原始值
-            var orgin = getSource(value);
+            const orgin = getSource(value);
             //非浅代理时设置原始对象而非响应对象
-            var res = Reflect.set(target, p, orgin, reciver);
+            const res = Reflect.set(target, p, orgin, reciver);
             if (target === Reflect.get(reciver, source)) {
                 if (oldValue !== value && (oldValue === oldValue || value === value)) {
                     trigger(target, p, type, value);
@@ -464,24 +448,24 @@ function reactive(value, isShadow, isReadonly) {
     if (typeof value === 'object' && value != null)
         reactiveMap.set(value, {
             value: proxy,
-            isShadow: isShadow,
-            isReadonly: isReadonly
+            isShadow,
+            isReadonly
         });
     return proxy;
 }
+exports.reactive = reactive;
 /**
  * 创建副作用函数
  * @param func 函数
  * @param options 配置
  * @returns effectFunc
  */
-function effect(func, options) {
-    if (options === void 0) { options = {}; }
-    var effectFn = function () {
+function effect(func, options = {}) {
+    let effectFn = function () {
         cleanup(effectFn);
         activeEffect = effectFn;
         effectStack.push(effectFn);
-        var res = func();
+        const res = func();
         effectStack.pop();
         activeEffect = effectStack[effectStack.length - 1];
         return res;
@@ -492,24 +476,25 @@ function effect(func, options) {
         effectFn();
     return effectFn;
 }
+exports.effect = effect;
 /**
  * 获取计算属性
  * @param getter
  * @returns { value: any }
  */
 function computed(getter) {
-    var value;
-    var dirty = true;
-    var effectFn = effect(getter, {
+    let value;
+    let dirty = true;
+    const effectFn = effect(getter, {
         lazy: true,
-        schedule: function () {
+        schedule() {
             if (!dirty) {
                 dirty = true;
-                trigger(obj, 'value', TriggerType.SET, 0);
+                trigger(obj, 'value', type_1.TriggerType.SET, 0);
             }
         }
     });
-    var obj = {
+    const obj = {
         //访问器属性
         get value() {
             if (dirty) {
@@ -522,12 +507,12 @@ function computed(getter) {
     };
     return obj;
 }
-function traverse(value, seen) {
-    if (seen === void 0) { seen = new Set(); }
+exports.computed = computed;
+function traverse(value, seen = new Set()) {
     if (typeof value !== 'object' || value === null || seen.has(value))
         return;
     seen.add(value);
-    for (var k in value) {
+    for (const k in value) {
         traverse(value[k], seen);
     }
     return value;
@@ -538,29 +523,28 @@ function traverse(value, seen) {
  * @param cb 数据变化后回调函数
  * @param options 配置
  */
-function watch(source, cb, options) {
-    if (options === void 0) { options = {}; }
-    var getter;
+function watch(source, cb, options = {}) {
+    let getter;
     if (typeof source === 'function')
         getter = source;
     else
-        getter = function () { return traverse(source); };
-    var oldValue, newValue, cleanup;
+        getter = () => traverse(source);
+    let oldValue, newValue, cleanup;
     function onInvalidate(fn) {
         cleanup = fn;
     }
-    var job = function () {
+    const job = () => {
         newValue = effectFn();
         if (cleanup)
             cleanup();
         cb(oldValue, newValue, onInvalidate);
         oldValue = newValue;
     };
-    var effectFn = effect(function () { return getter(); }, {
+    const effectFn = effect(() => getter(), {
         lazy: true,
-        schedule: function () {
+        schedule() {
             if (options.flush === 'post') {
-                var p = Promise.resolve();
+                const p = Promise.resolve();
                 p.then(job);
             }
             else {
@@ -573,4 +557,4 @@ function watch(source, cb, options) {
     else
         oldValue = effectFn();
 }
-export { ref, toRef, toRefs, reactive, effect, computed, watch, };
+exports.watch = watch;

@@ -1,15 +1,15 @@
 {
   "name": "z-util-page",
-  "version": "2.0.5",
+  "version": "2.0.7",
   "description": "javascript utils",
-  "type": "commonjs",
   "main": "./lib/zutilpage.js",
+  "type": "commonjs",
   "types": "./types/index.d.ts",
   "module": "./src/index.js",
   "repository": "https://gitee.com/lancelotox/zUtilPages",
   "scripts": {
     "clean": "rimraf lib dist src types coverage",
-    "build": "node build.js && tsc --module ES6",
+    "build": "node build.js && tsc",
     "test": "jest",
     "test:watch": "jest --watchAll"
   },

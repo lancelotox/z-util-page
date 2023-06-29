@@ -1,5 +1,7 @@
-import { deepClone } from '../deepClone/index';
-var defaultConfig = {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const index_1 = require("../deepClone/index");
+const defaultConfig = {
     leading: true,
     trailing: false
 };
@@ -11,15 +13,11 @@ var defaultConfig = {
  * @param option.trailing 结束是否执行
  */
 function throttle(func, wait, option) {
-    var options = Object.assign(deepClone(defaultConfig), option || {});
+    let options = Object.assign((0, index_1.deepClone)(defaultConfig), option || {});
     if (options.leading === false && options.trailing === false)
         throw ('leading, trailing不能同时为false');
-    var timeout = null, args, content, res;
-    var throttled = function () {
-        var argList = [];
-        for (var _i = 0; _i < arguments.length; _i++) {
-            argList[_i] = arguments[_i];
-        }
+    let timeout = null, args, content, res;
+    const throttled = function (...argList) {
         args = argList;
         content = this;
         if (!timeout) {
@@ -41,4 +39,4 @@ function throttle(func, wait, option) {
     };
     return throttled;
 }
-export default throttle;
+exports.default = throttle;
