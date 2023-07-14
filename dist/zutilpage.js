@@ -462,7 +462,7 @@ const index_1 = __webpack_require__(7);
  */
 
 
-function saveFile(file, saveFileName) {
+function saveFile(file, saveFileName = '') {
   let url = '';
 
   if (typeof file === 'string') {
@@ -478,7 +478,11 @@ function saveFile(file, saveFileName) {
   let alink = document.createElement('a');
   alink.href = url;
   alink.download = saveFileName || '';
+  alink.style.display = 'none';
+  alink.target = "_blank";
+  document.body.appendChild(alink);
   (0, index_1.clickElement)(alink);
+  document.body.removeChild(alink);
 }
 
 exports.write = saveFile;

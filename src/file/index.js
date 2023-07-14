@@ -7,7 +7,7 @@ const index_1 = require("../helper/index");
  * @param url 资源链接或者blob对象
  * @param saveFileName 保存文件名
  */
-function saveFile(file, saveFileName) {
+function saveFile(file, saveFileName = '') {
     let url = '';
     if (typeof file === 'string') {
         url = file;
@@ -23,7 +23,11 @@ function saveFile(file, saveFileName) {
     let alink = document.createElement('a');
     alink.href = url;
     alink.download = saveFileName || '';
+    alink.style.display = 'none';
+    alink.target = "_blank";
+    document.body.appendChild(alink);
     (0, index_1.clickElement)(alink);
+    document.body.removeChild(alink);
 }
 exports.write = saveFile;
 class FileReaderDecorate {
