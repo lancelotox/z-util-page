@@ -14,6 +14,10 @@ declare class Http {
      * @returns
      */
     ajaxAsync(param: Param): any;
+    /**
+       * 拦截器
+       */
+    Interceptor: Interceptor;
 }
 declare class PromiseHandle {
     private xhr;
@@ -41,11 +45,13 @@ interface CustomHttpOptions {
 }
 interface Param {
     url: string;
+    baseUrl?: string;
     method?: 'GET' | 'HEAD' | 'POST' | 'PUT' | 'DELETE';
     responseType?: XMLHttpRequestResponseType;
     timeout?: number;
-    data?: any;
     header?: Head;
+    param?: any;
+    data?: any;
     file?: {
         [propName: string]: File | Blob;
     };
@@ -54,6 +60,12 @@ interface Head {
     Accept?: string;
     ContentType?: ContentType;
     [propName: string]: any;
+}
+interface Interceptor {
+    requestArr: Array<Function>;
+    responseArr: Array<Function>;
+    request: (func: Function) => void;
+    response: (func: Function) => void;
 }
 declare type Callback = (res: ResponseMessage) => void;
 declare type ContentType = "" | "application/x-www-form-urlencoded" | "text/plain" | "multipart/form-data" | "application/json";
