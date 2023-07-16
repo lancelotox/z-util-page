@@ -311,6 +311,8 @@ function trigger(target, p, type, value) {
     return true;
 }
 function cleanup(effectFn) {
+    if (!shouldTrack)
+        return;
     effectFn.deps.forEach(deps => {
         deps.delete(effectFn);
     });
