@@ -31,6 +31,23 @@ describe('数组', () => {
         });
         expect(a.length).toBe(2);
     });
+    test('数组栈操作导致其他副作用函数无法追踪', () => {
+        const a = Reactive.reactive<Array<number>>([]);
+        Reactive.effect(function () {
+            if (a.length) {
+              a.push(1);
+            } else {
+              a.push(1);
+            }
+        });
+        Reactive.effect(function () {
+            a.push(1);
+        });
+        Reactive.effect(function () {
+            a.push(1);
+        });
+        expect(a.length).toBe(5);
+    });
 });
 
 describe('Map&Set', () => {

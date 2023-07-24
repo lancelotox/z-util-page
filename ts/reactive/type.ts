@@ -12,6 +12,7 @@ export interface Effect {
     (): any;
     deps: Array<Set<Effect>>;
     options: EffectOptions;
+    shouldTrack: boolean;
 }
 
 export type DepsMap = Map<string | symbol, Set<Effect>>;
