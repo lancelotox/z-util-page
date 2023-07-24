@@ -35,8 +35,8 @@ class Http {
     return xhr.response;
   }
   /**
-     * 拦截器
-     */
+   * 拦截器
+   */
   public Interceptor: Interceptor = {
     requestArr: [],
     responseArr: [],
@@ -176,7 +176,7 @@ function upperCase(val: string) {
 }
 
 function petchParam(param: Param) {
-  if (param.data === undefined) param.data = {}; 
+  if (param.data === undefined) param.data = {};
   if (param.header === undefined) param.header = {};
   return param
 }
