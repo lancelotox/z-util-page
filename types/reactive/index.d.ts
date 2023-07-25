@@ -1,5 +1,13 @@
 import { Ref, Effect, EffectOptions } from './type';
 /**
+ * 代理对象值，返回响应式数据
+ * @param value 对象值
+ * @param isShadow true为深代理，false为浅代理
+ * @param isReadonly 是否只读
+ * @returns T
+ */
+declare function reactive<T extends object>(value: T, isShadow?: boolean, isReadonly?: boolean): T;
+/**
  * 代理基本类型值，返回响应式数据
  * @param value 基本类型值
  * @param isReadonly 是否只读
@@ -10,14 +18,6 @@ declare function toRef(val: any, key: string | symbol): {
     value: any;
 };
 declare function toRefs(obj: any): {};
-/**
- * 代理对象值，返回响应式数据
- * @param value 对象值
- * @param isShadow true为深代理，false为浅代理
- * @param isReadonly 是否只读
- * @returns T
- */
-declare function reactive<T extends object>(value: T, isShadow?: boolean, isReadonly?: boolean): T;
 /**
  * 创建副作用函数
  * @param func 函数

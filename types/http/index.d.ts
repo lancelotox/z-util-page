@@ -15,8 +15,8 @@ declare class Http {
      */
     ajaxAsync(param: Param): any;
     /**
-       * 拦截器
-       */
+     * 拦截器
+     */
     Interceptor: Interceptor;
 }
 declare class PromiseHandle {

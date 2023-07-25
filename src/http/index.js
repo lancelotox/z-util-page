@@ -35,8 +35,8 @@ class Http {
             responseType: ''
         };
         /**
-           * 拦截器
-           */
+         * 拦截器
+         */
         this.Interceptor = {
             requestArr: [],
             responseArr: [],

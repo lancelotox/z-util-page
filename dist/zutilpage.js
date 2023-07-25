@@ -676,8 +676,8 @@ class Http {
       responseType: ''
     };
     /**
-       * 拦截器
-       */
+     * 拦截器
+     */
 
     this.Interceptor = {
       requestArr: [],
@@ -1021,9 +1021,7 @@ const wrap = util_1.wrapValue.bind({
   reactive
 }); //活动副作用函数
 
-let activeEffect = null; //是否进行依赖追踪
-
-let shouldTrack = true; //数组原型方法代理
+let activeEffect = null; //数组原型方法代理
 
 const arrayInstrumentations = {};
 
@@ -1041,9 +1039,9 @@ const arrayInstrumentations = {};
   ['pop', 'shift', 'splice'].forEach(method => {
     const originMethod = Reflect.get(Array.prototype, method);
     Reflect.set(arrayInstrumentations, method, function (...args) {
-      shouldTrack = false;
+      if (activeEffect) activeEffect.shouldTrack = false;
       let res = originMethod.apply(this, args);
-      shouldTrack = true;
+      if (activeEffect) activeEffect.shouldTrack = true;
       return res;
     });
   }); //在数组执行增加等涉及length属性修改的原型方法时，关闭依赖追踪
@@ -1051,11 +1049,11 @@ const arrayInstrumentations = {};
   ['push', 'unshift'].forEach(method => {
     const originMethod = Reflect.get(Array.prototype, method);
     Reflect.set(arrayInstrumentations, method, function (...args) {
-      shouldTrack = false;
+      if (activeEffect) activeEffect.shouldTrack = false;
       let res = originMethod.apply(this, args.map(arg => {
         return getSource(arg);
       }));
-      shouldTrack = true;
+      if (activeEffect) activeEffect.shouldTrack = true;
       return res;
     });
   });
@@ -1263,154 +1261,6 @@ const mutableInstrumentations = {};
   mutableInstrumentations.keys = keysIterationMethod;
   mutableInstrumentations[Symbol.iterator] = iterationMethod;
 })();
-
-function track(target, p) {
-  if (!activeEffect || !shouldTrack) {
-    return;
-  }
-
-  let depsMap = bucket.get(target);
-
-  if (!depsMap) {
-    bucket.set(target, depsMap = new Map());
-  }
-
-  let deps = depsMap.get(p);
-
-  if (!deps) {
-    depsMap.set(p, deps = new Set());
-  }
-
-  deps.add(activeEffect);
-  activeEffect.deps.push(deps);
-}
-
-function trigger(target, p, type, value) {
-  let depsMap = bucket.get(target);
-
-  if (!depsMap) {
-    return true;
-  } //取出所有与key直接相关的副作用函数
-
-
-  let effects = depsMap.get(p); //待执行副作用函数队列
-
-  let effectsToRun = new Set(); //排除正在运行的副作用函数
-
-  effects && effects.forEach(effectFn => {
-    if (effectFn !== activeEffect) effectsToRun.add(effectFn);
-  }); //type为ADD或者DELETE或为Map类型设置值时，取出迭代相关副作用函数执行
-
-  if (type === type_1.TriggerType.ADD || type === type_1.TriggerType.DELETE || type === type_1.TriggerType.SET && (0, index_1.getType)(target) === 'Map') {
-    let iterateEffects = depsMap.get(ITERATE_KEY);
-    iterateEffects && iterateEffects.forEach(effectFn => {
-      if (effectFn !== activeEffect) effectsToRun.add(effectFn);
-    });
-  } //type为ADD或者DELETE且target为Map时，取出迭代相关副作用函数执行
-
-
-  if ((type === type_1.TriggerType.ADD || type === type_1.TriggerType.DELETE) && (0, index_1.getType)(target) === 'Map') {
-    let iterateEffects = depsMap.get(MAP_KEY_ITERATE_KEY);
-    iterateEffects && iterateEffects.forEach(effectFn => {
-      if (effectFn !== activeEffect) effectsToRun.add(effectFn);
-    });
-  } //type为ADD且target为数组时，取出数组迭代相关副作用函数执行（使用delete删除数组元素不会改变数组长度，故无需触发）
-
-
-  if (type === type_1.TriggerType.ADD && Array.isArray(target)) {
-    let lengthEffects = depsMap.get('length');
-    lengthEffects && lengthEffects.forEach(effectFn => {
-      if (effectFn !== activeEffect) effectsToRun.add(effectFn);
-    });
-  } //target为数组且直接操作数组length属性时，取出大于新length值的副作用函数执行
-
-
-  if (Array.isArray(target) && p === 'length') {
-    depsMap.forEach((effects, key) => {
-      if (Number(key) >= Number(value)) {
-        effects.forEach(effectFn => {
-          if (effectFn !== activeEffect) effectsToRun.add(effectFn);
-        });
-      }
-    });
-    let lengthEffects = depsMap.get('length');
-    lengthEffects && lengthEffects.forEach(effectFn => {
-      if (effectFn !== activeEffect) effectsToRun.add(effectFn);
-    });
-  } //执行副作用函数
-
-
-  effectsToRun.forEach(fn => {
-    if (typeof fn.options.schedule === 'function') {
-      fn.options.schedule(fn);
-    } else {
-      fn();
-    }
-  });
-  return true;
-}
-
-function cleanup(effectFn) {
-  if (!shouldTrack) return;
-  effectFn.deps.forEach(deps => {
-    deps.delete(effectFn);
-  });
-  effectFn.deps.length = 0;
-}
-/**
- * 代理基本类型值，返回响应式数据
- * @param value 基本类型值
- * @param isReadonly 是否只读
- * @returns { value: T }
- */
-
-
-function ref(value, isReadonly = false) {
-  const wrapper = {
-    value
-  }; //定义变量标识对象为Ref对象
-
-  Object.defineProperty(wrapper, '__isRef', {
-    value: true
-  });
-  return reactive({
-    value
-  }, true, isReadonly);
-}
-
-exports.ref = ref;
-
-function toRef(val, key) {
-  const wrapper = {
-    get value() {
-      return val[key];
-    },
-
-    set value(value) {
-      val[key] = value;
-    }
-
-  }; //定义变量标识对象为Ref对象
-
-  Object.defineProperty(wrapper, '__isRef', {
-    value: true
-  });
-  return wrapper;
-}
-
-exports.toRef = toRef;
-
-function toRefs(obj) {
-  const ret = {};
-
-  for (const key in obj) {
-    Reflect.set(ret, key, toRef(obj, key));
-  }
-
-  return ret;
-}
-
-exports.toRefs = toRefs;
 /**
  * 代理对象值，返回响应式数据
  * @param value 对象值
@@ -1418,6 +1268,7 @@ exports.toRefs = toRefs;
  * @param isReadonly 是否只读
  * @returns T
  */
+
 
 function reactive(value, isShadow = false, isReadonly = false) {
   const proxy = new Proxy(value, {
@@ -1515,11 +1366,158 @@ function reactive(value, isShadow = false, isReadonly = false) {
 
 exports.reactive = reactive;
 /**
+ * 代理基本类型值，返回响应式数据
+ * @param value 基本类型值
+ * @param isReadonly 是否只读
+ * @returns { value: T }
+ */
+
+function ref(value, isReadonly = false) {
+  const wrapper = {
+    value
+  }; //定义变量标识对象为Ref对象
+
+  Object.defineProperty(wrapper, '__isRef', {
+    value: true
+  });
+  return reactive({
+    value
+  }, true, isReadonly);
+}
+
+exports.ref = ref;
+
+function toRef(val, key) {
+  const wrapper = {
+    get value() {
+      return val[key];
+    },
+
+    set value(value) {
+      val[key] = value;
+    }
+
+  }; //定义变量标识对象为Ref对象
+
+  Object.defineProperty(wrapper, '__isRef', {
+    value: true
+  });
+  return wrapper;
+}
+
+exports.toRef = toRef;
+
+function toRefs(obj) {
+  const ret = {};
+
+  for (const key in obj) {
+    Reflect.set(ret, key, toRef(obj, key));
+  }
+
+  return ret;
+}
+
+exports.toRefs = toRefs;
+
+function track(target, p) {
+  if (!activeEffect || !activeEffect.shouldTrack) {
+    return;
+  }
+
+  let depsMap = bucket.get(target);
+
+  if (!depsMap) {
+    bucket.set(target, depsMap = new Map());
+  }
+
+  let deps = depsMap.get(p);
+
+  if (!deps) {
+    depsMap.set(p, deps = new Set());
+  }
+
+  deps.add(activeEffect);
+  activeEffect.deps.push(deps);
+}
+
+function trigger(target, p, type, value) {
+  let depsMap = bucket.get(target);
+
+  if (!depsMap) {
+    return true;
+  } //取出所有与key直接相关的副作用函数
+
+
+  let effects = depsMap.get(p); //待执行副作用函数队列
+
+  let effectsToRun = new Set(); //排除正在运行的副作用函数
+
+  effects && effects.forEach(effectFn => {
+    if (effectFn !== activeEffect) effectsToRun.add(effectFn);
+  }); //type为ADD或者DELETE或为Map类型设置值时，取出迭代相关副作用函数执行
+
+  if (type === type_1.TriggerType.ADD || type === type_1.TriggerType.DELETE || type === type_1.TriggerType.SET && (0, index_1.getType)(target) === 'Map') {
+    let iterateEffects = depsMap.get(ITERATE_KEY);
+    iterateEffects && iterateEffects.forEach(effectFn => {
+      if (effectFn !== activeEffect) effectsToRun.add(effectFn);
+    });
+  } //type为ADD或者DELETE且target为Map时，取出迭代相关副作用函数执行
+
+
+  if ((type === type_1.TriggerType.ADD || type === type_1.TriggerType.DELETE) && (0, index_1.getType)(target) === 'Map') {
+    let iterateEffects = depsMap.get(MAP_KEY_ITERATE_KEY);
+    iterateEffects && iterateEffects.forEach(effectFn => {
+      if (effectFn !== activeEffect) effectsToRun.add(effectFn);
+    });
+  } //type为ADD且target为数组时，取出数组迭代相关副作用函数执行（使用delete删除数组元素不会改变数组长度，故无需触发）
+
+
+  if (type === type_1.TriggerType.ADD && Array.isArray(target)) {
+    let lengthEffects = depsMap.get('length');
+    lengthEffects && lengthEffects.forEach(effectFn => {
+      if (effectFn !== activeEffect) effectsToRun.add(effectFn);
+    });
+  } //target为数组且直接操作数组length属性时，取出大于新length值的副作用函数执行
+
+
+  if (Array.isArray(target) && p === 'length') {
+    depsMap.forEach((effects, key) => {
+      if (Number(key) >= Number(value)) {
+        effects.forEach(effectFn => {
+          if (effectFn !== activeEffect) effectsToRun.add(effectFn);
+        });
+      }
+    });
+    let lengthEffects = depsMap.get('length');
+    lengthEffects && lengthEffects.forEach(effectFn => {
+      if (effectFn !== activeEffect) effectsToRun.add(effectFn);
+    });
+  } //执行副作用函数
+
+
+  effectsToRun.forEach(fn => {
+    if (typeof fn.options.schedule === 'function') {
+      fn.options.schedule(fn);
+    } else {
+      fn();
+    }
+  });
+  return true;
+}
+
+function cleanup(effectFn) {
+  effectFn.deps.forEach(deps => {
+    deps.delete(effectFn);
+  });
+  effectFn.deps.length = 0;
+}
+/**
  * 创建副作用函数
  * @param func 函数
  * @param options 配置
  * @returns effectFunc
  */
+
 
 function effect(func, options = {}) {
   let effectFn = function () {
@@ -1534,6 +1532,7 @@ function effect(func, options = {}) {
 
   effectFn.deps = [];
   effectFn.options = options;
+  effectFn.shouldTrack = true;
   if (!options.lazy) effectFn();
   return effectFn;
 }
