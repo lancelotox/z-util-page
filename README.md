@@ -199,3 +199,27 @@ b.text = "jack";
 //副作用函数执行改变了a对象属性值，输出值为'jack'
 console.log(a.text);
 ```
+### 8. CookieHelper
+
+```javascript
+import { CookieHelper } from 'z-util-page';
+
+// 根据Key获取值
+CookieHelper.getItem('TEST');
+
+// 根据Key获取值后从cookie中删除该值
+CookieHelper.getItemOnce('TEST');
+
+// 修改或创建cookie键值对
+CookieHelper.setItem('TEST', '身体和心灵，总有一个在路上。');
+
+// 根据key删除指定键值对
+CookieHelper.removeItem('TEST');
+
+// 判断key是否存在cookie中
+CookieHelper.exist('TEST');
+
+// 清空cookie
+CookieHelper.clear('TEST');
+```
+

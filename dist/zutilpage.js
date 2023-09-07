@@ -63,7 +63,7 @@ var __importDefault = this && this.__importDefault || function (mod) {
 Object.defineProperty(exports, "__esModule", ({
   value: true
 }));
-exports.Reactive = exports.FileHelper = exports.Http = exports.generateUUID = exports.getType = exports.parseUrl = exports.deepClone = exports.throttle = exports.debounce = void 0;
+exports.CookieHelper = exports.Reactive = exports.FileHelper = exports.Http = exports.generateUUID = exports.getType = exports.parseUrl = exports.deepClone = exports.throttle = exports.debounce = void 0;
 
 const index_1 = __importDefault(__webpack_require__(1));
 
@@ -107,6 +107,15 @@ exports.Http = index_6.default;
 const Reactive = __importStar(__webpack_require__(10));
 
 exports.Reactive = Reactive;
+
+const index_7 = __webpack_require__(13);
+
+Object.defineProperty(exports, "CookieHelper", ({
+  enumerable: true,
+  get: function () {
+    return index_7.CookieHelper;
+  }
+}));
 
 /***/ }),
 /* 1 */
@@ -1673,6 +1682,51 @@ const wrapValue = function (value) {
 };
 
 exports.wrapValue = wrapValue;
+
+/***/ }),
+/* 13 */
+/***/ ((__unused_webpack_module, exports) => {
+
+
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports.CookieHelper = void 0;
+exports.CookieHelper = {
+  getItem(key) {
+    return document.cookie.replace(new RegExp(`(?:(?:^|.*;\\s*)${key}\\s*=\\s*([^;]*).*$)|^.*$`), "$1");
+  },
+
+  getItemOnce(key) {
+    const val = exports.CookieHelper.getItem(key);
+    exports.CookieHelper.removeItem(`${key}`);
+    return val;
+  },
+
+  setItem(key, val) {
+    if (typeof val !== 'string') return;
+    document.cookie = `${key}=${val};path=/`;
+  },
+
+  removeItem(key) {
+    document.cookie = `${key}=;path=/;expires=${new Date(0).toUTCString()}`;
+  },
+
+  exist(key) {
+    const keys = document.cookie.match(/[^ =;]+(?==)/g) || [];
+    return keys.includes(key);
+  },
+
+  clear() {
+    const keys = document.cookie.match(/[^ =;]+(?==)/g);
+
+    if (keys) {
+      for (let i = keys.length; i--;) exports.CookieHelper.removeItem(keys[i]);
+    }
+  }
+
+};
 
 /***/ })
 /******/ 	]);

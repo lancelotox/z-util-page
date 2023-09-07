@@ -26,7 +26,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Reactive = exports.FileHelper = exports.Http = exports.generateUUID = exports.getType = exports.parseUrl = exports.deepClone = exports.throttle = exports.debounce = void 0;
+exports.CookieHelper = exports.Reactive = exports.FileHelper = exports.Http = exports.generateUUID = exports.getType = exports.parseUrl = exports.deepClone = exports.throttle = exports.debounce = void 0;
 const index_1 = __importDefault(require("./debounce/index"));
 exports.debounce = index_1.default;
 const index_2 = __importDefault(require("./throttle/index"));
@@ -44,3 +44,5 @@ const index_6 = __importDefault(require("./http/index"));
 exports.Http = index_6.default;
 const Reactive = __importStar(require("./reactive/index"));
 exports.Reactive = Reactive;
+const index_7 = require("./cookie/index");
+Object.defineProperty(exports, "CookieHelper", { enumerable: true, get: function () { return index_7.CookieHelper; } });
