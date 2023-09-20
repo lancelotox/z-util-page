@@ -1,5 +1,5 @@
 import { Ref, Effect, DepsMap, EffectOptions, TriggerType, Instrumentations, ReactiveOptions } from './type';
-import { getSourceValue, wrapValue } from './util';
+import { wrapValue } from './util';
 import { getType } from '../deepClone/index';
 
 //对象-副作用函数映射关系字典
@@ -14,7 +14,6 @@ const ITERATE_KEY: symbol = Symbol();
 const MAP_KEY_ITERATE_KEY: symbol = Symbol();
 //取原始对象key
 const source: symbol = Symbol();
-const getSource = getSourceValue.bind({ source });
 const wrap = wrapValue.bind({ reactive });
 
 //活动副作用函数
@@ -50,7 +49,7 @@ const arrayInstrumentations: Instrumentations = {};
     Reflect.set(arrayInstrumentations, method, function (this: any, ...args: Array<any>): boolean | number {
       if(activeEffect) activeEffect.shouldTrack = false;
       let res: any = originMethod.apply(this, args.map((arg) => {
-        return getSource(arg);
+        return toRaw(arg);
       }));
       if(activeEffect) activeEffect.shouldTrack = true;
       return res;
@@ -143,7 +142,7 @@ const mutableInstrumentations: Instrumentations = {};
       return false;
     }
     //取原始值
-    const orgin = getSource(key);
+    const orgin = toRaw(key);
     //判断值是否已存在
     const hadkey = target.has(orgin);
     const res = target.add(orgin);
@@ -157,7 +156,7 @@ const mutableInstrumentations: Instrumentations = {};
     //是否浅代理、只读
     const { isShadow, isReadonly } = reactiveMap.get(target) || {};
     //取原始值, 避免数据污染
-    const orginKey = getSource(key);
+    const orginKey = toRaw(key);
     //只读对象或者key为symbol时不进行追踪
     if (!isReadonly) track(target, orginKey);
     const res = target.get(orginKey);
@@ -182,8 +181,8 @@ const mutableInstrumentations: Instrumentations = {};
       return false;
     }
     //取原始值, 避免数据污染
-    const orginKey = getSource(key);
-    const orginValue = getSource(value);
+    const orginKey = toRaw(key);
+    const orginValue = toRaw(value);
     //判断是否已存在
     const hadKey = target.has(orginKey);
     //取出旧值
@@ -200,7 +199,7 @@ const mutableInstrumentations: Instrumentations = {};
     //获取原始对象
     const target = Reflect.get(this, source);
     //取原始值
-    const orgin = getSource(key);
+    const orgin = toRaw(key);
     //判断值是否已存在
     const hadkey = target.has(orgin);
     const res = target.delete(orgin);
@@ -292,7 +291,7 @@ function reactive<T extends object>(value: T, isShadow = false, isReadonly = fal
         ? Number(p) < target.length ? TriggerType.SET : TriggerType.ADD
         : Object.prototype.hasOwnProperty.call(target, p) ? TriggerType.SET : TriggerType.ADD;
       //取原始值
-      const orgin = getSource(value);
+      const orgin = toRaw(value);
       //非浅代理时设置原始对象而非响应对象
       const res = Reflect.set(target, p, orgin, reciver);
       if (target === Reflect.get(reciver, source)) {
@@ -538,6 +537,13 @@ function watch(source: Function | object, cb: Function, options: EffectOptions =
   else oldValue = effectFn();
 }
 
+/**
+ * 获取原始对象
+ */
+function toRaw(proxy: any){
+  return Reflect.get((typeof proxy === 'object' && proxy !== null) ? proxy : {}, source) || proxy;
+}
+
 export {
   ref,
   toRef,
@@ -546,4 +552,5 @@ export {
   effect,
   computed,
   watch,
+  toRaw,
 }

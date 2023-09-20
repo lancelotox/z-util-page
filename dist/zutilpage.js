@@ -1003,7 +1003,7 @@ exports.UploadMessage = UploadMessage;
 Object.defineProperty(exports, "__esModule", ({
   value: true
 }));
-exports.watch = exports.computed = exports.effect = exports.reactive = exports.toRefs = exports.toRef = exports.ref = void 0;
+exports.toRaw = exports.watch = exports.computed = exports.effect = exports.reactive = exports.toRefs = exports.toRef = exports.ref = void 0;
 
 const type_1 = __webpack_require__(11);
 
@@ -1023,9 +1023,6 @@ const ITERATE_KEY = Symbol(); //MapKey迭代标识
 const MAP_KEY_ITERATE_KEY = Symbol(); //取原始对象key
 
 const source = Symbol();
-const getSource = util_1.getSourceValue.bind({
-  source
-});
 const wrap = util_1.wrapValue.bind({
   reactive
 }); //活动副作用函数
@@ -1060,7 +1057,7 @@ const arrayInstrumentations = {};
     Reflect.set(arrayInstrumentations, method, function (...args) {
       if (activeEffect) activeEffect.shouldTrack = false;
       let res = originMethod.apply(this, args.map(arg => {
-        return getSource(arg);
+        return toRaw(arg);
       }));
       if (activeEffect) activeEffect.shouldTrack = true;
       return res;
@@ -1176,7 +1173,7 @@ const mutableInstrumentations = {};
     } //取原始值
 
 
-    const orgin = getSource(key); //判断值是否已存在
+    const orgin = toRaw(key); //判断值是否已存在
 
     const hadkey = target.has(orgin);
     const res = target.add(orgin); //当值不存在时触发副作用函数
@@ -1196,7 +1193,7 @@ const mutableInstrumentations = {};
       isReadonly
     } = reactiveMap.get(target) || {}; //取原始值, 避免数据污染
 
-    const orginKey = getSource(key); //只读对象或者key为symbol时不进行追踪
+    const orginKey = toRaw(key); //只读对象或者key为symbol时不进行追踪
 
     if (!isReadonly) track(target, orginKey);
     const res = target.get(orginKey); //浅代理模式直接返回原始值
@@ -1227,8 +1224,8 @@ const mutableInstrumentations = {};
     } //取原始值, 避免数据污染
 
 
-    const orginKey = getSource(key);
-    const orginValue = getSource(value); //判断是否已存在
+    const orginKey = toRaw(key);
+    const orginValue = toRaw(value); //判断是否已存在
 
     const hadKey = target.has(orginKey); //取出旧值
 
@@ -1245,7 +1242,7 @@ const mutableInstrumentations = {};
     //获取原始对象
     const target = Reflect.get(this, source); //取原始值
 
-    const orgin = getSource(key); //判断值是否已存在
+    const orgin = toRaw(key); //判断值是否已存在
 
     const hadkey = target.has(orgin);
     const res = target.delete(orgin); //当值存在时触发副作用函数
@@ -1351,7 +1348,7 @@ function reactive(value, isShadow = false, isReadonly = false) {
 
       const type = Array.isArray(target) ? Number(p) < target.length ? type_1.TriggerType.SET : type_1.TriggerType.ADD : Object.prototype.hasOwnProperty.call(target, p) ? type_1.TriggerType.SET : type_1.TriggerType.ADD; //取原始值
 
-      const orgin = getSource(value); //非浅代理时设置原始对象而非响应对象
+      const orgin = toRaw(value); //非浅代理时设置原始对象而非响应对象
 
       const res = Reflect.set(target, p, orgin, reciver);
 
@@ -1636,6 +1633,15 @@ function watch(source, cb, options = {}) {
 }
 
 exports.watch = watch;
+/**
+ * 获取原始对象
+ */
+
+function toRaw(proxy) {
+  return Reflect.get(typeof proxy === 'object' && proxy !== null ? proxy : {}, source) || proxy;
+}
+
+exports.toRaw = toRaw;
 
 /***/ }),
 /* 11 */
@@ -1664,18 +1670,7 @@ var TriggerType;
 Object.defineProperty(exports, "__esModule", ({
   value: true
 }));
-exports.wrapValue = exports.getSourceValue = void 0;
-/**
- * 取原始值
- * @param value
- * @returns
- */
-
-const getSourceValue = function (value) {
-  return Reflect.get(typeof value === 'object' && value !== null ? value : {}, this.source || Symbol()) || value;
-};
-
-exports.getSourceValue = getSourceValue;
+exports.wrapValue = void 0;
 
 const wrapValue = function (value) {
   return typeof value === 'object' && value !== null ? this.reactive(value) : value;

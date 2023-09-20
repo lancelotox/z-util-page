@@ -40,4 +40,8 @@ declare function computed(getter: Function): {
  * @param options 配置
  */
 declare function watch(source: Function | object, cb: Function, options?: EffectOptions): void;
-export { ref, toRef, toRefs, reactive, effect, computed, watch, };
+/**
+ * 获取原始对象
+ */
+declare function toRaw(proxy: any): any;
+export { ref, toRef, toRefs, reactive, effect, computed, watch, toRaw, };

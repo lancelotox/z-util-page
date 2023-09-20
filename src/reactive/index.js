@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.watch = exports.computed = exports.effect = exports.reactive = exports.toRefs = exports.toRef = exports.ref = void 0;
+exports.toRaw = exports.watch = exports.computed = exports.effect = exports.reactive = exports.toRefs = exports.toRef = exports.ref = void 0;
 const type_1 = require("./type");
 const util_1 = require("./util");
 const index_1 = require("../deepClone/index");
@@ -16,7 +16,6 @@ const ITERATE_KEY = Symbol();
 const MAP_KEY_ITERATE_KEY = Symbol();
 //取原始对象key
 const source = Symbol();
-const getSource = util_1.getSourceValue.bind({ source });
 const wrap = util_1.wrapValue.bind({ reactive });
 //活动副作用函数
 let activeEffect = null;
@@ -52,7 +51,7 @@ const arrayInstrumentations = {};
             if (activeEffect)
                 activeEffect.shouldTrack = false;
             let res = originMethod.apply(this, args.map((arg) => {
-                return getSource(arg);
+                return toRaw(arg);
             }));
             if (activeEffect)
                 activeEffect.shouldTrack = true;
@@ -145,7 +144,7 @@ const mutableInstrumentations = {};
             return false;
         }
         //取原始值
-        const orgin = getSource(key);
+        const orgin = toRaw(key);
         //判断值是否已存在
         const hadkey = target.has(orgin);
         const res = target.add(orgin);
@@ -161,7 +160,7 @@ const mutableInstrumentations = {};
         //是否浅代理、只读
         const { isShadow, isReadonly } = reactiveMap.get(target) || {};
         //取原始值, 避免数据污染
-        const orginKey = getSource(key);
+        const orginKey = toRaw(key);
         //只读对象或者key为symbol时不进行追踪
         if (!isReadonly)
             track(target, orginKey);
@@ -189,8 +188,8 @@ const mutableInstrumentations = {};
             return false;
         }
         //取原始值, 避免数据污染
-        const orginKey = getSource(key);
-        const orginValue = getSource(value);
+        const orginKey = toRaw(key);
+        const orginValue = toRaw(value);
         //判断是否已存在
         const hadKey = target.has(orginKey);
         //取出旧值
@@ -208,7 +207,7 @@ const mutableInstrumentations = {};
         //获取原始对象
         const target = Reflect.get(this, source);
         //取原始值
-        const orgin = getSource(key);
+        const orgin = toRaw(key);
         //判断值是否已存在
         const hadkey = target.has(orgin);
         const res = target.delete(orgin);
@@ -309,7 +308,7 @@ function reactive(value, isShadow = false, isReadonly = false) {
                 ? Number(p) < target.length ? type_1.TriggerType.SET : type_1.TriggerType.ADD
                 : Object.prototype.hasOwnProperty.call(target, p) ? type_1.TriggerType.SET : type_1.TriggerType.ADD;
             //取原始值
-            const orgin = getSource(value);
+            const orgin = toRaw(value);
             //非浅代理时设置原始对象而非响应对象
             const res = Reflect.set(target, p, orgin, reciver);
             if (target === Reflect.get(reciver, source)) {
@@ -561,3 +560,10 @@ function watch(source, cb, options = {}) {
         oldValue = effectFn();
 }
 exports.watch = watch;
+/**
+ * 获取原始对象
+ */
+function toRaw(proxy) {
+    return Reflect.get((typeof proxy === 'object' && proxy !== null) ? proxy : {}, source) || proxy;
+}
+exports.toRaw = toRaw;
