@@ -467,7 +467,9 @@ function effect(func: Function, options: EffectOptions = {}) {
  * @param getter 
  * @returns { value: any }
  */
-function computed(getter: Function) {
+function computed<T>(getter: () => {
+  readonly value: T
+}) {
   let value: any;
   let dirty = true;
   const effectFn = effect(getter, {
@@ -540,7 +542,7 @@ function watch(source: Function | object, cb: Function, options: EffectOptions =
 /**
  * 获取原始对象
  */
-function toRaw(proxy: any){
+function toRaw<T>(proxy: T): T{
   return Reflect.get((typeof proxy === 'object' && proxy !== null) ? proxy : {}, source) || proxy;
 }
 

@@ -30,7 +30,9 @@ declare function effect(func: Function, options?: EffectOptions): Effect;
  * @param getter
  * @returns { value: any }
  */
-declare function computed(getter: Function): {
+declare function computed<T>(getter: () => {
+    readonly value: T;
+}): {
     readonly value: any;
 };
 /**
@@ -43,5 +45,5 @@ declare function watch(source: Function | object, cb: Function, options?: Effect
 /**
  * 获取原始对象
  */
-declare function toRaw(proxy: any): any;
+declare function toRaw<T>(proxy: T): T;
 export { ref, toRef, toRefs, reactive, effect, computed, watch, toRaw, };
