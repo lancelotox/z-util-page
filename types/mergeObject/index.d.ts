@@ -4,7 +4,7 @@
  * @param ob 被合并对象
  * @param more 其余被合并对象
  */
-export declare function mergeObject(origin: StandardObject, ob: StandardObject | undefined, ...more: Array<StandardObject>): StandardObject;
+export declare function mergeObject<T extends StandardObject>(origin: T, ob: StandardObject | undefined, ...more: Array<StandardObject>): T;
 interface StandardObject {
     [name: string]: any;
 }

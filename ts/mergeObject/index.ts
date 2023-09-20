@@ -6,9 +6,9 @@ import { getType } from "../deepClone/index";
  * @param ob 被合并对象
  * @param more 其余被合并对象
  */
-export function mergeObject(origin: StandardObject, ob: StandardObject | undefined, ...more: Array<StandardObject>): StandardObject {
+export function mergeObject<T extends StandardObject>(origin: T, ob: StandardObject | undefined, ...more: Array<StandardObject>): T {
   do {
-    origin = merge(origin, ob);
+    origin = merge<T>(origin, ob);
     ob = more.pop();
   } while (ob);
   return origin;
@@ -18,7 +18,7 @@ interface StandardObject {
   [name: string]: any
 }
 
-function merge(origin: StandardObject, ob: StandardObject | undefined): StandardObject {
+function merge<T extends StandardObject>(origin: T, ob: StandardObject | undefined): T {
   if (ob === undefined) return origin;
   if (getType(origin) !== 'Object' || getType(ob) !== 'Object') return origin;
 
@@ -26,7 +26,7 @@ function merge(origin: StandardObject, ob: StandardObject | undefined): Standard
     const oldVal = origin[key];
     const newVal = ob[key];
     if (oldVal !== newVal && newVal !== undefined) {
-      if (getType(oldVal) !== 'Object') origin[key] = newVal;
+      if (getType(oldVal) !== 'Object') origin[key as keyof T] = newVal;
       else merge(oldVal, newVal);
     }
   }
