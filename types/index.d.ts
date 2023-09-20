@@ -7,4 +7,5 @@ import * as FileHelper from "./file/index";
 import Http from "./http/index";
 import * as Reactive from "./reactive/index";
 import { CookieHelper } from "./cookie/index";
-export { debounce, throttle, deepClone, parseUrl, getType, generateUUID, Http, FileHelper, Reactive, CookieHelper };
+import { mergeObject } from "./mergeObject/index";
+export { debounce, throttle, deepClone, parseUrl, getType, generateUUID, Http, FileHelper, Reactive, CookieHelper, mergeObject };

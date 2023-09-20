@@ -5,64 +5,64 @@
  */
 let cacheMap = new WeakMap<object, any>();
 interface HandleMap {
-    [propName: string]: Function
+  [propName: string]: Function
 }
 const typeHandleMap: HandleMap = {
-    'Object': function (value: any) {
-        let cloneTarget = new value.constructor();
-        forEach(Object.keys(value), function (val: any, key: number) {
-            cloneTarget[val] = deepClone(value[val]);
-        });
-        return cloneTarget;
-    },
-    'Array': function (value: any) {
-        let cloneTarget: Array<any> = [];
-        forEach(value, function (val: any, key: number) {
-            cloneTarget[key] = deepClone(value[key]);
-        });
-        return cloneTarget;
-    },
-    'Set': function (value: any) {
-        let cloneTarget = new value.constructor();
-        value.forEach(function (val: any) {
-            cloneTarget.add(deepClone(val));
-        });
-        return cloneTarget;
-    },
-    'Map': function (value: any) {
-        let cloneTarget = new value.constructor();
-        value.forEach(function (val: any, key: any) {
-            cloneTarget.set(deepClone(key), deepClone(val));
-        });
-        return cloneTarget;
-    },
-    'Symbol': function (value: Symbol) {
-        return Object(Symbol.prototype.valueOf.call(value));
-    },
-    'HTMLElement': function (value: HTMLElement) {
-        return value.cloneNode(true);
-    },
-    'Error': function(value: any){
-        return new value.constructor(value.message);
-    }
+  'Object': function (value: any) {
+    let cloneTarget = new value.constructor();
+    forEach(Object.keys(value), function (val: any, key: number) {
+      cloneTarget[val] = deepClone(value[val]);
+    });
+    return cloneTarget;
+  },
+  'Array': function (value: any) {
+    let cloneTarget: Array<any> = [];
+    forEach(value, function (val: any, key: number) {
+      cloneTarget[key] = deepClone(value[key]);
+    });
+    return cloneTarget;
+  },
+  'Set': function (value: any) {
+    let cloneTarget = new value.constructor();
+    value.forEach(function (val: any) {
+      cloneTarget.add(deepClone(val));
+    });
+    return cloneTarget;
+  },
+  'Map': function (value: any) {
+    let cloneTarget = new value.constructor();
+    value.forEach(function (val: any, key: any) {
+      cloneTarget.set(deepClone(key), deepClone(val));
+    });
+    return cloneTarget;
+  },
+  'Symbol': function (value: Symbol) {
+    return Object(Symbol.prototype.valueOf.call(value));
+  },
+  'HTMLElement': function (value: HTMLElement) {
+    return value.cloneNode(true);
+  },
+  'Error': function (value: any) {
+    return new value.constructor(value.message);
+  }
 }
 const baseTypeList = ['boolean', 'number', 'string', 'undefined', "function", "symbol", 'Null', "Math", "Json", "Global"];
 const simpleTypeList = ["Boolean", "Number", 'String', 'Date', "Regexp"];
 function deepClone(value: any) {
-    let type: string = typeof value;
-    if (type === 'object') type = getType(value);
-    if (value instanceof HTMLElement) type = 'HTMLElement';
-    if (baseTypeList.includes(type)) return value;
-    else if (simpleTypeList.includes(type)) return new value.constructor(value);
-    let cloneTarget = cacheMap.get(value);
-    if (cloneTarget === undefined) {
-        let handle = typeHandleMap[type];
-        if (handle) cloneTarget = handle(value);
-        else cloneTarget = value;
-        cacheMap.set(value, cloneTarget);
-    }
-    clear();
-    return cloneTarget;
+  let type: string = typeof value;
+  if (type === 'object') type = getType(value);
+  if (value instanceof HTMLElement) type = 'HTMLElement';
+  if (baseTypeList.includes(type)) return value;
+  else if (simpleTypeList.includes(type)) return new value.constructor(value);
+  let cloneTarget = cacheMap.get(value);
+  if (cloneTarget === undefined) {
+    let handle = typeHandleMap[type];
+    if (handle) cloneTarget = handle(value);
+    else cloneTarget = value;
+    cacheMap.set(value, cloneTarget);
+  }
+  clear();
+  return cloneTarget;
 }
 
 /**
@@ -70,16 +70,16 @@ function deepClone(value: any) {
  */
 let isFlush = false;
 function clear() {
-    if (!isFlush) {
-        isFlush = true;
-        let promise = Promise.resolve();
-        promise.then(function () {
-            cacheMap = new WeakMap<object, any>();
-        });
-        promise.finally(function () {
-            isFlush = false;
-        });
-    }
+  if (!isFlush) {
+    isFlush = true;
+    let promise = Promise.resolve();
+    promise.then(function () {
+      cacheMap = new WeakMap<object, any>();
+    });
+    promise.finally(function () {
+      isFlush = false;
+    });
+  }
 }
 
 /**
@@ -88,11 +88,11 @@ function clear() {
  * @param handle 循环行为
  */
 function forEach(list: Array<any>, handle: Function) {
-    let index: number = -1;
-    let length = list.length;
-    while (++index < length) {
-        handle(list[index], index);
-    }
+  let index: number = -1;
+  let length = list.length;
+  while (++index < length) {
+    handle(list[index], index);
+  }
 }
 
 /**
@@ -101,15 +101,15 @@ function forEach(list: Array<any>, handle: Function) {
  * @returns 类型字符串, 'String'、'Map'
  */
 function getType(value: any): string {
-    try {
-        return Object.prototype.toString.call(value).match(/\[.+\s(.+)\]/)![1];
-    } catch (e) {
-        throw (e);
-    }
+  try {
+    return Object.prototype.toString.call(value).match(/\[.+\s(.+)\]/)![1];
+  } catch (e) {
+    throw (e);
+  }
 }
 
 export {
-    deepClone,
-    getType
+  deepClone,
+  getType
 }
 

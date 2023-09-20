@@ -1,6 +1,6 @@
 {
   "name": "z-util-page",
-  "version": "2.2.2",
+  "version": "2.2.5",
   "description": "javascript utils",
   "main": "./lib/zutilpage.js",
   "type": "commonjs",
