@@ -8,7 +8,7 @@ declare function saveFile(file: string | Blob, saveFileName?: string): void;
  * 文件读取
  * @param file File对象或Blob对象
  */
-declare type callback = (res: any) => void;
+type callback = (res: any) => void;
 declare class FileReaderDecorate {
     reader: FileReader;
     file: File | Blob;

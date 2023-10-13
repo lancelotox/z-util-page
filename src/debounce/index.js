@@ -7,15 +7,19 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * @param immediatel 是否立刻执行
  */
 function debounce(func, wait, immediatel) {
-    let timeout, content, args, callbacks = [], res;
-    const debounced = function (...args) {
+    var timeout, content, args, callbacks = [], res;
+    var debounced = function () {
+        var args = [];
+        for (var _i = 0; _i < arguments.length; _i++) {
+            args[_i] = arguments[_i];
+        }
         content = this;
         if (immediatel && !timeout) {
             res = func.apply(content, args);
-            let resolvedRes = res;
+            var resolvedRes_1 = res;
             callbacks.forEach(function (callback) {
                 if (callback instanceof Function)
-                    resolvedRes = callback(resolvedRes);
+                    resolvedRes_1 = callback(resolvedRes_1);
             });
         }
         if (timeout)

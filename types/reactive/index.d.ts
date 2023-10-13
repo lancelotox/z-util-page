@@ -14,9 +14,20 @@ declare function reactive<T extends object>(value: T, isShadow?: boolean, isRead
  * @returns { value: T }
  */
 declare function ref<T>(value: T, isReadonly?: boolean): Ref<T>;
+/**
+ * 将响应式对象的某键值转为ref
+ * @param val 响应式对象
+ * @param key 键值
+ * @returns Ref
+ */
 declare function toRef(val: any, key: string | symbol): {
     value: any;
 };
+/**
+ * 将响应式对象的键值全部转换为Ref, 可解构使用
+ * @param obj 响应式对象
+ * @returns
+ */
 declare function toRefs(obj: any): {};
 /**
  * 创建副作用函数
@@ -46,4 +57,4 @@ declare function watch(source: Function | object, cb: Function, options?: Effect
  * 获取原始对象
  */
 declare function toRaw<T>(proxy: T): T;
-export { ref, toRef, toRefs, reactive, effect, computed, watch, toRaw, };
+export { reactive, ref, toRef, toRefs, effect, computed, watch, toRaw, };

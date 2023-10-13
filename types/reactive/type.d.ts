@@ -9,20 +9,21 @@ export interface Ref<T> {
 export interface Effect {
     (): any;
     deps: Array<Set<Effect>>;
+    childs: Array<Effect>;
     options: EffectOptions;
     shouldTrack: boolean;
 }
-export declare type DepsMap = Map<string | symbol, Set<Effect>>;
-export declare type EffectOptions = {
+export type DepsMap = Map<string | symbol, Set<Effect>>;
+export type EffectOptions = {
     schedule?: Function;
     lazy?: boolean;
     immediate?: boolean;
     flush?: 'post' | '';
 };
-export declare type Instrumentations = {
+export type Instrumentations = {
     [propName: string | symbol]: Function;
 };
-export declare type ReactiveOptions = {
+export type ReactiveOptions = {
     value: any;
     isShadow: boolean;
     isReadonly: boolean;

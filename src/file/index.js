@@ -1,14 +1,15 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.choose = exports.read = exports.write = void 0;
-const index_1 = require("../helper/index");
+var index_1 = require("../helper/index");
 /**
  * H5文件下载方法
  * @param url 资源链接或者blob对象
  * @param saveFileName 保存文件名
  */
-function saveFile(file, saveFileName = '') {
-    let url = '';
+function saveFile(file, saveFileName) {
+    if (saveFileName === void 0) { saveFileName = ''; }
+    var url = '';
     if (typeof file === 'string') {
         url = file;
     }
@@ -20,7 +21,7 @@ function saveFile(file, saveFileName = '') {
             console.log(error);
         }
     }
-    let alink = document.createElement('a');
+    var alink = document.createElement('a');
     alink.href = url;
     alink.download = saveFileName || '';
     alink.style.display = 'none';
@@ -30,79 +31,149 @@ function saveFile(file, saveFileName = '') {
     document.body.removeChild(alink);
 }
 exports.write = saveFile;
-class FileReaderDecorate {
-    constructor(file) {
+var FileReaderDecorate = /** @class */ (function () {
+    function FileReaderDecorate(file) {
+        Object.defineProperty(this, "reader", {
+            enumerable: true,
+            configurable: true,
+            writable: true,
+            value: void 0
+        });
+        Object.defineProperty(this, "file", {
+            enumerable: true,
+            configurable: true,
+            writable: true,
+            value: void 0
+        });
         this.reader = new FileReader();
         this.file = file;
     }
     //读取操作发生中断时触发
-    abort(fun) {
-        this.reader.addEventListener('abort', () => {
-            fun(this.reader);
-        });
-        return this;
-    }
+    Object.defineProperty(FileReaderDecorate.prototype, "abort", {
+        enumerable: false,
+        configurable: true,
+        writable: true,
+        value: function (fun) {
+            var _this = this;
+            this.reader.addEventListener('abort', function () {
+                fun(_this.reader);
+            });
+            return this;
+        }
+    });
     //读取操作发生错误时触发。
-    error(fun) {
-        this.reader.addEventListener('error', () => {
-            fun(this.reader.error);
-        });
-        return this;
-    }
+    Object.defineProperty(FileReaderDecorate.prototype, "error", {
+        enumerable: false,
+        configurable: true,
+        writable: true,
+        value: function (fun) {
+            var _this = this;
+            this.reader.addEventListener('error', function () {
+                fun(_this.reader.error);
+            });
+            return this;
+        }
+    });
     //读取操作完成时触发。
-    load(fun) {
-        this.reader.addEventListener('load', () => {
-            fun(this.reader);
-        });
-        return this;
-    }
+    Object.defineProperty(FileReaderDecorate.prototype, "load", {
+        enumerable: false,
+        configurable: true,
+        writable: true,
+        value: function (fun) {
+            var _this = this;
+            this.reader.addEventListener('load', function () {
+                fun(_this.reader);
+            });
+            return this;
+        }
+    });
     //读取操作开始时触发。
-    loadstart(fun) {
-        this.reader.addEventListener('loadstart', () => {
-            fun(this.reader);
-        });
-        return this;
-    }
+    Object.defineProperty(FileReaderDecorate.prototype, "loadstart", {
+        enumerable: false,
+        configurable: true,
+        writable: true,
+        value: function (fun) {
+            var _this = this;
+            this.reader.addEventListener('loadstart', function () {
+                fun(_this.reader);
+            });
+            return this;
+        }
+    });
     //读取操作结束时（要么成功，要么失败）触发。
-    loadend(fun) {
-        this.reader.addEventListener('loadend', () => {
-            fun(this.reader.result);
-        });
-        return this;
-    }
+    Object.defineProperty(FileReaderDecorate.prototype, "loadend", {
+        enumerable: false,
+        configurable: true,
+        writable: true,
+        value: function (fun) {
+            var _this = this;
+            this.reader.addEventListener('loadend', function () {
+                fun(_this.reader.result);
+            });
+            return this;
+        }
+    });
     //在读取Blob时触发。
-    progress(fun) {
-        this.reader.addEventListener('progress', () => {
-            fun(this.reader);
-        });
-        return this;
-    }
-    getStatus() {
-        return this.reader.readyState;
-    }
-    getResult() {
-        return this.reader.result;
-    }
-    start(type) {
-        try {
-            Reflect.get(this.reader, "readAs" + type).call(this.reader, this.file);
+    Object.defineProperty(FileReaderDecorate.prototype, "progress", {
+        enumerable: false,
+        configurable: true,
+        writable: true,
+        value: function (fun) {
+            var _this = this;
+            this.reader.addEventListener('progress', function () {
+                fun(_this.reader);
+            });
+            return this;
         }
-        catch (error) {
-            console.error(error);
+    });
+    Object.defineProperty(FileReaderDecorate.prototype, "getStatus", {
+        enumerable: false,
+        configurable: true,
+        writable: true,
+        value: function () {
+            return this.reader.readyState;
         }
-        return this;
-    }
-    stop() {
-        this.reader.abort();
-        return this;
-    }
-}
+    });
+    Object.defineProperty(FileReaderDecorate.prototype, "getResult", {
+        enumerable: false,
+        configurable: true,
+        writable: true,
+        value: function () {
+            return this.reader.result;
+        }
+    });
+    Object.defineProperty(FileReaderDecorate.prototype, "start", {
+        enumerable: false,
+        configurable: true,
+        writable: true,
+        value: function (type) {
+            try {
+                Reflect.get(this.reader, "readAs" + type).call(this.reader, this.file);
+            }
+            catch (error) {
+                console.error(error);
+            }
+            return this;
+        }
+    });
+    Object.defineProperty(FileReaderDecorate.prototype, "stop", {
+        enumerable: false,
+        configurable: true,
+        writable: true,
+        value: function () {
+            this.reader.abort();
+            return this;
+        }
+    });
+    return FileReaderDecorate;
+}());
 function readFile(file) {
     return new FileReaderDecorate(file);
 }
 exports.read = readFile;
-function chooseFile(callback, options = {}) {
-    const input = document.createElement('input');
+function chooseFile(callback, options) {
+    if (options === void 0) { options = {}; }
+    var input = document.createElement('input');
     input.setAttribute('type', 'file');
     input.setAttribute('accept', (options.accept || []).join(','));
     input.setAttribute('capture', options.capture || '');

@@ -67,6 +67,6 @@ interface Interceptor {
     request: (func: Function) => void;
     response: (func: Function) => void;
 }
-declare type Callback = (res: ResponseMessage) => void;
-declare type ContentType = "" | "application/x-www-form-urlencoded" | "text/plain" | "multipart/form-data" | "application/json";
+type Callback = (res: ResponseMessage) => void;
+type ContentType = "" | "application/x-www-form-urlencoded" | "text/plain" | "multipart/form-data" | "application/json";
 export default Http;
