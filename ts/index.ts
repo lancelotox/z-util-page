@@ -10,15 +10,15 @@ import { CookieHelper } from "./cookie/index";
 import { mergeObject } from "./mergeObject/index";
 
 export {
-    debounce,
-    throttle,
-    deepClone,
-    parseUrl,
-    getType,
-    generateUUID,
-    Http,
-    FileHelper,
-    Reactive,
-    CookieHelper,
-    mergeObject
+  debounce,
+  throttle,
+  deepClone,
+  parseUrl,
+  getType,
+  generateUUID,
+  mergeObject,
+  Http,
+  FileHelper,
+  Reactive,
+  CookieHelper,
 }

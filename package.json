@@ -1,12 +1,12 @@
 {
   "name": "z-util-page",
   "version": "2.3.0",
-  "description": "javascript utils",
+  "description": "web utils",
   "main": "./lib/zutilpage.js",
   "type": "commonjs",
   "types": "./types/index.d.ts",
   "module": "./src/index.js",
-  "repository": "https://gitee.com/lancelotox/zUtilPages",
+  "repository": "https://github.com/lancelotox/z-util-page",
   "scripts": {
     "clean": "rimraf lib dist src types coverage",
     "build": "node build.js && tsc",

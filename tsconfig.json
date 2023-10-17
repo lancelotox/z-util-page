@@ -11,7 +11,7 @@
     // 输出目录
     "outDir": "src",
     // 指定编译后ECMAScript目标版本
-    "target": "ES5",
+    "target": "ES6",
     // 指定编译后代码的模块系统 "None"， "CommonJS"， "AMD"， "System"， "UMD"， "ES6"或 "ES2015"
     "module": "CommonJS",
     // 以严格模式解析并为每个源文件生成 "use strict"语句
