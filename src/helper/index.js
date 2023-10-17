@@ -12,9 +12,9 @@ function clickElement(el) {
         el.dispatchEvent(new MouseEvent('click'));
     }
     else {
-        var event_1 = document.createEvent('MouseEvents');
-        event_1.initMouseEvent('click', true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
-        el.dispatchEvent(event_1);
+        let event = document.createEvent('MouseEvents');
+        event.initMouseEvent('click', true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
+        el.dispatchEvent(event);
     }
 }
 exports.clickElement = clickElement;

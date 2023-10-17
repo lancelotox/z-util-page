@@ -6,10 +6,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * @returns URLWithParam
  */
 function parseUrl(url) {
-    var Url = null;
-    var param = {};
+    let Url = null;
+    const param = {};
     try {
-        var temp = new URL(url);
+        const temp = new URL(url);
         Url = {
             hash: temp.hash,
             host: temp.host,
@@ -30,9 +30,9 @@ function parseUrl(url) {
     }
     if (Url === null)
         return null;
-    var search = Url.search.slice(1);
-    var paramList = search.split('&').map(function (item) { return item.split('='); });
-    paramList.forEach(function (item) {
+    const search = Url.search.slice(1);
+    const paramList = search.split('&').map(item => item.split('='));
+    paramList.forEach(item => {
         param[item[0]] = item[1];
     });
     return Url;

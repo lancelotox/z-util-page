@@ -2,30 +2,30 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CookieHelper = void 0;
 exports.CookieHelper = {
-    getItem: function (key) {
-        return document.cookie.replace(new RegExp("(?:(?:^|.*;\\s*)".concat(key, "\\s*=\\s*([^;]*).*$)|^.*$")), "$1");
+    getItem(key) {
+        return document.cookie.replace(new RegExp(`(?:(?:^|.*;\\s*)${key}\\s*=\\s*([^;]*).*$)|^.*$`), "$1");
     },
-    getItemOnce: function (key) {
-        var val = exports.CookieHelper.getItem(key);
-        exports.CookieHelper.removeItem("".concat(key));
+    getItemOnce(key) {
+        const val = exports.CookieHelper.getItem(key);
+        exports.CookieHelper.removeItem(`${key}`);
         return val;
     },
-    setItem: function (key, val) {
+    setItem(key, val) {
         if (typeof val !== 'string')
             return;
-        document.cookie = "".concat(key, "=").concat(val, ";path=/");
+        document.cookie = `${key}=${val};path=/`;
     },
-    removeItem: function (key) {
-        document.cookie = "".concat(key, "=;path=/;expires=").concat(new Date(0).toUTCString());
+    removeItem(key) {
+        document.cookie = `${key}=;path=/;expires=${new Date(0).toUTCString()}`;
     },
-    exist: function (key) {
-        var keys = document.cookie.match(/[^ =;]+(?==)/g) || [];
+    exist(key) {
+        const keys = document.cookie.match(/[^ =;]+(?==)/g) || [];
         return keys.includes(key);
     },
-    clear: function () {
-        var keys = document.cookie.match(/[^ =;]+(?==)/g);
+    clear() {
+        const keys = document.cookie.match(/[^ =;]+(?==)/g);
         if (keys) {
-            for (var i = keys.length; i--;)
+            for (let i = keys.length; i--;)
                 exports.CookieHelper.removeItem(keys[i]);
         }
     }

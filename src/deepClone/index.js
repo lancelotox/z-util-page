@@ -5,31 +5,31 @@ exports.getType = exports.deepClone = void 0;
  * 深拷贝
  * @param value 待克隆值
  */
-var cacheMap = new WeakMap();
-var typeHandleMap = {
+let cacheMap = new WeakMap();
+const typeHandleMap = {
     'Object': function (value) {
-        var cloneTarget = new value.constructor();
+        let cloneTarget = new value.constructor();
         forEach(Object.keys(value), function (val, key) {
             cloneTarget[val] = deepClone(value[val]);
         });
         return cloneTarget;
     },
     'Array': function (value) {
-        var cloneTarget = [];
+        let cloneTarget = [];
         forEach(value, function (val, key) {
             cloneTarget[key] = deepClone(value[key]);
         });
         return cloneTarget;
     },
     'Set': function (value) {
-        var cloneTarget = new value.constructor();
+        let cloneTarget = new value.constructor();
         value.forEach(function (val) {
             cloneTarget.add(deepClone(val));
         });
         return cloneTarget;
     },
     'Map': function (value) {
-        var cloneTarget = new value.constructor();
+        let cloneTarget = new value.constructor();
         value.forEach(function (val, key) {
             cloneTarget.set(deepClone(key), deepClone(val));
         });
@@ -45,10 +45,10 @@ var typeHandleMap = {
         return new value.constructor(value.message);
     }
 };
-var baseTypeList = ['boolean', 'number', 'string', 'undefined', "function", "symbol", 'Null', "Math", "Json", "Global"];
-var simpleTypeList = ["Boolean", "Number", 'String', 'Date', "Regexp"];
+const baseTypeList = ['boolean', 'number', 'string', 'undefined', "function", "symbol", 'Null', "Math", "Json", "Global"];
+const simpleTypeList = ["Boolean", "Number", 'String', 'Date', "Regexp"];
 function deepClone(value) {
-    var type = typeof value;
+    let type = typeof value;
     if (type === 'object')
         type = getType(value);
     if (value instanceof HTMLElement)
@@ -57,9 +57,9 @@ function deepClone(value) {
         return value;
     else if (simpleTypeList.includes(type))
         return new value.constructor(value);
-    var cloneTarget = cacheMap.get(value);
+    let cloneTarget = cacheMap.get(value);
     if (cloneTarget === undefined) {
-        var handle = typeHandleMap[type];
+        let handle = typeHandleMap[type];
         if (handle)
             cloneTarget = handle(value);
         else
@@ -73,11 +73,11 @@ exports.deepClone = deepClone;
 /**
  * 清理缓存
  */
-var isFlush = false;
+let isFlush = false;
 function clear() {
     if (!isFlush) {
         isFlush = true;
-        var promise = Promise.resolve();
+        let promise = Promise.resolve();
         promise.then(function () {
             cacheMap = new WeakMap();
         });
@@ -92,8 +92,8 @@ function clear() {
  * @param handle 循环行为
  */
 function forEach(list, handle) {
-    var index = -1;
-    var length = list.length;
+    let index = -1;
+    let length = list.length;
     while (++index < length) {
         handle(list[index], index);
     }

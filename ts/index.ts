@@ -8,6 +8,7 @@ import Http from "./http/index";
 import * as Reactive from "./reactive/index";
 import { CookieHelper } from "./cookie/index";
 import { mergeObject } from "./mergeObject/index";
+import * as Dom from "./dom/index";
 
 export {
   debounce,
@@ -20,5 +21,6 @@ export {
   Http,
   FileHelper,
   Reactive,
+  Dom,
   CookieHelper,
 }

@@ -438,22 +438,18 @@ Object.defineProperty(exports, "__esModule", ({
  * @param immediatel 是否立刻执行
  */
 function debounce(func, wait, immediatel) {
-  var timeout,
+  let timeout,
     content,
     args,
     callbacks = [],
     res;
-  var debounced = function () {
-    var args = [];
-    for (var _i = 0; _i < arguments.length; _i++) {
-      args[_i] = arguments[_i];
-    }
+  const debounced = function (...args) {
     content = this;
     if (immediatel && !timeout) {
       res = func.apply(content, args);
-      var resolvedRes_1 = res;
+      let resolvedRes = res;
       callbacks.forEach(function (callback) {
-        if (callback instanceof Function) resolvedRes_1 = callback(resolvedRes_1);
+        if (callback instanceof Function) resolvedRes = callback(resolvedRes);
       });
     }
     if (timeout) clearTimeout(timeout);
@@ -486,8 +482,8 @@ exports["default"] = debounce;
 Object.defineProperty(exports, "__esModule", ({
   value: true
 }));
-var index_1 = __webpack_require__(4);
-var defaultConfig = {
+const index_1 = __webpack_require__(4);
+const defaultConfig = {
   leading: true,
   trailing: false
 };
@@ -499,17 +495,13 @@ var defaultConfig = {
  * @param option.trailing 结束是否执行
  */
 function throttle(func, wait, option) {
-  var options = Object.assign((0, index_1.deepClone)(defaultConfig), option || {});
+  let options = Object.assign((0, index_1.deepClone)(defaultConfig), option || {});
   if (options.leading === false && options.trailing === false) throw 'leading, trailing不能同时为false';
-  var timeout = null,
+  let timeout = null,
     args,
     content,
     res;
-  var throttled = function () {
-    var argList = [];
-    for (var _i = 0; _i < arguments.length; _i++) {
-      argList[_i] = arguments[_i];
-    }
+  const throttled = function (...argList) {
     args = argList;
     content = this;
     if (!timeout) {
@@ -545,31 +537,31 @@ exports.getType = exports.deepClone = void 0;
  * 深拷贝
  * @param value 待克隆值
  */
-var cacheMap = new WeakMap();
-var typeHandleMap = {
+let cacheMap = new WeakMap();
+const typeHandleMap = {
   'Object': function (value) {
-    var cloneTarget = new value.constructor();
+    let cloneTarget = new value.constructor();
     forEach(Object.keys(value), function (val, key) {
       cloneTarget[val] = deepClone(value[val]);
     });
     return cloneTarget;
   },
   'Array': function (value) {
-    var cloneTarget = [];
+    let cloneTarget = [];
     forEach(value, function (val, key) {
       cloneTarget[key] = deepClone(value[key]);
     });
     return cloneTarget;
   },
   'Set': function (value) {
-    var cloneTarget = new value.constructor();
+    let cloneTarget = new value.constructor();
     value.forEach(function (val) {
       cloneTarget.add(deepClone(val));
     });
     return cloneTarget;
   },
   'Map': function (value) {
-    var cloneTarget = new value.constructor();
+    let cloneTarget = new value.constructor();
     value.forEach(function (val, key) {
       cloneTarget.set(deepClone(key), deepClone(val));
     });
@@ -585,16 +577,16 @@ var typeHandleMap = {
     return new value.constructor(value.message);
   }
 };
-var baseTypeList = ['boolean', 'number', 'string', 'undefined', "function", "symbol", 'Null', "Math", "Json", "Global"];
-var simpleTypeList = ["Boolean", "Number", 'String', 'Date', "Regexp"];
+const baseTypeList = ['boolean', 'number', 'string', 'undefined', "function", "symbol", 'Null', "Math", "Json", "Global"];
+const simpleTypeList = ["Boolean", "Number", 'String', 'Date', "Regexp"];
 function deepClone(value) {
-  var type = typeof value;
+  let type = typeof value;
   if (type === 'object') type = getType(value);
   if (value instanceof HTMLElement) type = 'HTMLElement';
   if (baseTypeList.includes(type)) return value;else if (simpleTypeList.includes(type)) return new value.constructor(value);
-  var cloneTarget = cacheMap.get(value);
+  let cloneTarget = cacheMap.get(value);
   if (cloneTarget === undefined) {
-    var handle = typeHandleMap[type];
+    let handle = typeHandleMap[type];
     if (handle) cloneTarget = handle(value);else cloneTarget = value;
     cacheMap.set(value, cloneTarget);
   }
@@ -605,11 +597,11 @@ exports.deepClone = deepClone;
 /**
  * 清理缓存
  */
-var isFlush = false;
+let isFlush = false;
 function clear() {
   if (!isFlush) {
     isFlush = true;
-    var promise = Promise.resolve();
+    let promise = Promise.resolve();
     promise.then(function () {
       cacheMap = new WeakMap();
     });
@@ -624,8 +616,8 @@ function clear() {
  * @param handle 循环行为
  */
 function forEach(list, handle) {
-  var index = -1;
-  var length = list.length;
+  let index = -1;
+  let length = list.length;
   while (++index < length) {
     handle(list[index], index);
   }
@@ -659,10 +651,10 @@ Object.defineProperty(exports, "__esModule", ({
  * @returns URLWithParam
  */
 function parseUrl(url) {
-  var Url = null;
-  var param = {};
+  let Url = null;
+  const param = {};
   try {
-    var temp = new URL(url);
+    const temp = new URL(url);
     Url = {
       hash: temp.hash,
       host: temp.host,
@@ -681,11 +673,9 @@ function parseUrl(url) {
     console.log(error);
   }
   if (Url === null) return null;
-  var search = Url.search.slice(1);
-  var paramList = search.split('&').map(function (item) {
-    return item.split('=');
-  });
-  paramList.forEach(function (item) {
+  const search = Url.search.slice(1);
+  const paramList = search.split('&').map(item => item.split('='));
+  paramList.forEach(item => {
     param[item[0]] = item[1];
   });
   return Url;
@@ -708,16 +698,16 @@ Object.defineProperty(exports, "__esModule", ({
  * @returns uuid字符串
  */
 function generateUUID(length, radix) {
-  var chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
-  var uuid = [];
+  let chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+  let uuid = [];
   radix = radix || chars.length;
   if (length) {
-    for (var i = 0; i < length; i++) uuid[i] = chars[0 | Math.random() * radix];
+    for (let i = 0; i < length; i++) uuid[i] = chars[0 | Math.random() * radix];
   } else {
-    var r = void 0;
+    let r;
     uuid[8] = uuid[13] = uuid[18] = uuid[23] = '-';
     uuid[14] = '4';
-    for (var i = 0; i < 36; i++) {
+    for (let i = 0; i < 36; i++) {
       if (!uuid[i]) {
         r = 0 | Math.random() * 16;
         uuid[i] = chars[i == 19 ? r & 0x3 | 0x8 : r];
@@ -738,17 +728,14 @@ Object.defineProperty(exports, "__esModule", ({
   value: true
 }));
 exports.choose = exports.read = exports.write = void 0;
-var index_1 = __webpack_require__(8);
+const index_1 = __webpack_require__(8);
 /**
  * H5文件下载方法
  * @param url 资源链接或者blob对象
  * @param saveFileName 保存文件名
  */
-function saveFile(file, saveFileName) {
-  if (saveFileName === void 0) {
-    saveFileName = '';
-  }
-  var url = '';
+function saveFile(file, saveFileName = '') {
+  let url = '';
   if (typeof file === 'string') {
     url = file;
   } else {
@@ -758,7 +745,7 @@ function saveFile(file, saveFileName) {
       console.log(error);
     }
   }
-  var alink = document.createElement('a');
+  let alink = document.createElement('a');
   alink.href = url;
   alink.download = saveFileName || '';
   alink.style.display = 'none';
@@ -768,8 +755,8 @@ function saveFile(file, saveFileName) {
   document.body.removeChild(alink);
 }
 exports.write = saveFile;
-var FileReaderDecorate = /** @class */function () {
-  function FileReaderDecorate(file) {
+class FileReaderDecorate {
+  constructor(file) {
     Object.defineProperty(this, "reader", {
       enumerable: true,
       configurable: true,
@@ -786,132 +773,72 @@ var FileReaderDecorate = /** @class */function () {
     this.file = file;
   }
   //读取操作发生中断时触发
-  Object.defineProperty(FileReaderDecorate.prototype, "abort", {
-    enumerable: false,
-    configurable: true,
-    writable: true,
-    value: function (fun) {
-      var _this = this;
-      this.reader.addEventListener('abort', function () {
-        fun(_this.reader);
-      });
-      return this;
-    }
-  });
+  abort(fun) {
+    this.reader.addEventListener('abort', () => {
+      fun(this.reader);
+    });
+    return this;
+  }
   //读取操作发生错误时触发。
-  Object.defineProperty(FileReaderDecorate.prototype, "error", {
-    enumerable: false,
-    configurable: true,
-    writable: true,
-    value: function (fun) {
-      var _this = this;
-      this.reader.addEventListener('error', function () {
-        fun(_this.reader.error);
-      });
-      return this;
-    }
-  });
+  error(fun) {
+    this.reader.addEventListener('error', () => {
+      fun(this.reader.error);
+    });
+    return this;
+  }
   //读取操作完成时触发。
-  Object.defineProperty(FileReaderDecorate.prototype, "load", {
-    enumerable: false,
-    configurable: true,
-    writable: true,
-    value: function (fun) {
-      var _this = this;
-      this.reader.addEventListener('load', function () {
-        fun(_this.reader);
-      });
-      return this;
-    }
-  });
+  load(fun) {
+    this.reader.addEventListener('load', () => {
+      fun(this.reader);
+    });
+    return this;
+  }
   //读取操作开始时触发。
-  Object.defineProperty(FileReaderDecorate.prototype, "loadstart", {
-    enumerable: false,
-    configurable: true,
-    writable: true,
-    value: function (fun) {
-      var _this = this;
-      this.reader.addEventListener('loadstart', function () {
-        fun(_this.reader);
-      });
-      return this;
-    }
-  });
+  loadstart(fun) {
+    this.reader.addEventListener('loadstart', () => {
+      fun(this.reader);
+    });
+    return this;
+  }
   //读取操作结束时（要么成功，要么失败）触发。
-  Object.defineProperty(FileReaderDecorate.prototype, "loadend", {
-    enumerable: false,
-    configurable: true,
-    writable: true,
-    value: function (fun) {
-      var _this = this;
-      this.reader.addEventListener('loadend', function () {
-        fun(_this.reader.result);
-      });
-      return this;
-    }
-  });
+  loadend(fun) {
+    this.reader.addEventListener('loadend', () => {
+      fun(this.reader.result);
+    });
+    return this;
+  }
   //在读取Blob时触发。
-  Object.defineProperty(FileReaderDecorate.prototype, "progress", {
-    enumerable: false,
-    configurable: true,
-    writable: true,
-    value: function (fun) {
-      var _this = this;
-      this.reader.addEventListener('progress', function () {
-        fun(_this.reader);
-      });
-      return this;
+  progress(fun) {
+    this.reader.addEventListener('progress', () => {
+      fun(this.reader);
+    });
+    return this;
+  }
+  getStatus() {
+    return this.reader.readyState;
+  }
+  getResult() {
+    return this.reader.result;
+  }
+  start(type) {
+    try {
+      Reflect.get(this.reader, "readAs" + type).call(this.reader, this.file);
+    } catch (error) {
+      console.error(error);
     }
-  });
-  Object.defineProperty(FileReaderDecorate.prototype, "getStatus", {
-    enumerable: false,
-    configurable: true,
-    writable: true,
-    value: function () {
-      return this.reader.readyState;
-    }
-  });
-  Object.defineProperty(FileReaderDecorate.prototype, "getResult", {
-    enumerable: false,
-    configurable: true,
-    writable: true,
-    value: function () {
-      return this.reader.result;
-    }
-  });
-  Object.defineProperty(FileReaderDecorate.prototype, "start", {
-    enumerable: false,
-    configurable: true,
-    writable: true,
-    value: function (type) {
-      try {
-        Reflect.get(this.reader, "readAs" + type).call(this.reader, this.file);
-      } catch (error) {
-        console.error(error);
-      }
-      return this;
-    }
-  });
-  Object.defineProperty(FileReaderDecorate.prototype, "stop", {
-    enumerable: false,
-    configurable: true,
-    writable: true,
-    value: function () {
-      this.reader.abort();
-      return this;
-    }
-  });
-  return FileReaderDecorate;
-}();
+    return this;
+  }
+  stop() {
+    this.reader.abort();
+    return this;
+  }
+}
 function readFile(file) {
   return new FileReaderDecorate(file);
 }
 exports.read = readFile;
-function chooseFile(callback, options) {
-  if (options === void 0) {
-    options = {};
-  }
-  var input = document.createElement('input');
+function chooseFile(callback, options = {}) {
+  const input = document.createElement('input');
   input.setAttribute('type', 'file');
   input.setAttribute('accept', (options.accept || []).join(','));
   input.setAttribute('capture', options.capture || '');
@@ -941,9 +868,9 @@ function clickElement(el) {
   if (el.click && el.click instanceof Function) el.click();else if (window.MouseEvent) {
     el.dispatchEvent(new MouseEvent('click'));
   } else {
-    var event_1 = document.createEvent('MouseEvents');
-    event_1.initMouseEvent('click', true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
-    el.dispatchEvent(event_1);
+    let event = document.createEvent('MouseEvents');
+    event.initMouseEvent('click', true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
+    el.dispatchEvent(event);
   }
 }
 exports.clickElement = clickElement;
@@ -957,15 +884,12 @@ exports.clickElement = clickElement;
 Object.defineProperty(exports, "__esModule", ({
   value: true
 }));
-var tslib_1 = __webpack_require__(1);
-var index_1 = __webpack_require__(4);
-var FileHelper = tslib_1.__importStar(__webpack_require__(7));
-var message_1 = __webpack_require__(10);
-var Http = /** @class */function () {
-  function Http(options) {
-    if (options === void 0) {
-      options = {};
-    }
+const tslib_1 = __webpack_require__(1);
+const index_1 = __webpack_require__(4);
+const FileHelper = tslib_1.__importStar(__webpack_require__(7));
+const message_1 = __webpack_require__(10);
+class Http {
+  constructor(options = {}) {
     Object.defineProperty(this, "options", {
       enumerable: true,
       configurable: true,
@@ -987,10 +911,10 @@ var Http = /** @class */function () {
       value: {
         requestArr: [],
         responseArr: [],
-        request: function (func) {
+        request(func) {
           if (typeof func === 'function') this.requestArr.push(func);
         },
-        response: function (func) {
+        response(func) {
           if (typeof func === 'function') this.responseArr.push(func);
         }
       }
@@ -1002,36 +926,24 @@ var Http = /** @class */function () {
    * @param param
    * @returns
    */
-  Object.defineProperty(Http.prototype, "ajax", {
-    enumerable: false,
-    configurable: true,
-    writable: true,
-    value: function (param) {
-      var xhr = new XMLHttpRequest();
-      submit.call(this, xhr, petchParam(param));
-      return new PromiseHandle(xhr);
-    }
-  });
+  ajax(param) {
+    const xhr = new XMLHttpRequest();
+    submit.call(this, xhr, petchParam(param));
+    return new PromiseHandle(xhr);
+  }
   /**
    * XMLHttpRequest同步请求，绝大多数情况下只能在work进程内使用。
    * @param param
    * @returns
    */
-  Object.defineProperty(Http.prototype, "ajaxAsync", {
-    enumerable: false,
-    configurable: true,
-    writable: true,
-    value: function (param) {
-      var xhr = new XMLHttpRequest();
-      submit.call(this, xhr, petchParam(param), true);
-      return xhr.response;
-    }
-  });
-  return Http;
-}();
-var PromiseHandle = /** @class */function () {
-  function PromiseHandle(xhr) {
-    var _this = this;
+  ajaxAsync(param) {
+    const xhr = new XMLHttpRequest();
+    submit.call(this, xhr, petchParam(param), true);
+    return xhr.response;
+  }
+}
+class PromiseHandle {
+  constructor(xhr) {
     Object.defineProperty(this, "xhr", {
       enumerable: true,
       configurable: true,
@@ -1045,120 +957,69 @@ var PromiseHandle = /** @class */function () {
       value: void 0
     });
     this.xhr = xhr;
-    this.xhr.addEventListener('load', function () {
-      _this.result = _this.xhr.response;
+    this.xhr.addEventListener('load', () => {
+      this.result = this.xhr.response;
     });
   }
-  Object.defineProperty(PromiseHandle.prototype, "then", {
-    enumerable: false,
-    configurable: true,
-    writable: true,
-    value: function (callback) {
-      var _this = this;
-      this.xhr.addEventListener('load', function () {
-        callback(new message_1.Message(_this.xhr));
-      });
-      return this;
-    }
-  });
-  Object.defineProperty(PromiseHandle.prototype, "catch", {
-    enumerable: false,
-    configurable: true,
-    writable: true,
-    value: function (callback) {
-      var _this = this;
-      this.xhr.addEventListener('error', function () {
-        callback(new message_1.Message(_this.xhr));
-      });
-      return this;
-    }
-  });
-  Object.defineProperty(PromiseHandle.prototype, "finally", {
-    enumerable: false,
-    configurable: true,
-    writable: true,
-    value: function (callback) {
-      var _this = this;
-      this.xhr.addEventListener('loadend', function () {
-        callback(new message_1.Message(_this.xhr));
-      });
-      return this;
-    }
-  });
-  Object.defineProperty(PromiseHandle.prototype, "progress", {
-    enumerable: false,
-    configurable: true,
-    writable: true,
-    value: function (callback) {
-      var _this = this;
-      this.xhr.addEventListener('progress', function () {
-        callback(new message_1.Message(_this.xhr));
-      });
-      return this;
-    }
-  });
-  Object.defineProperty(PromiseHandle.prototype, "downProgress", {
-    enumerable: false,
-    configurable: true,
-    writable: true,
-    value: function (callback) {
-      var _this = this;
-      this.xhr.addEventListener('progress', function (e) {
-        if (e.lengthComputable) {
-          var percentComplete = e.loaded / e.total;
-          callback(new message_1.UploadMessage(_this.xhr, '下载中', percentComplete.toFixed(4)));
-        } else {
-          callback(new message_1.UploadMessage(_this.xhr, '无法计算进度', null));
-        }
-      });
-      return this;
-    }
-  });
-  Object.defineProperty(PromiseHandle.prototype, "upProgress", {
-    enumerable: false,
-    configurable: true,
-    writable: true,
-    value: function (callback) {
-      var _this = this;
-      this.xhr.upload.addEventListener('progress', function (e) {
-        if (e.lengthComputable) {
-          var percentComplete = e.loaded / e.total;
-          callback(new message_1.UploadMessage(_this.xhr, '上传中', percentComplete.toFixed(4)));
-        } else {
-          callback(new message_1.UploadMessage(_this.xhr, '无法计算进度', null));
-        }
-      });
-      return this;
-    }
-  });
-  Object.defineProperty(PromiseHandle.prototype, "abort", {
-    enumerable: false,
-    configurable: true,
-    writable: true,
-    value: function () {
-      this.xhr.abort();
-      return this;
-    }
-  });
-  return PromiseHandle;
-}();
-function warp(xhr, param, isInitHeader, isAsync, isGet) {
-  if (isInitHeader === void 0) {
-    isInitHeader = true;
+  then(callback) {
+    this.xhr.addEventListener('load', () => {
+      callback(new message_1.Message(this.xhr));
+    });
+    return this;
   }
-  if (isAsync === void 0) {
-    isAsync = false;
+  catch(callback) {
+    this.xhr.addEventListener('error', () => {
+      callback(new message_1.Message(this.xhr));
+    });
+    return this;
   }
-  if (isGet === void 0) {
-    isGet = false;
+  finally(callback) {
+    this.xhr.addEventListener('loadend', () => {
+      callback(new message_1.Message(this.xhr));
+    });
+    return this;
   }
+  progress(callback) {
+    this.xhr.addEventListener('progress', () => {
+      callback(new message_1.Message(this.xhr));
+    });
+    return this;
+  }
+  downProgress(callback) {
+    this.xhr.addEventListener('progress', e => {
+      if (e.lengthComputable) {
+        var percentComplete = e.loaded / e.total;
+        callback(new message_1.UploadMessage(this.xhr, '下载中', percentComplete.toFixed(4)));
+      } else {
+        callback(new message_1.UploadMessage(this.xhr, '无法计算进度', null));
+      }
+    });
+    return this;
+  }
+  upProgress(callback) {
+    this.xhr.upload.addEventListener('progress', e => {
+      if (e.lengthComputable) {
+        var percentComplete = e.loaded / e.total;
+        callback(new message_1.UploadMessage(this.xhr, '上传中', percentComplete.toFixed(4)));
+      } else {
+        callback(new message_1.UploadMessage(this.xhr, '无法计算进度', null));
+      }
+    });
+    return this;
+  }
+  abort() {
+    this.xhr.abort();
+    return this;
+  }
+}
+function warp(xhr, param, isInitHeader = true, isAsync = false, isGet = false) {
   if (isInitHeader) {
-    var header_1 = param.header || {};
-    Object.keys(header_1).forEach(function (key) {
+    const header = param.header || {};
+    Object.keys(header).forEach(key => {
       if (isGet && key === 'ContentType') return;
-      xhr.setRequestHeader(upperCase(key), header_1[key]);
+      xhr.setRequestHeader(upperCase(key), header[key]);
     });
-    if (!isGet && !header_1.ContentType) xhr.setRequestHeader("Content-Type", this.options.contentType);
+    if (!isGet && !header.ContentType) xhr.setRequestHeader("Content-Type", this.options.contentType);
   }
   if (!isAsync) {
     xhr.timeout = param.timeout || this.options.timeout;
@@ -1174,23 +1035,20 @@ function warp(xhr, param, isInitHeader, isAsync, isGet) {
     });
   }
 }
-function submit(xhr, param, isAsync) {
-  if (isAsync === void 0) {
-    isAsync = false;
-  }
-  this.Interceptor.requestArr.forEach(function (func) {
+function submit(xhr, param, isAsync = false) {
+  this.Interceptor.requestArr.forEach(func => {
     param = func(param) || param;
   });
-  var baseUrl = this.options.baseUrl;
+  let baseUrl = this.options.baseUrl;
   if (param.baseUrl !== undefined) {
     baseUrl = String(param.baseUrl);
   }
-  var url = baseUrl + (param.url || '');
-  var paramString = '';
+  let url = baseUrl + (param.url || '');
+  let paramString = '';
   if (param.param && Object.keys(param.param).length !== 0) {
-    var suffix = url.match(/(?:\?.*)$/);
+    let suffix = url.match(/(?:\?.*)$/);
     paramString = suffix === null ? "?" : "&";
-    Object.keys(param.param || {}).forEach(function (key) {
+    Object.keys(param.param || {}).forEach(key => {
       paramString += encodeURIComponent(key) + "=" + encodeURIComponent(param.param[key].toString()) + "&";
     });
   }
@@ -1200,19 +1058,19 @@ function submit(xhr, param, isAsync) {
     xhr.send(null);
   } else {
     xhr.open(param.method, url + paramString, true);
-    var type = this.options.contentType;
+    let type = this.options.contentType;
     if (param.header && param.header.ContentType) type = param.header.ContentType;
-    var excute = Reflect.get(HttpHandle, type) || Reflect.get(HttpHandle, 'text/plain');
+    const excute = Reflect.get(HttpHandle, type) || Reflect.get(HttpHandle, 'text/plain');
     warp.call(this, xhr, param, type !== "multipart/form-data", isAsync, false);
     excute.call(this, xhr, param);
   }
 }
 function upperCase(val) {
   if (val.length < 1) return val;
-  var charts = val.split('');
+  let charts = val.split('');
   charts[0] = charts[0].toLocaleUpperCase();
-  return charts.map(function (c, i) {
-    if (c.match(/[A-Z]/) !== null && i !== 0) return "-".concat(c);
+  return charts.map((c, i) => {
+    if (c.match(/[A-Z]/) !== null && i !== 0) return `-${c}`;
     return c;
   }).join('');
 }
@@ -1221,82 +1079,82 @@ function petchParam(param) {
   if (param.header === undefined) param.header = {};
   return param;
 }
-var HttpHandle = {
+const HttpHandle = {
   'application/x-www-form-urlencoded': function (xhr, param) {
-    var result = [];
-    Object.keys(param.data || {}).forEach(function (key) {
-      var val = param.data[key];
+    let result = [];
+    Object.keys(param.data || {}).forEach(key => {
+      let val = param.data[key];
       result.push(encodeURIComponent(key) + "=" + encodeURIComponent(val ? val.toString() : val));
     });
-    Promise.resolve().then(function () {
+    Promise.resolve().then(() => {
       xhr.send(result.join("&"));
     });
   },
   'text/plain': function (xhr, param) {
-    var result = [];
-    Object.keys(param.data || {}).forEach(function (key) {
-      var val = param.data[key];
+    let result = [];
+    Object.keys(param.data || {}).forEach(key => {
+      let val = param.data[key];
       result.push(key.replace(/[\s\=\\]/g, "\\$&") + "=" + (val ? val.toString().replace(/[\s\=\\]/g, "\\$&") : val));
     });
-    Promise.resolve().then(function () {
+    Promise.resolve().then(() => {
       xhr.send(result.join("\r\n"));
     });
   },
   'application/json': function (xhr, param) {
-    Promise.resolve().then(function () {
+    Promise.resolve().then(() => {
       xhr.send(JSON.stringify(param.data || {}));
     });
   },
   'multipart/form-data': function (xhr, param) {
-    var header = param.header || {};
-    Object.keys(header).forEach(function (key) {
+    const header = param.header || {};
+    Object.keys(header).forEach(key => {
       if (key === "ContentType") return;
       xhr.setRequestHeader(upperCase(key), header[key]);
     });
     if (window.FormData) {
-      var formData_1 = new FormData();
-      Object.keys(param.data || {}).forEach(function (key) {
-        formData_1.append(key, param.data[key]);
+      const formData = new FormData();
+      Object.keys(param.data || {}).forEach(key => {
+        formData.append(key, param.data[key]);
       });
-      if (param.file) Object.keys(param.file).forEach(function (key) {
-        formData_1.append(key, param.file[key]);
+      if (param.file) Object.keys(param.file).forEach(key => {
+        formData.append(key, param.file[key]);
       });
-      Promise.resolve().then(function () {
-        xhr.send(formData_1);
+      Promise.resolve().then(() => {
+        xhr.send(formData);
       });
     } else {
-      var result_1 = [];
-      Object.keys(param.data || {}).forEach(function (key) {
-        var val = param.data[key];
-        result_1.push("Content-Disposition: form-data; name=\"" + key + "\"\r\n\r\n" + (val ? val.toString() : val) + "\r\n");
+      let result = [];
+      Object.keys(param.data || {}).forEach(key => {
+        let val = param.data[key];
+        result.push("Content-Disposition: form-data; name=\"" + key + "\"\r\n\r\n" + (val ? val.toString() : val) + "\r\n");
       });
-      var index_2 = 0;
-      var boundary_1 = "---------------------------" + Date.now().toString(16);
-      xhr.setRequestHeader("Content-Type", "multipart/form-data; boundary=" + boundary_1);
+      let index = 0;
+      let boundary = "---------------------------" + Date.now().toString(16);
+      xhr.setRequestHeader("Content-Type", `multipart\/form-data; boundary=` + boundary);
       if (param.file && (0, index_1.getType)(param.file) === "Object") {
-        Object.keys(param.file).forEach(function (key) {
-          var file = param.file[key];
-          var type = (0, index_1.getType)(file);
+        Object.keys(param.file).forEach(key => {
+          let file = param.file[key];
+          let type = (0, index_1.getType)(file);
           if (type === "File" || type === "Blob") {
-            index_2++;
+            index++;
             FileHelper.read(file).load(function (res) {
-              var name = window.File && file instanceof File ? file.name : key + '.blob';
-              result_1.push("Content-Disposition: form-data; name=\"" + key + "\"; filename=\"" + name + "\"\r\nContent-Type: " + (file.type ? file.type : "octet-stream") + "\r\n\r\n" + res.result + "\r\n");
+              let name = window.File && file instanceof File ? file.name : key + '.blob';
+              result.push("Content-Disposition: form-data; name=\"" + key + "\"; filename=\"" + name + "\"\r\nContent-Type: " + (file.type ? file.type : "octet-stream") + "\r\n\r\n" + res.result + "\r\n");
             }).loadend(function () {
-              index_2--;
-              if (index_2 === 0) {
-                var combineResult_1 = "--" + boundary_1 + "\r\n" + result_1.join("--" + boundary_1 + "\r\n") + "--" + boundary_1 + "--\r\n";
-                Promise.resolve().then(function () {
-                  xhr.send(combineResult_1);
+              index--;
+              if (index === 0) {
+                let combineResult = "--" + boundary + "\r\n" + result.join("--" + boundary + "\r\n") + "--" + boundary + "--\r\n";
+                Promise.resolve().then(() => {
+                  xhr.send(combineResult);
                 });
               }
             }).start("BinaryString");
           }
         });
       }
-      if (index_2 === 0) {
-        Promise.resolve().then(function () {
-          xhr.send("--" + boundary_1 + "\r\n" + result_1.join("--" + boundary_1 + "\r\n") + "--" + boundary_1 + "--\r\n");
+      if (index === 0) {
+        Promise.resolve().then(() => {
+          xhr.send("--" + boundary + "\r\n" + result.join("--" + boundary + "\r\n") + "--" + boundary + "--\r\n");
         });
       }
     }
@@ -1314,8 +1172,8 @@ Object.defineProperty(exports, "__esModule", ({
   value: true
 }));
 exports.Message = exports.UploadMessage = void 0;
-var Message = /** @class */function () {
-  function Message(xhr) {
+class Message {
+  constructor(xhr) {
     Object.defineProperty(this, "status", {
       enumerable: true,
       configurable: true,
@@ -1338,11 +1196,10 @@ var Message = /** @class */function () {
     this.message = xhr.statusText;
     this.data = xhr.response;
   }
-  return Message;
-}();
+}
 exports.Message = Message;
-var UploadMessage = /** @class */function () {
-  function UploadMessage(xhr, message, data) {
+class UploadMessage {
+  constructor(xhr, message, data) {
     Object.defineProperty(this, "status", {
       enumerable: true,
       configurable: true,
@@ -1365,8 +1222,7 @@ var UploadMessage = /** @class */function () {
     this.message = message;
     this.data = data;
   }
-  return UploadMessage;
-}();
+}
 exports.UploadMessage = UploadMessage;
 
 /***/ }),
@@ -1379,66 +1235,54 @@ Object.defineProperty(exports, "__esModule", ({
   value: true
 }));
 exports.toRaw = exports.watch = exports.computed = exports.effect = exports.toRefs = exports.toRef = exports.ref = exports.reactive = void 0;
-var type_1 = __webpack_require__(12);
-var util_1 = __webpack_require__(13);
-var index_1 = __webpack_require__(4);
+const type_1 = __webpack_require__(12);
+const util_1 = __webpack_require__(13);
+const index_1 = __webpack_require__(4);
 //对象-副作用函数映射关系字典
-var bucket = new WeakMap();
+const bucket = new WeakMap();
 //对象-响应式对象字典
-var reactiveMap = new Map();
+const reactiveMap = new Map();
 //副作用函数执行栈
-var effectStack = new Array();
+const effectStack = new Array();
 //对象迭代标识
-var ITERATE_KEY = Symbol();
+const ITERATE_KEY = Symbol();
 //MapKey迭代标识
-var MAP_KEY_ITERATE_KEY = Symbol();
+const MAP_KEY_ITERATE_KEY = Symbol();
 //取原始对象key
-var source = Symbol();
-var wrap = util_1.wrapValue.bind({
-  reactive: reactive
+const source = Symbol();
+const wrap = util_1.wrapValue.bind({
+  reactive
 });
 //活动副作用函数
-var activeEffect = null;
+let activeEffect = null;
 //数组原型方法代理
-var arrayInstrumentations = {};
+const arrayInstrumentations = {};
 (function () {
   //在数组执行查找的原型方法时，在原始对象中进行查找，解决原始值与代理值不一致问题
-  ['includes', 'indexOf', 'lastIndexOf'].forEach(function (method) {
-    var originMethod = Reflect.get(Array.prototype, method);
-    Reflect.set(arrayInstrumentations, method, function () {
-      var args = [];
-      for (var _i = 0; _i < arguments.length; _i++) {
-        args[_i] = arguments[_i];
-      }
-      var res = originMethod.apply(this, args);
+  ['includes', 'indexOf', 'lastIndexOf'].forEach(method => {
+    const originMethod = Reflect.get(Array.prototype, method);
+    Reflect.set(arrayInstrumentations, method, function (...args) {
+      let res = originMethod.apply(this, args);
       if (res === false || res === -1) res = originMethod.apply(Reflect.get(this, source), args);
       return res;
     });
   });
   //在数组执行删除等涉及length属性修改的原型方法时，关闭依赖追踪
-  ['pop', 'shift', 'splice'].forEach(function (method) {
-    var originMethod = Reflect.get(Array.prototype, method);
-    Reflect.set(arrayInstrumentations, method, function () {
-      var args = [];
-      for (var _i = 0; _i < arguments.length; _i++) {
-        args[_i] = arguments[_i];
-      }
+  ['pop', 'shift', 'splice'].forEach(method => {
+    const originMethod = Reflect.get(Array.prototype, method);
+    Reflect.set(arrayInstrumentations, method, function (...args) {
       if (activeEffect) activeEffect.shouldTrack = false;
-      var res = originMethod.apply(this, args);
+      let res = originMethod.apply(this, args);
       if (activeEffect) activeEffect.shouldTrack = true;
       return res;
     });
   });
   //在数组执行增加等涉及length属性修改的原型方法时，关闭依赖追踪
-  ['push', 'unshift'].forEach(function (method) {
-    var originMethod = Reflect.get(Array.prototype, method);
-    Reflect.set(arrayInstrumentations, method, function () {
-      var args = [];
-      for (var _i = 0; _i < arguments.length; _i++) {
-        args[_i] = arguments[_i];
-      }
+  ['push', 'unshift'].forEach(method => {
+    const originMethod = Reflect.get(Array.prototype, method);
+    Reflect.set(arrayInstrumentations, method, function (...args) {
       if (activeEffect) activeEffect.shouldTrack = false;
-      var res = originMethod.apply(this, args.map(function (arg) {
+      let res = originMethod.apply(this, args.map(arg => {
         return toRaw(arg);
       }));
       if (activeEffect) activeEffect.shouldTrack = true;
@@ -1447,103 +1291,105 @@ var arrayInstrumentations = {};
   });
 })();
 //Set-Map原型方法代理
-var mutableInstrumentations = {};
+const mutableInstrumentations = {};
 (function () {
   function iterationMethod() {
-    var _a;
     //获取原始对象
-    var target = Reflect.get(this, source);
+    const target = Reflect.get(this, source);
     //获取迭代器对象
-    var itr = target[Symbol.iterator]();
+    const itr = target[Symbol.iterator]();
     //建立响应
     track(target, ITERATE_KEY);
     //返回自定义迭代器
-    return _a = {
+    return {
       //迭代器协议
-      next: function () {
+      next() {
         //获取原始数据
-        var _a = itr.next(),
-          value = _a.value,
-          done = _a.done;
+        const {
+          value,
+          done
+        } = itr.next();
         return {
           value: value ? [wrap(value[0]), wrap(value[1])] : value,
-          done: done
+          done
         };
+      },
+      //可迭代协议
+      [Symbol.iterator]() {
+        return this;
       }
-    },
-    //可迭代协议
-    _a[Symbol.iterator] = function () {
-      return this;
-    }, _a;
+    };
   }
   function valuesIterationMethod() {
-    var _a;
     //获取原始对象
-    var target = Reflect.get(this, source);
+    const target = Reflect.get(this, source);
     //获取迭代器对象
-    var itr = target.values();
+    const itr = target.values();
     //建立响应
     track(target, ITERATE_KEY);
     //返回自定义迭代器
-    return _a = {
+    return {
       //迭代器协议
-      next: function () {
+      next() {
         //获取原始数据
-        var _a = itr.next(),
-          value = _a.value,
-          done = _a.done;
+        const {
+          value,
+          done
+        } = itr.next();
         return {
           value: wrap(value),
-          done: done
+          done
         };
+      },
+      //可迭代协议
+      [Symbol.iterator]() {
+        return this;
       }
-    },
-    //可迭代协议
-    _a[Symbol.iterator] = function () {
-      return this;
-    }, _a;
+    };
   }
   function keysIterationMethod() {
-    var _a;
     //获取原始对象
-    var target = Reflect.get(this, source);
+    const target = Reflect.get(this, source);
     //获取迭代器对象
-    var itr = target.keys();
+    const itr = target.keys();
     //建立响应
     track(target, MAP_KEY_ITERATE_KEY);
     //返回自定义迭代器
-    return _a = {
+    return {
       //迭代器协议
-      next: function () {
+      next() {
         //获取原始数据
-        var _a = itr.next(),
-          value = _a.value,
-          done = _a.done;
+        const {
+          value,
+          done
+        } = itr.next();
         return {
           value: wrap(value),
-          done: done
+          done
         };
+      },
+      //可迭代协议
+      [Symbol.iterator]() {
+        return this;
       }
-    },
-    //可迭代协议
-    _a[Symbol.iterator] = function () {
-      return this;
-    }, _a;
+    };
   }
   mutableInstrumentations.add = function (key) {
     //获取原始对象
-    var target = Reflect.get(this, source);
+    const target = Reflect.get(this, source);
     //是否只读
-    var isReadonly = (reactiveMap.get(target) || {}).isReadonly;
+    const {
+      isReadonly
+    } = reactiveMap.get(target) || {};
     if (isReadonly) {
-      console.log(target, "\u5BF9\u8C61\u662F\u53EA\u8BFB\u7684");
+      console.log(target, `对象是只读的`);
       return false;
     }
     //取原始值
-    var orgin = toRaw(key);
+    const orgin = toRaw(key);
     //判断值是否已存在
-    var hadkey = target.has(orgin);
-    var res = target.add(orgin);
+    const hadkey = target.has(orgin);
+    const res = target.add(orgin);
     //当值不存在时触发副作用函数
     if (!hadkey) trigger(target, orgin, type_1.TriggerType.ADD);
     return res;
@@ -1551,21 +1397,22 @@ var mutableInstrumentations = {};
   mutableInstrumentations.get = function (key) {
     var _a;
     //获取原始对象
-    var target = Reflect.get(this, source);
+    const target = Reflect.get(this, source);
     //是否浅代理、只读
-    var _b = reactiveMap.get(target) || {},
-      isShadow = _b.isShadow,
-      isReadonly = _b.isReadonly;
+    const {
+      isShadow,
+      isReadonly
+    } = reactiveMap.get(target) || {};
     //取原始值, 避免数据污染
-    var orginKey = toRaw(key);
+    const orginKey = toRaw(key);
     //只读对象或者key为symbol时不进行追踪
     if (!isReadonly) track(target, orginKey);
-    var res = target.get(orginKey);
+    const res = target.get(orginKey);
     //浅代理模式直接返回原始值
     if (isShadow) return res;
     //非浅代理模式，如果原始值不是基本类型进行响应式包装
     if (typeof res === 'object' && res != null) {
-      var existionProxy = (_a = reactiveMap.get(res)) === null || _a === void 0 ? void 0 : _a.value;
+      const existionProxy = (_a = reactiveMap.get(res)) === null || _a === void 0 ? void 0 : _a.value;
       if (existionProxy) return existionProxy;
       return reactive(res, isShadow, isReadonly);
     }
@@ -1574,22 +1421,24 @@ var mutableInstrumentations = {};
   };
   mutableInstrumentations.set = function (key, value) {
     //获取原始对象
-    var target = Reflect.get(this, source);
+    const target = Reflect.get(this, source);
     //是否浅代理、只读
-    var isReadonly = (reactiveMap.get(target) || {}).isReadonly;
+    const {
+      isReadonly
+    } = reactiveMap.get(target) || {};
     if (isReadonly) {
-      console.log(target, "\u5BF9\u8C61\u662F\u53EA\u8BFB\u7684");
+      console.log(target, `对象是只读的`);
       return false;
     }
     //取原始值, 避免数据污染
-    var orginKey = toRaw(key);
-    var orginValue = toRaw(value);
+    const orginKey = toRaw(key);
+    const orginValue = toRaw(value);
     //判断是否已存在
-    var hadKey = target.has(orginKey);
+    const hadKey = target.has(orginKey);
     //取出旧值
-    var oldValue = target.get(orginKey);
+    const oldValue = target.get(orginKey);
     //非浅代理时设置原始对象而非响应对象
-    var res = target.set(orginKey, orginValue);
+    const res = target.set(orginKey, orginValue);
     if (!hadKey) trigger(target, orginKey, type_1.TriggerType.ADD);else if (oldValue !== orginValue && (oldValue === oldValue || orginValue === orginValue)) {
       trigger(target, orginKey, type_1.TriggerType.SET);
     }
@@ -1597,25 +1446,24 @@ var mutableInstrumentations = {};
   };
   mutableInstrumentations.delete = function (key) {
     //获取原始对象
-    var target = Reflect.get(this, source);
+    const target = Reflect.get(this, source);
     //取原始值
-    var orgin = toRaw(key);
+    const orgin = toRaw(key);
     //判断值是否已存在
-    var hadkey = target.has(orgin);
-    var res = target.delete(orgin);
+    const hadkey = target.has(orgin);
+    const res = target.delete(orgin);
     //当值存在时触发副作用函数
     if (hadkey) trigger(target, orgin, type_1.TriggerType.DELETE);
     return res;
   };
   mutableInstrumentations.forEach = function (cb, thisArg) {
-    var _this = this;
     //获取原始对象
-    var target = Reflect.get(this, source);
+    const target = Reflect.get(this, source);
     //与迭代key建立响应
     track(target, ITERATE_KEY);
     //调用原函数
-    target.forEach(function (value, key) {
-      cb.call(thisArg, wrap(value), wrap(key), _this);
+    target.forEach((value, key) => {
+      cb.call(thisArg, wrap(value), wrap(key), this);
     });
   };
   mutableInstrumentations.entries = iterationMethod;
@@ -1632,11 +1480,11 @@ function track(target, p) {
   if (!activeEffect || !activeEffect.shouldTrack) {
     return;
   }
-  var depsMap = bucket.get(target);
+  let depsMap = bucket.get(target);
   if (!depsMap) {
     bucket.set(target, depsMap = new Map());
   }
-  var deps = depsMap.get(p);
+  let deps = depsMap.get(p);
   if (!deps) {
     depsMap.set(p, deps = new Set());
   }
@@ -1652,55 +1500,55 @@ function track(target, p) {
  * @returns 是否成功
  */
 function trigger(target, p, type, value) {
-  var depsMap = bucket.get(target);
+  let depsMap = bucket.get(target);
   if (!depsMap) {
     return true;
   }
   //取出所有与key直接相关的副作用函数
-  var effects = depsMap.get(p);
+  let effects = depsMap.get(p);
   //待执行副作用函数队列
-  var effectsToRun = new Set();
+  let effectsToRun = new Set();
   //排除正在运行的副作用函数
-  effects && effects.forEach(function (effectFn) {
+  effects && effects.forEach(effectFn => {
     if (effectFn !== activeEffect) effectsToRun.add(effectFn);
   });
   //type为ADD或者DELETE或为Map类型设置值时，取出迭代相关副作用函数执行
   if (type === type_1.TriggerType.ADD || type === type_1.TriggerType.DELETE || type === type_1.TriggerType.SET && (0, index_1.getType)(target) === 'Map') {
-    var iterateEffects = depsMap.get(ITERATE_KEY);
-    iterateEffects && iterateEffects.forEach(function (effectFn) {
+    let iterateEffects = depsMap.get(ITERATE_KEY);
+    iterateEffects && iterateEffects.forEach(effectFn => {
       if (effectFn !== activeEffect) effectsToRun.add(effectFn);
     });
   }
   //type为ADD或者DELETE且target为Map时，取出迭代相关副作用函数执行
   if ((type === type_1.TriggerType.ADD || type === type_1.TriggerType.DELETE) && (0, index_1.getType)(target) === 'Map') {
-    var iterateEffects = depsMap.get(MAP_KEY_ITERATE_KEY);
-    iterateEffects && iterateEffects.forEach(function (effectFn) {
+    let iterateEffects = depsMap.get(MAP_KEY_ITERATE_KEY);
+    iterateEffects && iterateEffects.forEach(effectFn => {
       if (effectFn !== activeEffect) effectsToRun.add(effectFn);
     });
   }
   //type为ADD且target为数组时，取出数组迭代相关副作用函数执行（使用delete删除数组元素不会改变数组长度，故无需触发）
   if (type === type_1.TriggerType.ADD && Array.isArray(target)) {
-    var lengthEffects = depsMap.get('length');
-    lengthEffects && lengthEffects.forEach(function (effectFn) {
+    let lengthEffects = depsMap.get('length');
+    lengthEffects && lengthEffects.forEach(effectFn => {
       if (effectFn !== activeEffect) effectsToRun.add(effectFn);
     });
   }
   //target为数组且直接操作数组length属性时，取出大于新length值的副作用函数执行
   if (Array.isArray(target) && p === 'length') {
-    depsMap.forEach(function (effects, key) {
+    depsMap.forEach((effects, key) => {
       if (Number(key) >= Number(value)) {
-        effects.forEach(function (effectFn) {
+        effects.forEach(effectFn => {
           if (effectFn !== activeEffect) effectsToRun.add(effectFn);
         });
       }
     });
-    var lengthEffects = depsMap.get('length');
-    lengthEffects && lengthEffects.forEach(function (effectFn) {
+    let lengthEffects = depsMap.get('length');
+    lengthEffects && lengthEffects.forEach(effectFn => {
       if (effectFn !== activeEffect) effectsToRun.add(effectFn);
     });
   }
   //执行副作用函数
-  effectsToRun.forEach(function (fn) {
+  effectsToRun.forEach(fn => {
     if (typeof fn.options.schedule === 'function') {
       fn.options.schedule(fn);
     } else {
@@ -1716,15 +1564,9 @@ function trigger(target, p, type, value) {
  * @param isReadonly 是否只读
  * @returns T
  */
-function reactive(value, isShadow, isReadonly) {
-  if (isShadow === void 0) {
-    isShadow = false;
-  }
-  if (isReadonly === void 0) {
-    isReadonly = false;
-  }
-  var proxy = new Proxy(value, {
-    get: function (target, p, reciver) {
+function reactive(value, isShadow = false, isReadonly = false) {
+  const proxy = new Proxy(value, {
+    get(target, p, reciver) {
       var _a;
       if (p === source) return target;
       //数组原型方法代理
@@ -1739,52 +1581,52 @@ function reactive(value, isShadow, isReadonly) {
       }
       //只读对象或者key为symbol时不进行追踪
       if (!isReadonly && typeof p !== 'symbol') track(target, p);
-      var res = Reflect.get(target, p, reciver);
+      const res = Reflect.get(target, p, reciver);
       //浅代理模式直接返回原始值
       if (isShadow) return res;
       //非浅代理模式，如果原始值不是基本类型进行响应式包装
       if (typeof res === 'object' && res != null) {
-        var existionProxy = (_a = reactiveMap.get(res)) === null || _a === void 0 ? void 0 : _a.value;
+        const existionProxy = (_a = reactiveMap.get(res)) === null || _a === void 0 ? void 0 : _a.value;
         if (existionProxy) return existionProxy;
         return reactive(res, isShadow, isReadonly);
       }
       //否则返回基本类型值
       return res;
     },
-    has: function (target, p) {
+    has(target, p) {
       if (!isReadonly) track(target, p);
       return Reflect.has(target, p);
     },
-    ownKeys: function (target) {
+    ownKeys(target) {
       if (!isReadonly) track(target, Array.isArray(target) ? 'length' : ITERATE_KEY);
       return Reflect.ownKeys(target);
     },
-    deleteProperty: function (target, p) {
+    deleteProperty(target, p) {
       if (isReadonly) {
-        console.log(target, "\u5BF9\u8C61\u662F\u53EA\u8BFB\u7684");
+        console.log(target, `对象是只读的`);
         return false;
       }
       //判断变量是否不处于对象原型上
-      var hadKey = Object.prototype.hasOwnProperty.call(target, p);
-      var res = Reflect.deleteProperty(target, p);
+      const hadKey = Object.prototype.hasOwnProperty.call(target, p);
+      const res = Reflect.deleteProperty(target, p);
       if (res && hadKey) {
         trigger(target, p, type_1.TriggerType.DELETE);
       }
       return res;
     },
-    set: function (target, p, value, reciver) {
+    set(target, p, value, reciver) {
       if (isReadonly) {
-        console.log(target, "\u5BF9\u8C61\u662F\u53EA\u8BFB\u7684");
+        console.log(target, `对象是只读的`);
         return false;
       }
       //取出旧值
-      var oldValue = Reflect.get(target, p);
+      const oldValue = Reflect.get(target, p);
       //判断操作类型
-      var type = Array.isArray(target) ? Number(p) < target.length ? type_1.TriggerType.SET : type_1.TriggerType.ADD : Object.prototype.hasOwnProperty.call(target, p) ? type_1.TriggerType.SET : type_1.TriggerType.ADD;
+      const type = Array.isArray(target) ? Number(p) < target.length ? type_1.TriggerType.SET : type_1.TriggerType.ADD : Object.prototype.hasOwnProperty.call(target, p) ? type_1.TriggerType.SET : type_1.TriggerType.ADD;
       //取原始值
-      var orgin = toRaw(value);
+      const orgin = toRaw(value);
       //非浅代理时设置原始对象而非响应对象
-      var res = Reflect.set(target, p, orgin, reciver);
+      const res = Reflect.set(target, p, orgin, reciver);
       if (target === Reflect.get(reciver, source)) {
         if (oldValue !== value && (oldValue === oldValue || value === value)) {
           trigger(target, p, type, value);
@@ -1795,8 +1637,8 @@ function reactive(value, isShadow, isReadonly) {
   });
   if (typeof value === 'object' && value != null) reactiveMap.set(value, {
     value: proxy,
-    isShadow: isShadow,
-    isReadonly: isReadonly
+    isShadow,
+    isReadonly
   });
   return proxy;
 }
@@ -1807,19 +1649,16 @@ exports.reactive = reactive;
  * @param isReadonly 是否只读
  * @returns { value: T }
  */
-function ref(value, isReadonly) {
-  if (isReadonly === void 0) {
-    isReadonly = false;
-  }
-  var wrapper = {
-    value: value
+function ref(value, isReadonly = false) {
+  const wrapper = {
+    value
   };
   //定义变量标识对象为Ref对象
   Object.defineProperty(wrapper, '__isRef', {
     value: true
   });
   return reactive({
-    value: value
+    value
   }, true, isReadonly);
 }
 exports.ref = ref;
@@ -1830,7 +1669,7 @@ exports.ref = ref;
  * @returns Ref
  */
 function toRef(val, key) {
-  var wrapper = {
+  const wrapper = {
     get value() {
       return val[key];
     },
@@ -1851,8 +1690,8 @@ exports.toRef = toRef;
  * @returns
  */
 function toRefs(obj) {
-  var ret = {};
-  for (var key in obj) {
+  const ret = {};
+  for (const key in obj) {
     Reflect.set(ret, key, toRef(obj, key));
   }
   return ret;
@@ -1864,15 +1703,12 @@ exports.toRefs = toRefs;
  * @param options 配置
  * @returns effectFunc
  */
-function effect(func, options) {
-  if (options === void 0) {
-    options = {};
-  }
-  var effectFn = function () {
+function effect(func, options = {}) {
+  const effectFn = function () {
     (0, util_1.cleanup)(effectFn);
     activeEffect = effectFn;
     effectStack.push(effectFn);
-    var res = func();
+    const res = func();
     effectStack.pop();
     activeEffect = effectStack[effectStack.length - 1];
     return res;
@@ -1882,8 +1718,8 @@ function effect(func, options) {
   effectFn.options = options;
   effectFn.shouldTrack = true;
   if (effectStack.length) {
-    var parent_1 = effectStack[effectStack.length - 1];
-    parent_1.childs.push(effectFn);
+    const parent = effectStack[effectStack.length - 1];
+    parent.childs.push(effectFn);
   }
   if (!options.lazy) effectFn();
   return effectFn;
@@ -1895,18 +1731,18 @@ exports.effect = effect;
  * @returns { value: any }
  */
 function computed(getter) {
-  var value;
-  var dirty = true;
-  var effectFn = effect(getter, {
+  let value;
+  let dirty = true;
+  const effectFn = effect(getter, {
     lazy: true,
-    schedule: function () {
+    schedule() {
       if (!dirty) {
         dirty = true;
         trigger(obj, 'value', type_1.TriggerType.SET, 0);
       }
     }
   });
-  var obj = {
+  const obj = {
     //访问器属性
     get value() {
       if (dirty) {
@@ -1926,31 +1762,24 @@ exports.computed = computed;
  * @param cb 数据变化后回调函数
  * @param options 配置
  */
-function watch(source, cb, options) {
-  if (options === void 0) {
-    options = {};
-  }
-  var getter;
-  if (typeof source === 'function') getter = source;else getter = function () {
-    return (0, util_1.traverse)(source);
-  };
-  var oldValue, newValue, cleanup;
+function watch(source, cb, options = {}) {
+  let getter;
+  if (typeof source === 'function') getter = source;else getter = () => (0, util_1.traverse)(source);
+  let oldValue, newValue, cleanup;
   function onInvalidate(fn) {
     cleanup = fn;
   }
-  var job = function () {
+  const job = () => {
     newValue = effectFn();
     if (cleanup) cleanup();
     cb(oldValue, newValue, onInvalidate);
     oldValue = newValue;
   };
-  var effectFn = effect(function () {
-    return getter();
-  }, {
+  const effectFn = effect(() => getter(), {
     lazy: true,
-    schedule: function () {
+    schedule() {
       if (options.flush === 'post') {
-        var p = Promise.resolve();
+        const p = Promise.resolve();
         p.then(job);
       } else {
         job();
@@ -1999,7 +1828,7 @@ exports.traverse = exports.cleanup = exports.wrapValue = void 0;
 /**
  * 普通对象转代理对象, 原始值转换
  */
-var wrapValue = function (value) {
+const wrapValue = function (value) {
   return typeof value === 'object' && value !== null ? this.reactive(value) : value;
 };
 exports.wrapValue = wrapValue;
@@ -2007,7 +1836,7 @@ exports.wrapValue = wrapValue;
  * 清理副作用函数
  * @param effectFn 副作用函数
  */
-var cleanup = function (effectFn) {
+const cleanup = function (effectFn) {
   clean(effectFn);
   cleanupDeep(effectFn);
 };
@@ -2017,7 +1846,7 @@ exports.cleanup = cleanup;
  * @param effectFn
  */
 function clean(effectFn) {
-  effectFn.deps.forEach(function (deps) {
+  effectFn.deps.forEach(deps => {
     deps.delete(effectFn);
   });
   effectFn.deps.length = 0;
@@ -2027,7 +1856,7 @@ function clean(effectFn) {
  * @param effectFn
  */
 function cleanupDeep(effectFn) {
-  effectFn.childs.forEach(function (effect) {
+  effectFn.childs.forEach(effect => {
     clean(effect);
     cleanupDeep(effect);
   });
@@ -2036,13 +1865,10 @@ function cleanupDeep(effectFn) {
  * 循环建立依赖追踪
  * @param value 待建立对象
  */
-var traverse = function (value, seen) {
-  if (seen === void 0) {
-    seen = new Set();
-  }
+const traverse = function (value, seen = new Set()) {
   if (typeof value !== 'object' || value === null || seen.has(value)) return;
   seen.add(value);
-  for (var k in value) {
+  for (const k in value) {
     (0, exports.traverse)(value[k], seen);
   }
   return value;
@@ -2060,29 +1886,29 @@ Object.defineProperty(exports, "__esModule", ({
 }));
 exports.CookieHelper = void 0;
 exports.CookieHelper = {
-  getItem: function (key) {
-    return document.cookie.replace(new RegExp("(?:(?:^|.*;\\s*)".concat(key, "\\s*=\\s*([^;]*).*$)|^.*$")), "$1");
+  getItem(key) {
+    return document.cookie.replace(new RegExp(`(?:(?:^|.*;\\s*)${key}\\s*=\\s*([^;]*).*$)|^.*$`), "$1");
   },
-  getItemOnce: function (key) {
-    var val = exports.CookieHelper.getItem(key);
-    exports.CookieHelper.removeItem("".concat(key));
+  getItemOnce(key) {
+    const val = exports.CookieHelper.getItem(key);
+    exports.CookieHelper.removeItem(`${key}`);
     return val;
   },
-  setItem: function (key, val) {
+  setItem(key, val) {
     if (typeof val !== 'string') return;
-    document.cookie = "".concat(key, "=").concat(val, ";path=/");
+    document.cookie = `${key}=${val};path=/`;
   },
-  removeItem: function (key) {
-    document.cookie = "".concat(key, "=;path=/;expires=").concat(new Date(0).toUTCString());
+  removeItem(key) {
+    document.cookie = `${key}=;path=/;expires=${new Date(0).toUTCString()}`;
   },
-  exist: function (key) {
-    var keys = document.cookie.match(/[^ =;]+(?==)/g) || [];
+  exist(key) {
+    const keys = document.cookie.match(/[^ =;]+(?==)/g) || [];
     return keys.includes(key);
   },
-  clear: function () {
-    var keys = document.cookie.match(/[^ =;]+(?==)/g);
+  clear() {
+    const keys = document.cookie.match(/[^ =;]+(?==)/g);
     if (keys) {
-      for (var i = keys.length; i--;) exports.CookieHelper.removeItem(keys[i]);
+      for (let i = keys.length; i--;) exports.CookieHelper.removeItem(keys[i]);
     }
   }
 };
@@ -2097,18 +1923,14 @@ Object.defineProperty(exports, "__esModule", ({
   value: true
 }));
 exports.mergeObject = void 0;
-var index_1 = __webpack_require__(4);
+const index_1 = __webpack_require__(4);
 /**
  * 深度合并n个对象值
  * @param origin 将多个对象深度合并到该对象
  * @param ob 被合并对象
  * @param more 其余被合并对象
  */
-function mergeObject(origin, ob) {
-  var more = [];
-  for (var _i = 2; _i < arguments.length; _i++) {
-    more[_i - 2] = arguments[_i];
-  }
+function mergeObject(origin, ob, ...more) {
   do {
     origin = merge(origin, ob);
     ob = more.pop();
@@ -2119,15 +1941,95 @@ exports.mergeObject = mergeObject;
 function merge(origin, ob) {
   if (ob === undefined) return origin;
   if ((0, index_1.getType)(origin) !== 'Object' || (0, index_1.getType)(ob) !== 'Object') return origin;
-  for (var key in ob) {
-    var oldVal = origin[key];
-    var newVal = ob[key];
+  for (const key in ob) {
+    const oldVal = origin[key];
+    const newVal = ob[key];
     if (oldVal !== newVal && newVal !== undefined) {
       if ((0, index_1.getType)(oldVal) !== 'Object') origin[key] = newVal;else merge(oldVal, newVal);
     }
   }
   return origin;
 }
+
+/***/ }),
+/* 16 */
+/***/ ((__unused_webpack_module, exports) => {
+
+
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports.draggable = exports.scrollToRight = exports.scrollToLeft = exports.scrollToBottom = exports.scrollToTop = void 0;
+function scrollToTop(scroll) {
+  scroll.scrollTop = 0;
+}
+exports.scrollToTop = scrollToTop;
+function scrollToBottom(scroll) {
+  let scrollTop = scroll.scrollHeight - scroll.clientHeight;
+  scroll.scrollTop = scrollTop > 0 ? scrollTop : 0;
+}
+exports.scrollToBottom = scrollToBottom;
+function scrollToLeft(scroll) {
+  scroll.scrollLeft = 0;
+}
+exports.scrollToLeft = scrollToLeft;
+function scrollToRight(scroll) {
+  let scrollLeft = scroll.scrollWidth - scroll.clientWidth;
+  scroll.scrollLeft = scrollLeft > 0 ? scrollLeft : 0;
+}
+exports.scrollToRight = scrollToRight;
+function draggable(dom) {
+  let parent = dom.parentElement;
+  if (!parent) {
+    console.warn('parentElement not found');
+    return;
+  }
+  let isDraggable = true;
+  dom.style.position = 'absolute';
+  let rect = dom.getBoundingClientRect();
+  let geometry = {
+    x: rect.x,
+    y: rect.y,
+    left: rect.left,
+    top: rect.top
+  };
+  dom.addEventListener("mousedown", function (e) {
+    geometry.x = e.clientX;
+    geometry.y = e.clientY;
+    isDraggable && (parent === null || parent === void 0 ? void 0 : parent.addEventListener("mousemove", mouseMove));
+  });
+  window.addEventListener("mouseup", function () {
+    parent === null || parent === void 0 ? void 0 : parent.removeEventListener("mousemove", mouseMove);
+  });
+  function mouseMove(e) {
+    let skewX = e.clientX - geometry.x;
+    let skewY = e.clientY - geometry.y;
+    geometry.left += skewX;
+    geometry.top += skewY;
+    dom.style.left = geometry.left + "px";
+    dom.style.top = geometry.top + "px";
+    geometry.x = e.clientX;
+    geometry.y = e.clientY;
+  }
+  return {
+    close() {
+      isDraggable = false;
+    },
+    open() {
+      isDraggable = true;
+    },
+    wrap(dom) {
+      dom.addEventListener('mousedown', function () {
+        isDraggable = false;
+      });
+      window.addEventListener('mouseup', function () {
+        isDraggable = true;
+      });
+    }
+  };
+}
+exports.draggable = draggable;
 
 /***/ })
 /******/ 	]);
@@ -2195,13 +2097,13 @@ var exports = __webpack_exports__;
 Object.defineProperty(exports, "__esModule", ({
   value: true
 }));
-exports.mergeObject = exports.CookieHelper = exports.Reactive = exports.FileHelper = exports.Http = exports.generateUUID = exports.getType = exports.parseUrl = exports.deepClone = exports.throttle = exports.debounce = void 0;
-var tslib_1 = __webpack_require__(1);
-var index_1 = tslib_1.__importDefault(__webpack_require__(2));
+exports.CookieHelper = exports.Dom = exports.Reactive = exports.FileHelper = exports.Http = exports.mergeObject = exports.generateUUID = exports.getType = exports.parseUrl = exports.deepClone = exports.throttle = exports.debounce = void 0;
+const tslib_1 = __webpack_require__(1);
+const index_1 = tslib_1.__importDefault(__webpack_require__(2));
 exports.debounce = index_1.default;
-var index_2 = tslib_1.__importDefault(__webpack_require__(3));
+const index_2 = tslib_1.__importDefault(__webpack_require__(3));
 exports.throttle = index_2.default;
-var index_3 = __webpack_require__(4);
+const index_3 = __webpack_require__(4);
 Object.defineProperty(exports, "deepClone", ({
   enumerable: true,
   get: function () {
@@ -2214,30 +2116,32 @@ Object.defineProperty(exports, "getType", ({
     return index_3.getType;
   }
 }));
-var index_4 = tslib_1.__importDefault(__webpack_require__(5));
+const index_4 = tslib_1.__importDefault(__webpack_require__(5));
 exports.parseUrl = index_4.default;
-var index_5 = tslib_1.__importDefault(__webpack_require__(6));
+const index_5 = tslib_1.__importDefault(__webpack_require__(6));
 exports.generateUUID = index_5.default;
-var FileHelper = tslib_1.__importStar(__webpack_require__(7));
+const FileHelper = tslib_1.__importStar(__webpack_require__(7));
 exports.FileHelper = FileHelper;
-var index_6 = tslib_1.__importDefault(__webpack_require__(9));
+const index_6 = tslib_1.__importDefault(__webpack_require__(9));
 exports.Http = index_6.default;
-var Reactive = tslib_1.__importStar(__webpack_require__(11));
+const Reactive = tslib_1.__importStar(__webpack_require__(11));
 exports.Reactive = Reactive;
-var index_7 = __webpack_require__(14);
+const index_7 = __webpack_require__(14);
 Object.defineProperty(exports, "CookieHelper", ({
   enumerable: true,
   get: function () {
     return index_7.CookieHelper;
   }
 }));
-var index_8 = __webpack_require__(15);
+const index_8 = __webpack_require__(15);
 Object.defineProperty(exports, "mergeObject", ({
   enumerable: true,
   get: function () {
     return index_8.mergeObject;
   }
 }));
+const Dom = tslib_1.__importStar(__webpack_require__(16));
+exports.Dom = Dom;
 })();
 
 /******/ 	return __webpack_exports__;
