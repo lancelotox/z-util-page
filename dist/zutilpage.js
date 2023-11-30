@@ -2031,6 +2031,94 @@ function draggable(dom) {
 }
 exports.draggable = draggable;
 
+/***/ }),
+/* 17 */
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports.EventBus = void 0;
+const mergeObject_1 = __webpack_require__(15);
+/**
+ * 事件总线
+ * on: 注册事件
+ * emit: 触发事件
+ */
+class EventBus {
+  constructor(config) {
+    Object.defineProperty(this, "config", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: void 0
+    });
+    Object.defineProperty(this, "bucket", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: void 0
+    });
+    Object.defineProperty(this, "on", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: void 0
+    });
+    Object.defineProperty(this, "emit", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: void 0
+    });
+    this.config = (0, mergeObject_1.mergeObject)({
+      maxEventCount: 10000
+    }, EventBus.config, config || {});
+    this.bucket = {};
+    this.on = EventBus.on;
+    this.emit = EventBus.emit;
+  }
+}
+exports.EventBus = EventBus;
+Object.defineProperty(EventBus, "config", {
+  enumerable: true,
+  configurable: true,
+  writable: true,
+  value: {}
+});
+Object.defineProperty(EventBus, "bucket", {
+  enumerable: true,
+  configurable: true,
+  writable: true,
+  value: {}
+});
+Object.defineProperty(EventBus, "on", {
+  enumerable: true,
+  configurable: true,
+  writable: true,
+  value: function (key, func) {
+    let funcSet = this.bucket[key];
+    if (!funcSet) funcSet = this.bucket[key] = [];
+    const re = funcSet.find(item => item === func);
+    if (re || typeof func !== 'function') return;
+    funcSet.push(func);
+  }
+});
+Object.defineProperty(EventBus, "emit", {
+  enumerable: true,
+  configurable: true,
+  writable: true,
+  value: function (key, ...rest) {
+    let funcSet = this.bucket[key];
+    if (!funcSet) return;
+    funcSet.forEach(function (func) {
+      func(...rest);
+    });
+  }
+});
+
 /***/ })
 /******/ 	]);
 /************************************************************************/
@@ -2097,7 +2185,7 @@ var exports = __webpack_exports__;
 Object.defineProperty(exports, "__esModule", ({
   value: true
 }));
-exports.CookieHelper = exports.Dom = exports.Reactive = exports.FileHelper = exports.Http = exports.mergeObject = exports.generateUUID = exports.getType = exports.parseUrl = exports.deepClone = exports.throttle = exports.debounce = void 0;
+exports.EventBus = exports.CookieHelper = exports.Dom = exports.Reactive = exports.FileHelper = exports.Http = exports.mergeObject = exports.generateUUID = exports.getType = exports.parseUrl = exports.deepClone = exports.throttle = exports.debounce = void 0;
 const tslib_1 = __webpack_require__(1);
 const index_1 = tslib_1.__importDefault(__webpack_require__(2));
 exports.debounce = index_1.default;
@@ -2142,6 +2230,13 @@ Object.defineProperty(exports, "mergeObject", ({
 }));
 const Dom = tslib_1.__importStar(__webpack_require__(16));
 exports.Dom = Dom;
+const index_9 = __webpack_require__(17);
+Object.defineProperty(exports, "EventBus", ({
+  enumerable: true,
+  get: function () {
+    return index_9.EventBus;
+  }
+}));
 })();
 
 /******/ 	return __webpack_exports__;

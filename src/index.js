@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.CookieHelper = exports.Dom = exports.Reactive = exports.FileHelper = exports.Http = exports.mergeObject = exports.generateUUID = exports.getType = exports.parseUrl = exports.deepClone = exports.throttle = exports.debounce = void 0;
+exports.EventBus = exports.CookieHelper = exports.Dom = exports.Reactive = exports.FileHelper = exports.Http = exports.mergeObject = exports.generateUUID = exports.getType = exports.parseUrl = exports.deepClone = exports.throttle = exports.debounce = void 0;
 const tslib_1 = require("tslib");
 const index_1 = tslib_1.__importDefault(require("./debounce/index"));
 exports.debounce = index_1.default;
@@ -25,3 +25,5 @@ const index_8 = require("./mergeObject/index");
 Object.defineProperty(exports, "mergeObject", { enumerable: true, get: function () { return index_8.mergeObject; } });
 const Dom = tslib_1.__importStar(require("./dom/index"));
 exports.Dom = Dom;
+const index_9 = require("./eventBus/index");
+Object.defineProperty(exports, "EventBus", { enumerable: true, get: function () { return index_9.EventBus; } });

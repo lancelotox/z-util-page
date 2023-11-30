@@ -9,6 +9,7 @@ import * as Reactive from "./reactive/index";
 import { CookieHelper } from "./cookie/index";
 import { mergeObject } from "./mergeObject/index";
 import * as Dom from "./dom/index";
+import { EventBus } from "./eventBus/index";
 
 export {
   debounce,
@@ -23,4 +24,5 @@ export {
   Reactive,
   Dom,
   CookieHelper,
+  EventBus,
 }

@@ -9,4 +9,5 @@ import * as Reactive from "./reactive/index";
 import { CookieHelper } from "./cookie/index";
 import { mergeObject } from "./mergeObject/index";
 import * as Dom from "./dom/index";
-export { debounce, throttle, deepClone, parseUrl, getType, generateUUID, mergeObject, Http, FileHelper, Reactive, Dom, CookieHelper, };
+import { EventBus } from "./eventBus/index";
+export { debounce, throttle, deepClone, parseUrl, getType, generateUUID, mergeObject, Http, FileHelper, Reactive, Dom, CookieHelper, EventBus, };
