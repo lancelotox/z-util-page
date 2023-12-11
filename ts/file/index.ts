@@ -113,7 +113,8 @@ interface chooseOption {
     //以逗号为分隔的[唯一文件类型说明符]列表
     accept?: Array<string>,
     //尝试请求使用设备的媒体捕获设备（如：摄像机），而不是请求一个文件输入。
-    capture?: "user" | "environment",
+    //camera–照相机；camcorder–摄像机；microphone–录音
+    capture?: "user" | "environment" | "camera" | "camcorder" | "microphone",
     //是否允许多选
     multiple?: boolean
 }
