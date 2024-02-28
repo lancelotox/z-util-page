@@ -92,12 +92,11 @@ let newValue = deepClone({
 });
 ```
 
-### 4.  生成UUID  或  GUID
+### 4.  生成UUID
 
 ``` javascript
-import { UuidFactory } from 'z-util-page'
-UuidFactory.uuid();
-UuidFactory.guid();
+import { generateUUID } from 'z-util-page'
+generateUUID();
 ```
 
 ### 5. Web端文件操作
@@ -130,8 +129,8 @@ fileReader.stop();//停止读取
 fileReader.getStatus();//获取状态
 fileReader.getResult();//获取结果
 
-//文件写入数据并下载
-FileHelper.write(new Blob([JSON.stringify({a: '身体和心灵，总有一个在路上。'}, null, 2)], {type : 'application/json'}), 'test.json');
+//文件下载
+FileHelper.save(new Blob([JSON.stringify({a: '身体和心灵，总有一个在路上。'}, null, 2)], {type : 'application/json'}), 'test.json');
 ```
 
 ### 6. Http

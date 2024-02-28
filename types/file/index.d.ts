@@ -1,9 +1,20 @@
 /**
+ * 文件选择
+ * @param options 文件选择配置
+ * @param callback 回调函数, 参数为选择文件列表
+ */
+interface chooseOption {
+    accept?: Array<string>;
+    capture?: "user" | "environment" | "camera" | "camcorder" | "microphone";
+    multiple?: boolean;
+}
+export declare function choose(callback: (fileList: FileList | null) => void, options?: chooseOption): void;
+/**
  * H5文件下载方法
  * @param url 资源链接或者blob对象
  * @param saveFileName 保存文件名
  */
-declare function saveFile(file: string | Blob, saveFileName?: string): void;
+export declare function save(file: string | Blob, saveFileName?: string): void;
 /**
  * 文件读取
  * @param file File对象或Blob对象
@@ -24,16 +35,5 @@ declare class FileReaderDecorate {
     start(type: "ArrayBuffer" | "BinaryString" | "DataURL" | "Text"): this;
     stop(): this;
 }
-declare function readFile(file: File | Blob): FileReaderDecorate;
-/**
- * 文件选择
- * @param options 文件选择配置
- * @param callback 回调函数, 参数为选择文件列表
- */
-interface chooseOption {
-    accept?: Array<string>;
-    capture?: "user" | "environment";
-    multiple?: boolean;
-}
-declare function chooseFile(callback: Function, options?: chooseOption): void;
-export { saveFile as write, readFile as read, chooseFile as choose };
+export declare function read(file: File | Blob): FileReaderDecorate;
+export {};

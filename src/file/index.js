@@ -1,13 +1,26 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.choose = exports.read = exports.write = void 0;
+exports.read = exports.save = exports.choose = void 0;
 const index_1 = require("../helper/index");
+function choose(callback, options = {}) {
+    const input = document.createElement('input');
+    input.setAttribute('type', 'file');
+    input.setAttribute('accept', (options.accept || []).join(','));
+    input.setAttribute('capture', options.capture || '');
+    if (options.multiple)
+        input.setAttribute('multiple', 'true');
+    input.addEventListener('change', function (e) {
+        callback(input.files);
+    });
+    (0, index_1.clickElement)(input);
+}
+exports.choose = choose;
 /**
  * H5文件下载方法
  * @param url 资源链接或者blob对象
  * @param saveFileName 保存文件名
  */
-function saveFile(file, saveFileName = '') {
+function save(file, saveFileName = '') {
     let url = '';
     if (typeof file === 'string') {
         url = file;
@@ -29,7 +42,7 @@ function saveFile(file, saveFileName = '') {
     (0, index_1.clickElement)(alink);
     document.body.removeChild(alink);
 }
-exports.write = saveFile;
+exports.save = save;
 class FileReaderDecorate {
     constructor(file) {
         Object.defineProperty(this, "reader", {
@@ -109,20 +122,7 @@ class FileReaderDecorate {
         return this;
     }
 }
-function readFile(file) {
+function read(file) {
     return new FileReaderDecorate(file);
 }
-exports.read = readFile;
-function chooseFile(callback, options = {}) {
-    const input = document.createElement('input');
-    input.setAttribute('type', 'file');
-    input.setAttribute('accept', (options.accept || []).join(','));
-    input.setAttribute('capture', options.capture || '');
-    if (options.multiple)
-        input.setAttribute('multiple', 'true');
-    input.addEventListener('change', function (e) {
-        callback(input.files);
-    });
-    (0, index_1.clickElement)(input);
-}
-exports.choose = chooseFile;
+exports.read = read;
