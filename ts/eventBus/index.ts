@@ -5,7 +5,7 @@ interface EventBusConfig {}
 
 // 数据桶
 interface Bucket {
-  [key: string]: Array<Function>
+  [key: string]: Array<(...rest: any[]) => void>
 }
 
 /**
@@ -18,7 +18,7 @@ export class EventBus {
 
   private static bucket: Bucket = {}
 
-  public static on = function(key: string, func: Function) {
+  public static on = function (this: EventBus, key: string, func: (...rest: any[]) => void) {
     let funcSet = this.bucket[key];
     if (!funcSet) funcSet = this.bucket[key] = [];
     const re = funcSet.find(item => item === func);
@@ -26,8 +26,8 @@ export class EventBus {
     funcSet.push(func);
   }
 
-  public static emit = function(key: string, ...rest: any[]) {
-    let funcSet = this.bucket[key];
+  public static emit = function(this: EventBus, key: string, ...rest: any[]) {
+    const funcSet = this.bucket[key];
     if (!funcSet) return;
     funcSet.forEach(function (func) {
       func(...rest);
