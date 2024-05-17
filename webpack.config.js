@@ -1,5 +1,4 @@
 const path = require('path');
-const { defin } = require('webpack');
 
 const config = {
   entry: './src/index.ts',
