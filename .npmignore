@@ -12,10 +12,5 @@ tsconfig.json
 .git/
 node_modules/
 coverage/
-ts/
+src/
 tests/
-
-#lib
-lib/sheet2blob
-lib/promise
-lib/linkedList
