@@ -179,17 +179,17 @@ http.ajax({
 ### 7. Reactive
 
 ``` javascript
-import { Reactive } from 'z-util-page';
+import { reactive, effect } from 'z-util-page/Reactive';
 
 const a = {
     text: ""
 };
 //生成响应式对象
-const b = Reactive.reactive({
+const b = reactive({
     text: ""
 });
 //创建副作用函数
-Reactive.effect(function () {
+effect(function () {
     a.text = b.text;
 });
 //修改响应式对象属性
