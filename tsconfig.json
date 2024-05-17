@@ -9,11 +9,11 @@
     // 类型文件输出目录
     "declarationDir": "./types",
     // 输出目录
-    "outDir": "src",
+    "outDir": "es",
     // 指定编译后ECMAScript目标版本
     "target": "ES6",
     // 指定编译后代码的模块系统 "None"， "CommonJS"， "AMD"， "System"， "UMD"， "ES6"或 "ES2015"
-    "module": "CommonJS",
+    "module": "ES6",
     // 以严格模式解析并为每个源文件生成 "use strict"语句
     "alwaysStrict": false,
     // 启用ts严格类型检查模式
@@ -63,7 +63,7 @@
   // 指定包含哪些文件
   // "files": [],
   // 指定包含哪些文件或目录
-  "include": ["./ts/index.ts"],
+  "include": ["./src/index.ts"],
   // 指定排除哪些文件或目录
   "exclude": [
     "node_modules"

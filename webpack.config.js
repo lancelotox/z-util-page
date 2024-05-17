@@ -1,7 +1,8 @@
 const path = require('path');
+const { defin } = require('webpack');
 
 const config = {
-  entry: './ts/index.ts',
+  entry: './src/index.ts',
   output: {
     path: path.resolve(__dirname, 'dist'),
     filename: 'zutilpage.js',

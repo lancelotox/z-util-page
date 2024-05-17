@@ -5,7 +5,7 @@ const config = require('./webpack.config');
 function bulidUmd(isMinimizer){
     return new Promise(resolve=>{
         config.output.path = path.resolve(__dirname, 'dist');
-        config.output.filename = `zutilpage${!!isMinimizer ? '.min' : ''}.js`;
+        config.output.filename = `zutilpage.umd${!!isMinimizer ? '.min' : ''}.js`;
         config.output.library.type = 'umd';
         config.optimization = {
             minimize: !!isMinimizer
@@ -19,8 +19,8 @@ function bulidUmd(isMinimizer){
 
 function bulidCmd(){
     return new Promise(resolve=>{
-        config.output.path = path.resolve(__dirname, 'lib');
-        config.output.filename = 'zutilpage.js';
+        config.output.path = path.resolve(__dirname, 'dist');
+        config.output.filename = 'zutilpage.cmd.js';
         config.output.library.type = 'commonjs';
         delete config.output.library.name;
         config.optimization = {

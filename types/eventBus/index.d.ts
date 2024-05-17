@@ -8,8 +8,8 @@ interface EventBusConfig {
 export declare class EventBus {
     private static config;
     private static bucket;
-    static on: (this: EventBus, key: string, func: (...rest: any[]) => void) => void;
-    static emit: (this: EventBus, key: string, ...rest: any[]) => void;
+    static on(key: string, func: (...rest: any[]) => void): void;
+    static emit(key: string, ...rest: any[]): void;
     constructor(config?: EventBusConfig);
     private config;
     private bucket;

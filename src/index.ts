@@ -10,4 +10,19 @@ import { CookieHelper } from "./CookieHelper/index";
 import { mergeObject } from "./mergeObject/index";
 import * as DomHelper from "./DomHelper/index";
 import { EventBus } from "./EventBus/index";
-export { debounce, throttle, deepClone, parseUrl, getType, generateUUID, mergeObject, Http, EventBus, Reactive, FileHelper, DomHelper, CookieHelper, };
+
+export {
+  debounce,
+  throttle,
+  deepClone,
+  parseUrl,
+  getType,
+  generateUUID,
+  mergeObject,
+  Http,
+  EventBus,
+  Reactive,
+  CookieHelper,
+  FileHelper,
+  DomHelper,
+}

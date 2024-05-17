@@ -1,4 +1,4 @@
-import { debounce, throttle, deepClone, getType, generateUUID, parseUrl } from "../ts/index";
+import { debounce, throttle, deepClone, getType, generateUUID, parseUrl } from "../src/index";
 
 describe('函数防抖', () => {
 

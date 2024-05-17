@@ -1,4 +1,4 @@
-import { Reactive } from '../ts/index';
+import { Reactive } from '../src/index';
 
 describe('常规', () => {
   test('副作用函数执行', () => {
