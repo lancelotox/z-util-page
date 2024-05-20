@@ -36,4 +36,5 @@ declare class FileReaderDecorate {
     stop(): this;
 }
 export declare function read(file: File | Blob): FileReaderDecorate;
+export declare function saveFileToDir(dirKey: string | symbol, fileName: string, fileContent: Array<ArrayBuffer | Promise<ArrayBuffer>>): Promise<FileSystemWritableFileStream | undefined>;
 export {};

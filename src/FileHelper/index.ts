@@ -128,3 +128,34 @@ class FileReaderDecorate {
 export function read(file: File | Blob) {
   return new FileReaderDecorate(file);
 }
+
+/**
+ * 将文件写入目标文件夹
+ * @param dirKey 文件夹唯一标识，自行定义string或symbol，用于后续向同一文件夹写入文件
+ * @param fileName 文件名
+ * @param fileContent 二进制文件流
+ */
+const DirMap = new Map<string | symbol, FileSystemDirectoryHandle>();
+export async function saveFileToDir(dirKey: string | symbol, fileName: string, fileContent: Array<ArrayBuffer | Promise<ArrayBuffer>>): Promise<FileSystemWritableFileStream | undefined>  {
+  try {
+    if (!self.showDirectoryPicker) throw new Error("该浏览器不支持showDirectoryPicker");
+    let dirHandle = DirMap.get(dirKey);
+    if (!dirHandle) {
+      dirHandle = await self.showDirectoryPicker({
+        mode: 'readwrite',
+        startIn: 'documents'
+      });
+      DirMap.set(dirKey, dirHandle);
+    }
+    const fileHandle = await dirHandle.getFileHandle(fileName, {
+      create: true
+    });
+    const writable = await fileHandle.createWritable();
+    for await (const item of fileContent) {
+      await writable.write(item);
+    }
+    return writable;
+  } catch (error) {
+    console.error(error);
+  }
+}

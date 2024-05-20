@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.read = exports.save = exports.choose = void 0;
+exports.saveFileToDir = exports.read = exports.save = exports.choose = void 0;
+const tslib_1 = require("tslib");
 const index_1 = require("../helper/index");
 function choose(callback, options = {}) {
     const input = document.createElement('input');
@@ -126,3 +127,52 @@ function read(file) {
     return new FileReaderDecorate(file);
 }
 exports.read = read;
+/**
+ * 将文件写入目标文件夹
+ * @param dirKey 文件夹唯一标识，自行定义string或symbol，用于后续向同一文件夹写入文件
+ * @param fileName 文件名
+ * @param fileContent 二进制文件流
+ */
+const DirMap = new Map();
+function saveFileToDir(dirKey, fileName, fileContent) {
+    return tslib_1.__awaiter(this, void 0, void 0, function* () {
+        var _a, fileContent_1, fileContent_1_1;
+        var _b, e_1, _c, _d;
+        try {
+            if (!self.showDirectoryPicker)
+                throw new Error("该浏览器不支持showDirectoryPicker");
+            let dirHandle = DirMap.get(dirKey);
+            if (!dirHandle) {
+                dirHandle = yield self.showDirectoryPicker({
+                    mode: 'readwrite',
+                    startIn: 'documents'
+                });
+                DirMap.set(dirKey, dirHandle);
+            }
+            const fileHandle = yield dirHandle.getFileHandle(fileName, {
+                create: true
+            });
+            const writable = yield fileHandle.createWritable();
+            try {
+                for (_a = true, fileContent_1 = tslib_1.__asyncValues(fileContent); fileContent_1_1 = yield fileContent_1.next(), _b = fileContent_1_1.done, !_b; _a = true) {
+                    _d = fileContent_1_1.value;
+                    _a = false;
+                    const item = _d;
+                    yield writable.write(item);
+                }
+            }
+            catch (e_1_1) { e_1 = { error: e_1_1 }; }
+            finally {
+                try {
+                    if (!_a && !_b && (_c = fileContent_1.return)) yield _c.call(fileContent_1);
+                }
+                finally { if (e_1) throw e_1.error; }
+            }
+            return writable;
+        }
+        catch (error) {
+            console.error(error);
+        }
+    });
+}
+exports.saveFileToDir = saveFileToDir;
