@@ -1,4 +1,5 @@
 import { clickElement } from '../helper/index';
+import debounce from '../debounce/index';
 
 /**
  * 文件选择
@@ -99,6 +100,17 @@ class FileReaderDecorate {
     });
     return this;
   }
+  //读取操作结束时（要么成功，要么失败）触发。
+  loadendPromise() {
+    return new Promise<ArrayBuffer | string>((resolve, reject) => {
+      this.reader.addEventListener('loadend', () => {
+        resolve(this.reader.result!);
+      });
+      this.reader.addEventListener('error', () => {
+        reject(this.reader.error);
+      });
+    });
+  }
   //在读取Blob时触发。
   progress(fun: callback) {
     this.reader.addEventListener('progress', () => {
@@ -134,28 +146,44 @@ export function read(file: File | Blob) {
  * @param dirKey 文件夹唯一标识，自行定义string或symbol，用于后续向同一文件夹写入文件
  * @param fileName 文件名
  * @param fileContent 二进制文件流
+ * @param overwrite 是否覆盖同名文件
  */
-const DirMap = new Map<string | symbol, FileSystemDirectoryHandle>();
-export async function saveFileToDir(dirKey: string | symbol, fileName: string, fileContent: Array<ArrayBuffer | Promise<ArrayBuffer>>): Promise<FileSystemWritableFileStream | undefined>  {
+const DirMap = new Map<string | symbol, Promise<FileSystemDirectoryHandle>>();
+type FileContent = ArrayBuffer | string | Uint8Array | Blob;
+const errorMessage = debounce((err: Error) => {
+  console.error(err);
+}, 100);
+export async function saveFileToDir(dirKey: string | symbol, fileName: string, fileContent: Array<FileContent | Promise<FileContent>>, overwrite: boolean = false): Promise<FileSystemWritableFileStream | undefined> {
   try {
     if (!self.showDirectoryPicker) throw new Error("该浏览器不支持showDirectoryPicker");
-    let dirHandle = DirMap.get(dirKey);
-    if (!dirHandle) {
-      dirHandle = await self.showDirectoryPicker({
+    let dirHandlePromise = DirMap.get(dirKey);
+    if (!dirHandlePromise) {
+      dirHandlePromise = self.showDirectoryPicker({
         mode: 'readwrite',
         startIn: 'documents'
       });
-      DirMap.set(dirKey, dirHandle);
+      DirMap.set(dirKey, dirHandlePromise);
     }
+    const dirHandle = await dirHandlePromise;
     const fileHandle = await dirHandle.getFileHandle(fileName, {
       create: true
     });
     const writable = await fileHandle.createWritable();
+    if (!overwrite) {
+      const file = await fileHandle.getFile();
+      const fileContent = await read(file).start("ArrayBuffer").loadendPromise();
+      writable.write(fileContent);
+    }
     for await (const item of fileContent) {
       await writable.write(item);
     }
     return writable;
-  } catch (error) {
-    console.error(error);
+  } catch (error: any) {
+    if (error.code === 20) {
+      DirMap.delete(dirKey);
+      errorMessage(new Error("用户取消选择"));
+    } else {
+      console.error(error);
+    }
   }
 }

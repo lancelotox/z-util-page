@@ -293,8 +293,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   save: function() { return /* binding */ save; },
 /* harmony export */   saveFileToDir: function() { return /* binding */ saveFileToDir; }
 /* harmony export */ });
-/* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(7);
+/* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(7);
 /* harmony import */ var _helper_index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(8);
+/* harmony import */ var _debounce_index__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(1);
+
 
 
 function choose(callback, options = {}) {
@@ -385,6 +387,17 @@ class FileReaderDecorate {
     });
     return this;
   }
+  //读取操作结束时（要么成功，要么失败）触发。
+  loadendPromise() {
+    return new Promise((resolve, reject) => {
+      this.reader.addEventListener('loadend', () => {
+        resolve(this.reader.result);
+      });
+      this.reader.addEventListener('error', () => {
+        reject(this.reader.error);
+      });
+    });
+  }
   //在读取Blob时触发。
   progress(fun) {
     this.reader.addEventListener('progress', () => {
@@ -419,29 +432,39 @@ function read(file) {
  * @param dirKey 文件夹唯一标识，自行定义string或symbol，用于后续向同一文件夹写入文件
  * @param fileName 文件名
  * @param fileContent 二进制文件流
+ * @param overwrite 是否覆盖同名文件
  */
 const DirMap = new Map();
-function saveFileToDir(dirKey, fileName, fileContent) {
-  return (0,tslib__WEBPACK_IMPORTED_MODULE_1__.__awaiter)(this, void 0, void 0, function* () {
-    var _a, fileContent_1, fileContent_1_1;
+const errorMessage = (0,_debounce_index__WEBPACK_IMPORTED_MODULE_1__["default"])(err => {
+  console.error(err);
+}, 100);
+function saveFileToDir(dirKey_1, fileName_1, fileContent_1) {
+  return (0,tslib__WEBPACK_IMPORTED_MODULE_2__.__awaiter)(this, arguments, void 0, function* (dirKey, fileName, fileContent, overwrite = false) {
+    var _a, fileContent_2, fileContent_2_1;
     var _b, e_1, _c, _d;
     try {
       if (!self.showDirectoryPicker) throw new Error("该浏览器不支持showDirectoryPicker");
-      let dirHandle = DirMap.get(dirKey);
-      if (!dirHandle) {
-        dirHandle = yield self.showDirectoryPicker({
+      let dirHandlePromise = DirMap.get(dirKey);
+      if (!dirHandlePromise) {
+        dirHandlePromise = self.showDirectoryPicker({
           mode: 'readwrite',
           startIn: 'documents'
         });
-        DirMap.set(dirKey, dirHandle);
+        DirMap.set(dirKey, dirHandlePromise);
       }
+      const dirHandle = yield dirHandlePromise;
       const fileHandle = yield dirHandle.getFileHandle(fileName, {
         create: true
       });
       const writable = yield fileHandle.createWritable();
+      if (!overwrite) {
+        const file = yield fileHandle.getFile();
+        const fileContent = yield read(file).start("ArrayBuffer").loadendPromise();
+        writable.write(fileContent);
+      }
       try {
-        for (_a = true, fileContent_1 = (0,tslib__WEBPACK_IMPORTED_MODULE_1__.__asyncValues)(fileContent); fileContent_1_1 = yield fileContent_1.next(), _b = fileContent_1_1.done, !_b; _a = true) {
-          _d = fileContent_1_1.value;
+        for (_a = true, fileContent_2 = (0,tslib__WEBPACK_IMPORTED_MODULE_2__.__asyncValues)(fileContent); fileContent_2_1 = yield fileContent_2.next(), _b = fileContent_2_1.done, !_b; _a = true) {
+          _d = fileContent_2_1.value;
           _a = false;
           const item = _d;
           yield writable.write(item);
@@ -452,14 +475,19 @@ function saveFileToDir(dirKey, fileName, fileContent) {
         };
       } finally {
         try {
-          if (!_a && !_b && (_c = fileContent_1.return)) yield _c.call(fileContent_1);
+          if (!_a && !_b && (_c = fileContent_2.return)) yield _c.call(fileContent_2);
         } finally {
           if (e_1) throw e_1.error;
         }
       }
       return writable;
     } catch (error) {
-      console.error(error);
+      if (error.code === 20) {
+        DirMap.delete(dirKey);
+        errorMessage(new Error("用户取消选择"));
+      } else {
+        console.error(error);
+      }
     }
   });
 }
