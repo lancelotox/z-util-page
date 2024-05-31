@@ -1,6 +1,6 @@
 const webpack = require('webpack');
 const path = require('path');
-const config = require('./webpack.config');
+const config = require('./build.webpack.config');
 
 function bulidUmd(isMinimizer){
     return new Promise(resolve=>{

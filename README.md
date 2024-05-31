@@ -222,3 +222,45 @@ CookieHelper.exist('TEST');
 CookieHelper.clear('TEST');
 ```
 
+### 8. IDBHelper
+
+```javascript
+import { IDBHelper } from 'z-util-page';
+
+// 获取数据库
+const PersonDB = new IDBHelper('Person');
+
+// 创建表
+PersonDB.createTable(['Chinese', 'American'], 'id');
+PersonDB.createTable('Indian', 'caste');
+
+// 删除表
+PersonDB.deleteTable(['Chinese', 'American']);
+PersonDB.deleteTable('Indian');
+// 删除所有表
+PersonDB.deleteAllTable();
+
+// 获取所有表名
+PersonDB.getAllTableName();
+
+// 向表中写入数据
+PersonDB.setTableRow('Chinese', { id: 1, age: 22, name: '' })
+
+// 从表中通过主键查询数据
+PersonDB.getTableRow('Chinese', 1);
+
+// 删除表中某行数据
+PersonDB.deleteTableRow('Chinese', 1);
+
+// 获取表中所有数据
+PersonDB.getAllTableRow('Chinese');
+
+// 获取表数据条数
+PersonDB.getTableRowCount('Chinese');
+
+// 重置数据库到初始版本（会清空数据库）
+PersonDB.reSet();
+
+// 断开数据库连接
+PersonDB.close();
+```

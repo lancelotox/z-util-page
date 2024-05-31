@@ -2141,6 +2141,316 @@ Object.defineProperty(EventBus, "bucket", {
   value: {}
 });
 
+/***/ }),
+/* 18 */
+/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   IDBHelper: function() { return /* binding */ IDBHelper; }
+/* harmony export */ });
+/* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(7);
+
+class IDBHelper {
+  constructor(name) {
+    Object.defineProperty(this, "dbRq", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: void 0
+    });
+    Object.defineProperty(this, "version", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: 1
+    });
+    Object.defineProperty(this, "name", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: void 0
+    });
+    Object.defineProperty(this, "initPromise", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: void 0
+    });
+    Object.defineProperty(this, "upgradePromise", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: Promise.resolve(true)
+    });
+    if (name === null || name === undefined) throw new Error("数据库名称不能为空");
+    this.name = name;
+    this.dbRq = indexedDB.open(this.name); // 创建数据库
+    this.initPromise = this.init();
+    this.createTable(['check']);
+  }
+  /**
+   * 初始化
+   */
+  init() {
+    return (0,tslib__WEBPACK_IMPORTED_MODULE_0__.__awaiter)(this, void 0, void 0, function* () {
+      // 获取数据库版本号
+      const databases = yield indexedDB.databases();
+      const db = databases.find(item => item.name === this.name);
+      db && (this.version = db.version || 0);
+      return true;
+    });
+  }
+  /**
+   * 检查连接状态
+   */
+  checkConnect() {
+    return (0,tslib__WEBPACK_IMPORTED_MODULE_0__.__awaiter)(this, void 0, void 0, function* () {
+      yield this.initPromise;
+      yield this.upgradePromise;
+      try {
+        const tx = this.dbRq.result.transaction(['check']);
+        tx.abort();
+      } catch (error) {
+        if (this.dbRq.readyState === "done") {
+          this.dbRq.result.close();
+          this.dbRq = indexedDB.open(this.name);
+        }
+        return new Promise((resolve, reject) => {
+          this.dbRq.addEventListener('success', () => {
+            resolve(true);
+          });
+        });
+      }
+    });
+  }
+  /**
+   * 获取所有表名
+   */
+  getAllTableName() {
+    return (0,tslib__WEBPACK_IMPORTED_MODULE_0__.__awaiter)(this, void 0, void 0, function* () {
+      yield this.checkConnect();
+      return this.dbRq.result.objectStoreNames;
+    });
+  }
+  /**
+   * 创建表
+   */
+  createTable(tableNameList, keyPath) {
+    return (0,tslib__WEBPACK_IMPORTED_MODULE_0__.__awaiter)(this, void 0, void 0, function* () {
+      yield this.initPromise;
+      if (this.dbRq.readyState === "done") {
+        this.dbRq.result.close();
+        this.dbRq = indexedDB.open(this.name, ++this.version);
+      }
+      this.dbRq.addEventListener('upgradeneeded', () => {
+        if (typeof tableNameList === 'string') {
+          tableNameList = [tableNameList];
+        }
+        tableNameList.forEach(tableName => {
+          const db = this.dbRq.result;
+          if (db.objectStoreNames.contains(tableName)) return;
+          db.createObjectStore(tableName, keyPath ? {
+            keyPath
+          } : {
+            autoIncrement: true
+          });
+        });
+      });
+      this.upgradePromise = new Promise(resolve => {
+        this.dbRq.addEventListener('success', () => {
+          resolve(true);
+        });
+      });
+      return this.upgradePromise;
+    });
+  }
+  /**
+   * 删除表
+   */
+  deleteTable(tableNameList) {
+    return (0,tslib__WEBPACK_IMPORTED_MODULE_0__.__awaiter)(this, void 0, void 0, function* () {
+      yield this.initPromise;
+      if (this.dbRq.readyState === "done") {
+        this.dbRq.result.close();
+        this.dbRq = indexedDB.open(this.name, ++this.version);
+      }
+      this.dbRq.addEventListener('upgradeneeded', () => {
+        if (typeof tableNameList === 'string') {
+          tableNameList = [tableNameList];
+        }
+        tableNameList.forEach(tableName => {
+          const db = this.dbRq.result;
+          if (db.objectStoreNames.contains(tableName)) {
+            db.deleteObjectStore(tableName);
+          }
+        });
+      });
+      this.upgradePromise = new Promise(resolve => {
+        this.dbRq.addEventListener('success', () => {
+          resolve(true);
+        });
+      });
+      return this.upgradePromise;
+    });
+  }
+  /**
+   * 删除所有表
+   */
+  deleteAllTable() {
+    return (0,tslib__WEBPACK_IMPORTED_MODULE_0__.__awaiter)(this, void 0, void 0, function* () {
+      yield this.initPromise;
+      if (this.dbRq.readyState === "done") {
+        this.dbRq.result.close();
+        this.dbRq = indexedDB.open(this.name, ++this.version);
+      }
+      this.dbRq.addEventListener('upgradeneeded', () => {
+        const db = this.dbRq.result;
+        let tableNameList = Array.prototype.slice.call(db.objectStoreNames);
+        tableNameList.forEach(tableName => {
+          if (tableName === 'check') return;
+          if (db.objectStoreNames.contains(tableName)) {
+            db.deleteObjectStore(tableName);
+          }
+        });
+      });
+      this.upgradePromise = new Promise(resolve => {
+        this.dbRq.addEventListener('success', () => {
+          resolve(true);
+        });
+      });
+      return this.upgradePromise;
+    });
+  }
+  /**
+   * 增加/修改表中某行数据
+   */
+  setTableRow(tableName, data) {
+    return (0,tslib__WEBPACK_IMPORTED_MODULE_0__.__awaiter)(this, void 0, void 0, function* () {
+      yield this.checkConnect();
+      const tx = this.dbRq.result.transaction(tableName, "readwrite");
+      const request = tx.objectStore(tableName).put(data);
+      request.onsuccess = () => {
+        tx.commit();
+      };
+      request.onerror = () => {
+        console.error("setTableRow failed");
+      };
+    });
+  }
+  /**
+   * 获取表中某行数据
+   */
+  getTableRow(tableName, key) {
+    return (0,tslib__WEBPACK_IMPORTED_MODULE_0__.__awaiter)(this, void 0, void 0, function* () {
+      yield this.checkConnect();
+      const tx = this.dbRq.result.transaction(tableName, "readwrite");
+      const request = tx.objectStore(tableName).get(key);
+      return new Promise(resolve => {
+        request.onsuccess = () => {
+          resolve(request.result);
+          tx.commit();
+        };
+        request.onerror = () => {
+          console.error("getTableRow failed");
+        };
+      });
+    });
+  }
+  /**
+   * 删除表中某行数据
+   */
+  deleteTableRow(tableName, key) {
+    return (0,tslib__WEBPACK_IMPORTED_MODULE_0__.__awaiter)(this, void 0, void 0, function* () {
+      yield this.checkConnect();
+      const tx = this.dbRq.result.transaction(tableName, "readwrite");
+      const request = tx.objectStore(tableName).delete(key);
+      request.onsuccess = () => {
+        tx.commit();
+      };
+      request.onerror = () => {
+        console.error("deleteTableRow failed");
+      };
+    });
+  }
+  /**
+   * 获取表中所有数据
+   */
+  getAllTableRow(tableName, range) {
+    return (0,tslib__WEBPACK_IMPORTED_MODULE_0__.__awaiter)(this, void 0, void 0, function* () {
+      yield this.checkConnect();
+      const tx = this.dbRq.result.transaction(tableName, "readwrite");
+      const request = tx.objectStore(tableName).getAll(range);
+      return new Promise(resolve => {
+        request.onsuccess = () => {
+          resolve(request.result);
+          tx.commit();
+        };
+        request.onerror = () => {
+          console.error("getAllTableRow failed");
+        };
+      });
+    });
+  }
+  /**
+   * 获取表数据条数
+   */
+  getTableRowCount(tableName, range) {
+    return (0,tslib__WEBPACK_IMPORTED_MODULE_0__.__awaiter)(this, void 0, void 0, function* () {
+      yield this.checkConnect();
+      const tx = this.dbRq.result.transaction(tableName, "readwrite");
+      const request = tx.objectStore(tableName).count(range);
+      return new Promise(resolve => {
+        request.onsuccess = () => {
+          resolve(request.result);
+          tx.commit();
+        };
+        request.onerror = () => {
+          console.error("getTableRowCount failed");
+        };
+      });
+    });
+  }
+  /**
+   * 关闭数据库
+   */
+  close() {
+    return (0,tslib__WEBPACK_IMPORTED_MODULE_0__.__awaiter)(this, void 0, void 0, function* () {
+      yield this.initPromise;
+      yield this.upgradePromise;
+      if (this.dbRq.readyState === "done") {
+        this.dbRq.result.close();
+      } else {
+        this.dbRq.addEventListener('success', () => {
+          this.dbRq.result.close();
+        });
+      }
+    });
+  }
+  /**
+   * 重置数据库
+   */
+  reSet() {
+    return (0,tslib__WEBPACK_IMPORTED_MODULE_0__.__awaiter)(this, void 0, void 0, function* () {
+      try {
+        this.dbRq.result.close();
+      } catch (error) {
+        console.log(error);
+      }
+      const close = indexedDB.deleteDatabase(this.name);
+      this.initPromise = new Promise((resolve, reject) => {
+        close.addEventListener("success", () => {
+          this.version = 1;
+          this.dbRq = indexedDB.open(this.name, this.version); // 创建数据库
+          this.createTable(['check']);
+          resolve(true);
+        });
+      });
+      return this.initPromise;
+    });
+  }
+}
+
 /***/ })
 /******/ 	]);
 /************************************************************************/
@@ -2208,6 +2518,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   EventBus: function() { return /* reexport safe */ _EventBus_index__WEBPACK_IMPORTED_MODULE_11__.EventBus; },
 /* harmony export */   FileHelper: function() { return /* reexport module object */ _FileHelper_index__WEBPACK_IMPORTED_MODULE_5__; },
 /* harmony export */   Http: function() { return /* reexport safe */ _Http_index__WEBPACK_IMPORTED_MODULE_6__["default"]; },
+/* harmony export */   IDBHelper: function() { return /* reexport safe */ _IDBHelper_index__WEBPACK_IMPORTED_MODULE_12__.IDBHelper; },
 /* harmony export */   Reactive: function() { return /* reexport module object */ _Reactive_index__WEBPACK_IMPORTED_MODULE_7__; },
 /* harmony export */   debounce: function() { return /* reexport safe */ _debounce_index__WEBPACK_IMPORTED_MODULE_0__["default"]; },
 /* harmony export */   deepClone: function() { return /* reexport safe */ _deepClone_index__WEBPACK_IMPORTED_MODULE_2__.deepClone; },
@@ -2229,6 +2540,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _mergeObject_index__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(15);
 /* harmony import */ var _DomHelper_index__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(16);
 /* harmony import */ var _EventBus_index__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(17);
+/* harmony import */ var _IDBHelper_index__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(18);
+
 
 
 

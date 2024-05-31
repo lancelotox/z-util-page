@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.DomHelper = exports.FileHelper = exports.CookieHelper = exports.Reactive = exports.EventBus = exports.Http = exports.mergeObject = exports.generateUUID = exports.getType = exports.parseUrl = exports.deepClone = exports.throttle = exports.debounce = void 0;
+exports.IDBHelper = exports.DomHelper = exports.FileHelper = exports.CookieHelper = exports.Reactive = exports.EventBus = exports.Http = exports.mergeObject = exports.generateUUID = exports.getType = exports.parseUrl = exports.deepClone = exports.throttle = exports.debounce = void 0;
 const tslib_1 = require("tslib");
 const index_1 = tslib_1.__importDefault(require("./debounce/index"));
 exports.debounce = index_1.default;
@@ -27,3 +27,5 @@ const DomHelper = tslib_1.__importStar(require("./DomHelper/index"));
 exports.DomHelper = DomHelper;
 const index_9 = require("./EventBus/index");
 Object.defineProperty(exports, "EventBus", { enumerable: true, get: function () { return index_9.EventBus; } });
+const index_10 = require("./IDBHelper/index");
+Object.defineProperty(exports, "IDBHelper", { enumerable: true, get: function () { return index_10.IDBHelper; } });
