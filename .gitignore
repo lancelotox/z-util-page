@@ -1,3 +1,8 @@
 # 项目排除路径
 node_modules/
 package-lock.json
+pnpm-lock.yaml
+utils/cmd/
+utils/dist/
+utils/es/
+utils/types/

@@ -1,4 +1,4 @@
-import { EventBus } from "z-util-page/ts";
+import { EventBus } from "z-util-page";
 
 describe('新建事件总线', () => {
 

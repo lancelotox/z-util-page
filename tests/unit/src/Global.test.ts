@@ -1,4 +1,4 @@
-import { debounce, throttle, deepClone, getType, generateUUID, parseUrl } from "z-util-page/ts";
+import { debounce, throttle, deepClone, getType, generateUUID, parseUrl } from "z-util-page";
 
 describe('函数防抖', () => {
 

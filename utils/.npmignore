@@ -2,15 +2,11 @@
 .gitignore
 babel.config.js
 build.js
-package-lock.json
 webpack.config.js
-jest.config.js
 tsconfig.json
+package-lock.json
 
 #other
 .idea/
-.git/
 node_modules/
-coverage/
 src/
-tests/

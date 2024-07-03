@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 
-import { Http } from "z-util-page/ts";
+import { Http } from "z-util-page";
 import mock from "xhr-mock";
 
 describe('Http请求', ()=>{

@@ -3,5 +3,5 @@ if((module as any).hot){
   (module as any).hot.accept();
 }
 
-import './tests/FileHelper.test';
-import './tests/IDBHelper.test';
+import './src/FileHelper';
+import './src/IDBHelper';

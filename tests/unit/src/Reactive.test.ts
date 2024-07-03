@@ -1,4 +1,4 @@
-import { Reactive } from 'z-util-page/ts';
+import { Reactive } from 'z-util-page';
 
 describe('常规', () => {
   test('副作用函数执行', () => {

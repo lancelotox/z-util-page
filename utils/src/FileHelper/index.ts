@@ -141,49 +141,108 @@ export function read(file: File | Blob) {
   return new FileReaderDecorate(file);
 }
 
-/**
- * 将文件写入目标文件夹
- * @param dirKey 文件夹唯一标识，自行定义string或symbol，用于后续向同一文件夹写入文件
- * @param fileName 文件名
- * @param fileContent 二进制文件流
- * @param overwrite 是否覆盖同名文件
- */
-const DirMap = new Map<string | symbol, Promise<FileSystemDirectoryHandle>>();
-type FileContent = ArrayBuffer | string | Uint8Array | Blob;
-const errorMessage = debounce((err: Error) => {
-  console.error(err);
-}, 100);
-export async function saveFileToDir(dirKey: string | symbol, fileName: string, fileContent: Array<FileContent | Promise<FileContent>>, overwrite: boolean = false): Promise<FileSystemWritableFileStream | undefined> {
-  try {
-    if (!self.showDirectoryPicker) throw new Error("该浏览器不支持showDirectoryPicker");
-    let dirHandlePromise = DirMap.get(dirKey);
-    if (!dirHandlePromise) {
-      dirHandlePromise = self.showDirectoryPicker({
-        mode: 'readwrite',
-        startIn: 'documents'
-      });
-      DirMap.set(dirKey, dirHandlePromise);
-    }
-    const dirHandle = await dirHandlePromise;
-    const fileHandle = await dirHandle.getFileHandle(fileName, {
-      create: true
-    });
-    const writable = await fileHandle.createWritable();
-    if (!overwrite) {
-      const file = await fileHandle.getFile();
-      const fileContent = await read(file).start("ArrayBuffer").loadendPromise();
-      writable.write(fileContent);
-    }
-    for await (const item of fileContent) {
-      await writable.write(item);
-    }
-    return writable;
-  } catch (error: any) {
-    if (error.code === 20) {
-      DirMap.delete(dirKey);
-      errorMessage(new Error("用户取消选择"));
-    } else {
-      console.error(error);
-    }
-  }
-}
+// /**
+//  * 将文件写入目标文件夹
+//  * @param dirKey 文件夹唯一标识，自行定义string，用于后续向同一文件夹写入文件
+//  * @param fileName 文件名
+//  * @param fileContent 二进制文件流
+//  * @param overwrite 是否覆盖同名文件
+//  */
+// const DirMap = new Map<string | symbol, Promise<FileSystemDirectoryHandle>>();
+// type FileContent = ArrayBuffer | string | Uint8Array | Blob;
+// const warnMessage = debounce((err: Error) => {
+//   console.warn(err);
+// }, 100);
+// export async function saveFileToDir(dirKey: string, fileName: string, fileContent: Array<FileContent | Promise<FileContent>>, overwrite: boolean = true) {
+//   try {
+//     let dirHandlePromise = DirMap.get(dirKey);
+//     if (!dirHandlePromise) throw new Error("请先选择文件夹");
+//     const dirHandle = await dirHandlePromise;
+
+//     // const list = [];
+//     // for await (const key of dirHandle.keys()) {
+//     //   list.push(key);
+//     // }
+
+//     // fileName = getName(list, fileName);
+
+//     const fileHandle = await dirHandle.getFileHandle(fileName, {
+//       create: true
+//     });
+
+//     const writable = await fileHandle.createWritable();
+//     if (!overwrite) {
+//       const file = await fileHandle.getFile();
+//       const fileContent = await read(file).start("ArrayBuffer").loadendPromise();
+//       writable.write(fileContent);
+//     }
+//     for await (const item of fileContent) {
+//       await writable.write(item);
+//     }
+//     await writable.close();
+//     return {
+//       success: true,
+//       message: "保存成功"
+//     };
+//   } catch (error: any) {
+//     if (error.code === 20) {
+//       DirMap.delete(dirKey);
+//       warnMessage(new Error("用户取消选择"));
+//     } else {
+//       console.error(error);
+//     }
+//     return {
+//       success: false,
+//       message: "保存失败"
+//     };
+//   }
+// }
+
+// function getName(list: string[], name: string, index: number = 1) {
+//   console.log(name)
+//   const res = list.find(item => item === name);
+//   if (res) {
+//     const paths = name.split(".");
+//     const newName = (<string[]>[]).concat(paths, [`(${index})`], [paths.pop()!]).join('.');
+//     return getName(list, newName, ++index);
+//   } else {
+//     return name;
+//   }
+// }
+
+// /**
+//  * 选择文件夹
+//  * @param dirKey 文件夹唯一标识，自行定义string，用于后续向同一文件夹写入文件
+//  * 与saveFileToDir共用缓存
+//  */
+// export async function pickDir(dirKey: string, force: boolean = false) {
+//   try {
+//     if (!self.showDirectoryPicker) throw new Error("该浏览器不支持showDirectoryPicker");
+//     let dirHandlePromise = DirMap.get(dirKey);
+//     if (!dirHandlePromise || force) {
+//       dirHandlePromise = self.showDirectoryPicker({
+//         id: dirKey,
+//         mode: 'readwrite'
+//       });
+//       DirMap.set(dirKey, dirHandlePromise);
+//     }
+//     const dirHandle = await dirHandlePromise;
+//     return {
+//       success: true,
+//       data: dirHandle,
+//       message: "获取成功"
+//     };
+//   } catch (error: any) {
+//     if (error.code === 20) {
+//       DirMap.delete(dirKey);
+//       warnMessage(new Error("用户取消选择"));
+//     } else {
+//       console.error(error);
+//     }
+//     return {
+//       success: false,
+//       data: null,
+//       message: "获取失败"
+//     };
+//   }
+// }

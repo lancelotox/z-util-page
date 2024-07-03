@@ -41,7 +41,7 @@
     // 生成相应的 .map文件。
     "sourceMap": false,
     // 解析非相对模块名的基准目录
-    "baseUrl": ".",
+    "baseUrl": "./",
     // 如果指定了typeRoots，只有typeRoots下面的包才会被包含进来
     // "typeRoots" : ["./typings"],
     // 如果指定了types，只有被列出来的包才会被包含进来
@@ -49,7 +49,7 @@
     // (模块名)到(基于baseUrl的路径)映射的列表。
     "paths": {
       "@/*": [
-        "src/*"
+        "*"
       ]
     },
     // 编译过程中需要引入的库文件的列表。
@@ -64,9 +64,7 @@
   // "files": [],
   // 指定包含哪些文件或目录
   "include": [
-    "./src/index.ts",
-    "./src/*.d.ts",
-    "web-tests/index.ts"
+    "./index.ts"
   ],
   // 指定排除哪些文件或目录
   "exclude": [

@@ -1,15 +1,10 @@
 {
   "name": "z-util-page",
   "version": "3.2.0",
-  "type": "commonjs",
   "main": "./cmd/index.js",
   "module": "./es/index.js",
   "types": "./types/index.d.ts",
   "exports": {
-    "./ts": {
-      "import": "./src/index.ts",
-      "types": "./src/index.ts"
-    },
     ".": {
       "require": "./cmd/index.js",
       "import": "./es/index.js",

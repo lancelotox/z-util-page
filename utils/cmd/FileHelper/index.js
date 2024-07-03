@@ -3,10 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.choose = choose;
 exports.save = save;
 exports.read = read;
-exports.saveFileToDir = saveFileToDir;
-const tslib_1 = require("tslib");
 const index_1 = require("../helper/index");
-const index_2 = tslib_1.__importDefault(require("../debounce/index"));
 function choose(callback, options = {}) {
     const input = document.createElement('input');
     input.setAttribute('type', 'file');
@@ -139,67 +136,102 @@ class FileReaderDecorate {
 function read(file) {
     return new FileReaderDecorate(file);
 }
-/**
- * 将文件写入目标文件夹
- * @param dirKey 文件夹唯一标识，自行定义string或symbol，用于后续向同一文件夹写入文件
- * @param fileName 文件名
- * @param fileContent 二进制文件流
- * @param overwrite 是否覆盖同名文件
- */
-const DirMap = new Map();
-const errorMessage = (0, index_2.default)((err) => {
-    console.error(err);
-}, 100);
-function saveFileToDir(dirKey_1, fileName_1, fileContent_1) {
-    return tslib_1.__awaiter(this, arguments, void 0, function* (dirKey, fileName, fileContent, overwrite = false) {
-        var _a, fileContent_2, fileContent_2_1;
-        var _b, e_1, _c, _d;
-        try {
-            if (!self.showDirectoryPicker)
-                throw new Error("该浏览器不支持showDirectoryPicker");
-            let dirHandlePromise = DirMap.get(dirKey);
-            if (!dirHandlePromise) {
-                dirHandlePromise = self.showDirectoryPicker({
-                    mode: 'readwrite',
-                    startIn: 'documents'
-                });
-                DirMap.set(dirKey, dirHandlePromise);
-            }
-            const dirHandle = yield dirHandlePromise;
-            const fileHandle = yield dirHandle.getFileHandle(fileName, {
-                create: true
-            });
-            const writable = yield fileHandle.createWritable();
-            if (!overwrite) {
-                const file = yield fileHandle.getFile();
-                const fileContent = yield read(file).start("ArrayBuffer").loadendPromise();
-                writable.write(fileContent);
-            }
-            try {
-                for (_a = true, fileContent_2 = tslib_1.__asyncValues(fileContent); fileContent_2_1 = yield fileContent_2.next(), _b = fileContent_2_1.done, !_b; _a = true) {
-                    _d = fileContent_2_1.value;
-                    _a = false;
-                    const item = _d;
-                    yield writable.write(item);
-                }
-            }
-            catch (e_1_1) { e_1 = { error: e_1_1 }; }
-            finally {
-                try {
-                    if (!_a && !_b && (_c = fileContent_2.return)) yield _c.call(fileContent_2);
-                }
-                finally { if (e_1) throw e_1.error; }
-            }
-            return writable;
-        }
-        catch (error) {
-            if (error.code === 20) {
-                DirMap.delete(dirKey);
-                errorMessage(new Error("用户取消选择"));
-            }
-            else {
-                console.error(error);
-            }
-        }
-    });
-}
+// /**
+//  * 将文件写入目标文件夹
+//  * @param dirKey 文件夹唯一标识，自行定义string，用于后续向同一文件夹写入文件
+//  * @param fileName 文件名
+//  * @param fileContent 二进制文件流
+//  * @param overwrite 是否覆盖同名文件
+//  */
+// const DirMap = new Map<string | symbol, Promise<FileSystemDirectoryHandle>>();
+// type FileContent = ArrayBuffer | string | Uint8Array | Blob;
+// const warnMessage = debounce((err: Error) => {
+//   console.warn(err);
+// }, 100);
+// export async function saveFileToDir(dirKey: string, fileName: string, fileContent: Array<FileContent | Promise<FileContent>>, overwrite: boolean = true) {
+//   try {
+//     let dirHandlePromise = DirMap.get(dirKey);
+//     if (!dirHandlePromise) throw new Error("请先选择文件夹");
+//     const dirHandle = await dirHandlePromise;
+//     // const list = [];
+//     // for await (const key of dirHandle.keys()) {
+//     //   list.push(key);
+//     // }
+//     // fileName = getName(list, fileName);
+//     const fileHandle = await dirHandle.getFileHandle(fileName, {
+//       create: true
+//     });
+//     const writable = await fileHandle.createWritable();
+//     if (!overwrite) {
+//       const file = await fileHandle.getFile();
+//       const fileContent = await read(file).start("ArrayBuffer").loadendPromise();
+//       writable.write(fileContent);
+//     }
+//     for await (const item of fileContent) {
+//       await writable.write(item);
+//     }
+//     await writable.close();
+//     return {
+//       success: true,
+//       message: "保存成功"
+//     };
+//   } catch (error: any) {
+//     if (error.code === 20) {
+//       DirMap.delete(dirKey);
+//       warnMessage(new Error("用户取消选择"));
+//     } else {
+//       console.error(error);
+//     }
+//     return {
+//       success: false,
+//       message: "保存失败"
+//     };
+//   }
+// }
+// function getName(list: string[], name: string, index: number = 1) {
+//   console.log(name)
+//   const res = list.find(item => item === name);
+//   if (res) {
+//     const paths = name.split(".");
+//     const newName = (<string[]>[]).concat(paths, [`(${index})`], [paths.pop()!]).join('.');
+//     return getName(list, newName, ++index);
+//   } else {
+//     return name;
+//   }
+// }
+// /**
+//  * 选择文件夹
+//  * @param dirKey 文件夹唯一标识，自行定义string，用于后续向同一文件夹写入文件
+//  * 与saveFileToDir共用缓存
+//  */
+// export async function pickDir(dirKey: string, force: boolean = false) {
+//   try {
+//     if (!self.showDirectoryPicker) throw new Error("该浏览器不支持showDirectoryPicker");
+//     let dirHandlePromise = DirMap.get(dirKey);
+//     if (!dirHandlePromise || force) {
+//       dirHandlePromise = self.showDirectoryPicker({
+//         id: dirKey,
+//         mode: 'readwrite'
+//       });
+//       DirMap.set(dirKey, dirHandlePromise);
+//     }
+//     const dirHandle = await dirHandlePromise;
+//     return {
+//       success: true,
+//       data: dirHandle,
+//       message: "获取成功"
+//     };
+//   } catch (error: any) {
+//     if (error.code === 20) {
+//       DirMap.delete(dirKey);
+//       warnMessage(new Error("用户取消选择"));
+//     } else {
+//       console.error(error);
+//     }
+//     return {
+//       success: false,
+//       data: null,
+//       message: "获取失败"
+//     };
+//   }
+// }

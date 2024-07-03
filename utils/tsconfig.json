@@ -57,6 +57,7 @@
       "esnext",
       "dom",
       "dom.iterable",
+      "DOM.AsyncIterable",
       "scripthost"
     ]
   },

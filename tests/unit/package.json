@@ -10,6 +10,7 @@
     "jest-environment-jsdom": "^29.7.0"
   },
   "dependencies": {
+    "ts-jest": "^29.1.5",
     "xhr-mock": "^2.5.1",
     "z-util-page": "workspace:^"
   }

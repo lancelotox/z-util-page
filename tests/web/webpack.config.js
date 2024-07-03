@@ -3,9 +3,9 @@ const path = require('path');
 const HtmlWebPackPlugin = require('html-webpack-plugin');
 
 const config = {
-  entry: './web-tests/index.ts',
+  entry: './index.ts',
   output: {
-    path: path.resolve(__dirname, 'web-tests/dist'),
+    path: path.resolve(__dirname, '/dist'),
   },
   resolve: {
     extensions: [".ts", ".tsx", ".js", "..."],
@@ -16,7 +16,7 @@ const config = {
     },
     // 配置路径别名
     alias: {
-      "@": path.resolve(__dirname, 'src')
+      "@": path.resolve(__dirname, './')
     }
   },
   module: {
@@ -33,7 +33,7 @@ const config = {
   plugins: [
     //自动生成html并将资源引入
     new HtmlWebPackPlugin({
-      template: path.resolve(__dirname, 'web-tests/index.html')
+      template: path.resolve(__dirname, 'public/index.html')
     }),
   ],
   devServer: {

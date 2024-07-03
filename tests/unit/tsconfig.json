@@ -21,11 +21,11 @@
     // 在 .tsx文件里支持JSX： "react-jsx"或 "Preserve"
     "jsx": "react-jsx",
     // 是否允许编译js文件
-    "allowJs": false,
+    "allowJs": true,
     // 从 tslib 导入辅助工具函数(比如 __extends， __rest等)
     "importHelpers": true,
     // 决定TS编译时如何处理模块。"AMD" or "System" or "ES6" ? "Classic" : "Node"
-    "moduleResolution": "bundler",
+    "moduleResolution": "Node",
     // 启用实验性的ES装饰器。需要安装@type/estree
     "experimentalDecorators": true,
     // 忽略所有的声明文件（ *.d.ts）的类型检查。

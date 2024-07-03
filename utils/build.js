@@ -12,7 +12,7 @@ function bulidUmd(isMinimizer) {
     }
     const compiler = webpack(config);
     compiler.run(status => {
-      console.log(status);
+      status && console.log(status);
       resolve();
     });
   })
@@ -29,7 +29,7 @@ function bulidCmd() {
     }
     const compiler = webpack(config);
     compiler.run(status => {
-      console.log(status);
+      status && console.log(status);
       resolve();
     });
   })
