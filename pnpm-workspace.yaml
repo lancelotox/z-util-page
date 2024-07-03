@@ -1,0 +1,5 @@
+packages: 
+  - utils
+  - tests/unit
+  - tests/web
+  - docs

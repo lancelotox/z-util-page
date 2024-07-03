@@ -1,87 +1,21 @@
 {
-  "name": "z-util-page",
-  "version": "3.1.0",
-  "type": "commonjs",
-  "main": "./cmd/index.js",
-  "module": "./es/index.js",
-  "types": "./types/index.d.ts",
-  "exports": {
-    ".": {
-      "require": "./cmd/index.js",
-      "import": "./es/index.js",
-      "types": "./types/index.d.ts"
-    },
-    "./Http": {
-      "require": "./cmd/Http/index.js",
-      "import": "./es/Http/index.js",
-      "types": "./types/Http/index.d.ts"
-    },
-    "./EventBus": {
-      "require": "./cmd/EventBus/index.js",
-      "import": "./es/EventBus/index.js",
-      "types": "./types/EventBus/index.d.ts"
-    },
-    "./Reactive": {
-      "require": "./cmd/Reactive/index.js",
-      "import": "./es/Reactive/index.js",
-      "types": "./types/Reactive/index.d.ts"
-    },
-    "./CookieHelper": {
-      "require": "./cmd/CookieHelper/index.js",
-      "import": "./es/CookieHelper/index.js",
-      "types": "./types/CookieHelper/index.d.ts"
-    },
-    "./FileHelper": {
-      "require": "./cmd/FileHelper/index.js",
-      "import": "./es/FileHelper/index.js",
-      "types": "./types/FileHelper/index.d.ts"
-    },
-    "./DomHelper": {
-      "require": "./cmd/DomHelper/index.js",
-      "import": "./es/DomHelper/index.js",
-      "types": "./types/DomHelper/index.d.ts"
-    },
-    "./IDBHelper": {
-      "require": "./cmd/IDBHelper/index.js",
-      "import": "./es/IDBHelper/index.js",
-      "types": "./types/IDBHelper/index.d.ts"
-    }
-  },
+  "name": "z-utils-repo",
+  "private": true,
+  "version": "1.0.0",
+  "description": "工具库仓库",
   "scripts": {
-    "dev": "webpack serve",
-    "build": "node build.js && tsc --project build.tsconfig.json --outDir cmd --module CommonJS && tsc --project build.tsconfig.json",
-    "clean": "rimraf lib dist src types coverage",
-    "test": "jest",
-    "test:watch": "jest --watch",
-    "test:watchAll": "jest --watchAll"
+    "build:utils": "cd utils && node build.js && tsc --outDir cmd --module CommonJS && tsc",
+    "clean:utils": "cd utils && rimraf lib dist types coverage",
+    "test:unit": "cd tests/unit && jest --watchAll",
+    "test:web": "webpack serve"
   },
-  "description": "web utils",
-  "author": "zhou feng",
-  "repository": "https://github.com/lancelotox/z-util-page",
-  "license": "ISC",
-  "keywords": [
-    "js",
-    "ts",
-    "utils",
-    "uuid",
-    "debounce",
-    "throttle",
-    "deepClone",
-    "getType",
-    "WebFileHelper",
-    "Http",
-    "Cookie",
-    "webpack",
-    "EventBus",
-    "indexedDB"
-  ],
+  "author": "zhoufeng",
   "devDependencies": {
     "@babel/core": "^7.24.5",
     "@babel/preset-env": "^7.24.5",
     "@babel/preset-typescript": "^7.24.1",
     "@types/jest": "^29.5.12",
     "@types/node": "^20.12.12",
-    "@webpack-cli/generators": "^3.0.7",
     "babel": "^6.23.0",
     "babel-loader": "^9.1.3",
     "core-js": "^3.37.1",
@@ -93,12 +27,6 @@
     "typescript": "^5.4.5",
     "webpack": "^5.91.0",
     "webpack-cli": "^5.1.4",
-    "webpack-dev-server": "^5.0.4",
-    "xhr-mock": "^2.5.1"
-  },
-  "browserslist": [
-    "> 1%",
-    "last 2 versions",
-    "not ie <= 8"
-  ]
+    "webpack-dev-server": "^5.0.4"
+  }
 }

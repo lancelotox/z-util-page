@@ -1,0 +1,11 @@
+{
+  "name": "web",
+  "private": true,
+  "version": "1.0.0",
+  "description": "端到端测试",
+  "author": "zhoufeng",
+  "devDependencies": {
+    "html-webpack-plugin": "^5.6.0",
+    "webpack-dev-server": "^5.0.4"
+  }
+}

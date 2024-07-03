@@ -1,0 +1,16 @@
+{
+  "name": "unit",
+  "private": true,
+  "version": "1.0.0",
+  "description": "单元测试",
+  "author": "zhoufeng",
+  "devDependencies": {
+    "@types/jest": "^29.5.12",
+    "jest": "^29.7.0",
+    "jest-environment-jsdom": "^29.7.0"
+  },
+  "dependencies": {
+    "xhr-mock": "^2.5.1",
+    "z-util-page": "workspace:^"
+  }
+}

@@ -1,0 +1,79 @@
+{
+  "name": "z-util-page",
+  "version": "3.2.0",
+  "type": "commonjs",
+  "main": "./cmd/index.js",
+  "module": "./es/index.js",
+  "types": "./types/index.d.ts",
+  "exports": {
+    "./ts": {
+      "import": "./src/index.ts",
+      "types": "./src/index.ts"
+    },
+    ".": {
+      "require": "./cmd/index.js",
+      "import": "./es/index.js",
+      "types": "./types/index.d.ts"
+    },
+    "./Http": {
+      "require": "./cmd/Http/index.js",
+      "import": "./es/Http/index.js",
+      "types": "./types/Http/index.d.ts"
+    },
+    "./EventBus": {
+      "require": "./cmd/EventBus/index.js",
+      "import": "./es/EventBus/index.js",
+      "types": "./types/EventBus/index.d.ts"
+    },
+    "./Reactive": {
+      "require": "./cmd/Reactive/index.js",
+      "import": "./es/Reactive/index.js",
+      "types": "./types/Reactive/index.d.ts"
+    },
+    "./CookieHelper": {
+      "require": "./cmd/CookieHelper/index.js",
+      "import": "./es/CookieHelper/index.js",
+      "types": "./types/CookieHelper/index.d.ts"
+    },
+    "./FileHelper": {
+      "require": "./cmd/FileHelper/index.js",
+      "import": "./es/FileHelper/index.js",
+      "types": "./types/FileHelper/index.d.ts"
+    },
+    "./DomHelper": {
+      "require": "./cmd/DomHelper/index.js",
+      "import": "./es/DomHelper/index.js",
+      "types": "./types/DomHelper/index.d.ts"
+    },
+    "./IDBHelper": {
+      "require": "./cmd/IDBHelper/index.js",
+      "import": "./es/IDBHelper/index.js",
+      "types": "./types/IDBHelper/index.d.ts"
+    }
+  },
+  "description": "web utils",
+  "author": "zhou feng",
+  "repository": "https://github.com/lancelotox/z-util-page",
+  "license": "ISC",
+  "keywords": [
+    "js",
+    "ts",
+    "utils",
+    "uuid",
+    "debounce",
+    "throttle",
+    "deepClone",
+    "getType",
+    "WebFileHelper",
+    "Http",
+    "Cookie",
+    "webpack",
+    "EventBus",
+    "indexedDB"
+  ],
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not ie <= 8"
+  ]
+}
