@@ -1,4 +1,4 @@
-**z-util-pages说明文档** • [**Docs**](modules.md)
+**z-util-pages说明文档 v3.2.0** • [**Docs**](globals.md)
 
 ***
 

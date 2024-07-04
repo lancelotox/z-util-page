@@ -1,10 +1,16 @@
 {
+  "$schema": "https://typedoc.org/schema.json",
+  "entryPoints": ["../utils/src/index.ts"],
   "out": "html",
   "name": "z-util-pages说明文档",
-  "entryPoints": ["../utils/src/**/index.ts"],
   "theme": "default",
   "exclude": ["**/*.test.ts", "**/node_modules/**", "**/helper/**"],
   "tsconfig": "../utils/tsconfig.json",
   "plugin": [],
-  "readme": "../README.md"
+  "readme": "../README.md",
+  "entryPointStrategy": "expand",
+  "disableSources": true,
+  "includeVersion": true,
+  "excludePrivate": true,
+  "excludeProtected": true
 }

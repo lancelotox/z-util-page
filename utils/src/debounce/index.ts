@@ -1,10 +1,16 @@
 /**
+ * 模块配置:
+ * @category 函数
+ * @module debounce - 防抖函数
+ */
+
+/**
  * 函数防抖
  * @param func 待处理函数
  * @param wait 函数执行延迟时间
  * @param immediatel 是否立刻执行
  */
-function debounce(func: Function, wait: number, immediatel?: boolean) {
+export function debounce(func: Function, wait: number, immediatel?: boolean) {
     let timeout: NodeJS.Timeout | null, content: any, args: IArguments, callbacks: Array<Function> = [], res: any;
     const debounced = function (this: any, ...args: any[]) {
         content = this;
@@ -35,4 +41,6 @@ function debounce(func: Function, wait: number, immediatel?: boolean) {
     return debounced;
 }
 
-export default debounce;
+export function name() {
+  
+}

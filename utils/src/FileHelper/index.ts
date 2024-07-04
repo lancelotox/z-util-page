@@ -1,5 +1,5 @@
 import { clickElement } from '../helper/index';
-import debounce from '../debounce/index';
+import { debounce } from '../debounce/index';
 
 /**
  * 文件选择

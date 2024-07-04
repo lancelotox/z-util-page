@@ -1,3 +1,8 @@
+/**
+ * 模块配置:
+ * @category 命名空间
+ * @module Reactive - 响应式数据API
+ */
 import { Ref, Effect, DepsMap, EffectOptions, TriggerType, Instrumentations, ReactiveOptions } from './type';
 import { wrapValue, cleanup, traverse } from './util';
 import { getType } from '../deepClone/index';
