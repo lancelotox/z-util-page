@@ -1,0 +1,10 @@
+{
+  "out": "html",
+  "name": "z-util-pages说明文档",
+  "entryPoints": ["../utils/src/**/index.ts"],
+  "theme": "default",
+  "exclude": ["**/*.test.ts", "**/node_modules/**", "**/helper/**"],
+  "tsconfig": "../utils/tsconfig.json",
+  "plugin": [],
+  "readme": "../README.md"
+}
