@@ -1,3 +1,8 @@
+/**
+ * @module FileHelper
+ * @category 文件操作辅助类
+ */
+
 import { clickElement } from '../helper/index';
 import { debounce } from '../debounce/index';
 

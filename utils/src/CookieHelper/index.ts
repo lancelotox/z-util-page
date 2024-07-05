@@ -1,12 +1,11 @@
 /**
- * 模块配置:
- * @category 命名空间
- * @module CookieHelper - Cookie辅助操作类
+ * @module CookieHelper
+ * @category Cookie操作辅助类
  */
 
 
 /**
- * 根据key值获取cookie数据
+ * @group 根据key值获取cookie数据
  * @param key key值
  * @returns 数据
  */

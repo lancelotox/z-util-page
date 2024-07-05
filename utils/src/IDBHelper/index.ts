@@ -1,45 +1,55 @@
+/**
+ * @category indexedDB操作辅助类
+ */
 export class IDBHelper {
-  private dbRq: IDBOpenDBRequest;
-  private version: number = 1;
+  private dbRq?: IDBOpenDBRequest;
+  private version: number = 0;
   private name: string;
-  private initPromise: Promise<Boolean>;
   private upgradePromise: Promise<Boolean> = Promise.resolve(true);
+  private resetPromise: Promise<Boolean> = Promise.resolve(true);
 
   constructor(name: string) {
     if (name === null || name === undefined) throw new Error("数据库名称不能为空");
     this.name = name;
-    this.dbRq = indexedDB.open(this.name); // 创建数据库
-    this.initPromise = this.init();
     this.createTable(['check']);
   }
 
   /**
-   * 初始化
+   * 获取数据库版本号
    */
-  private async init() {
+  private async getVersion() {
     // 获取数据库版本号
     const databases = await indexedDB.databases();
     const db = databases.find(item => item.name === this.name);
     db && (this.version = db.version || 0);
-    return true;
+    return this.version;
   }
 
   /**
    * 检查连接状态
    */
   private async checkConnect() {
-    await this.initPromise;
+    await this.resetPromise;
     await this.upgradePromise;
-    try {
-      const tx = this.dbRq.result.transaction(['check']);
-      tx.abort();
-    } catch (error) {
-      if (this.dbRq.readyState === "done") {
-        this.dbRq.result.close();
-        this.dbRq = indexedDB.open(this.name);
+    if (this.dbRq) {
+      try {
+        this.dbRq.result.transaction(['check']).abort();
+        return Promise.resolve(true);
+      } catch (error) {
+        if (this.dbRq.readyState === "done") {
+          this.dbRq.result?.close();
+          this.dbRq = this.getDb(this.name);
+        }
+        return new Promise((resolve, reject) => {
+          this.dbRq?.addEventListener('success', () => {
+            resolve(true);
+          })
+        })
       }
+    } else {
+      this.dbRq = this.getDb(this.name);
       return new Promise((resolve, reject) => {
-        this.dbRq.addEventListener('success', () => {
+        this.dbRq?.addEventListener('success', () => {
           resolve(true);
         })
       })
@@ -47,79 +57,87 @@ export class IDBHelper {
   }
 
   /**
-   * 获取所有表名
+   * 获取更新后的DB
+   * @returns 
    */
-  public async getAllTableName() {
-    await this.checkConnect();
-    return this.dbRq.result.objectStoreNames;
+  private async updateDb() {
+    await this.resetPromise;
+    await this.getVersion();
+    const dbRq = this.dbRq = this.getDb(this.name, ++this.version);
+    return dbRq;
+  }
+
+  /**
+   * 获取的DB
+   * @returns 
+   */
+  private getDb(name: string, version?: number) {
+    const dbRq = indexedDB.open(name, version);
+    dbRq.addEventListener('success', () => {
+      dbRq.result?.addEventListener('versionchange', (e) => {
+        dbRq.result?.close();
+        if (e.newVersion && e.newVersion !== this.version) this.version = e.newVersion;
+      });
+    });
+    return dbRq;
   }
 
   /**
    * 创建表
    */
   public async createTable(tableNameList: string[] | string, keyPath?: string) {
-    await this.initPromise;
-    if (this.dbRq.readyState === "done") {
-      this.dbRq.result.close();
-      this.dbRq = indexedDB.open(this.name, ++this.version);
-    }
-    this.dbRq.addEventListener('upgradeneeded', () => {
+    const { promise, resolve } = Promise.withResolvers<boolean>();
+    this.upgradePromise = promise;
+    const dbRq = await this.updateDb();
+    dbRq.addEventListener('upgradeneeded', () => {
       if (typeof tableNameList === 'string') {
         tableNameList = [tableNameList];
       }
       tableNameList.forEach(tableName => {
-        const db = this.dbRq.result;
+        const db = dbRq.result;
         if (db.objectStoreNames.contains(tableName)) return;
         db.createObjectStore(tableName, keyPath ? { keyPath } : { autoIncrement: true });
       });
     });
-    this.upgradePromise = new Promise(resolve => {
-      this.dbRq.addEventListener('success', () => {
-        resolve(true);
-      });
+    dbRq.addEventListener('success', () => {
+      resolve(true);
     });
-    return this.upgradePromise;
+    return promise;
   }
 
   /**
    * 删除表
    */
   public async deleteTable(tableNameList: string[] | string) {
-    await this.initPromise;
-    if (this.dbRq.readyState === "done") {
-      this.dbRq.result.close();
-      this.dbRq = indexedDB.open(this.name, ++this.version);
-    }
-    this.dbRq.addEventListener('upgradeneeded', () => {
+    const { promise, resolve } = Promise.withResolvers<boolean>();
+    this.upgradePromise = promise;
+    const dbRq = await this.updateDb();
+    dbRq.addEventListener('upgradeneeded', () => {
       if (typeof tableNameList === 'string') {
         tableNameList = [tableNameList];
       }
       tableNameList.forEach(tableName => {
-        const db = this.dbRq.result;
+        const db = dbRq.result;
         if (db.objectStoreNames.contains(tableName)) {
           db.deleteObjectStore(tableName);
         }
       });
     });
-    this.upgradePromise = new Promise(resolve => {
-      this.dbRq.addEventListener('success', () => {
-        resolve(true);
-      });
+    dbRq.addEventListener('success', () => {
+      resolve(true);
     });
-    return this.upgradePromise;
+    return promise;
   }
 
   /**
    * 删除所有表
    */
   public async deleteAllTable() {
-    await this.initPromise;
-    if (this.dbRq.readyState === "done") {
-      this.dbRq.result.close();
-      this.dbRq = indexedDB.open(this.name, ++this.version);
-    }
-    this.dbRq.addEventListener('upgradeneeded', () => {
-      const db = this.dbRq.result;
+    const { promise, resolve } = Promise.withResolvers<boolean>();
+    this.upgradePromise = promise;
+    const dbRq = await this.updateDb();
+    dbRq.addEventListener('upgradeneeded', () => {
+      const db = dbRq.result;
       let tableNameList: string[] = Array.prototype.slice.call(db.objectStoreNames);
       tableNameList.forEach(tableName => {
         if (tableName === 'check') return;
@@ -128,18 +146,26 @@ export class IDBHelper {
         }
       });
     });
-    this.upgradePromise = new Promise(resolve => {
-      this.dbRq.addEventListener('success', () => {
-        resolve(true);
-      });
+    dbRq.addEventListener('success', () => {
+      resolve(true);
     });
-    return this.upgradePromise;
+    return promise;
+  }
+
+  /**
+   * 获取所有表名
+   */
+  public async getAllTableName() {
+    if (!this.dbRq) return false;
+    await this.checkConnect();
+    return this.dbRq?.result?.objectStoreNames;
   }
 
   /**
    * 增加/修改表中某行数据
    */
   public async setTableRow(tableName: string, data: any) {
+    if (!this.dbRq) return false;
     await this.checkConnect();
     const tx = this.dbRq.result.transaction(tableName, "readwrite");
     const request = tx.objectStore(tableName).put(data);
@@ -155,6 +181,7 @@ export class IDBHelper {
    * 获取表中某行数据
    */
   public async getTableRow(tableName: string, key: string) {
+    if (!this.dbRq) return false;
     await this.checkConnect();
     const tx = this.dbRq.result.transaction(tableName, "readwrite");
     const request = tx.objectStore(tableName).get(key);
@@ -173,6 +200,7 @@ export class IDBHelper {
    * 删除表中某行数据
    */
   public async deleteTableRow(tableName: string, key: string) {
+    if (!this.dbRq) return false;
     await this.checkConnect();
     const tx = this.dbRq.result.transaction(tableName, "readwrite");
     const request = tx.objectStore(tableName).delete(key);
@@ -188,6 +216,7 @@ export class IDBHelper {
    * 获取表中所有数据
    */
   public async getAllTableRow(tableName: string, range?: IDBKeyRange) {
+    if (!this.dbRq) return false;
     await this.checkConnect();
     const tx = this.dbRq.result.transaction(tableName, "readwrite");
     const request = tx.objectStore(tableName).getAll(range);
@@ -206,6 +235,7 @@ export class IDBHelper {
    * 获取表数据条数
    */
   public async getTableRowCount(tableName: string, range?: IDBKeyRange) {
+    if (!this.dbRq) return false;
     await this.checkConnect();
     const tx = this.dbRq.result.transaction(tableName, "readwrite");
     const request = tx.objectStore(tableName).count(range);
@@ -224,13 +254,16 @@ export class IDBHelper {
    * 关闭数据库
    */
   public async close() {
-    await this.initPromise;
+    if (!this.dbRq) return false;
     await this.upgradePromise;
-    if (this.dbRq.readyState === "done") {
-      this.dbRq.result.close();
+    await this.resetPromise;
+    const dbRq = this.dbRq;
+    this.dbRq = undefined;
+    if (dbRq.readyState === "done") {
+      dbRq.result.close();
     } else {
-      this.dbRq.addEventListener('success', () => {
-        this.dbRq.result.close();
+      dbRq.addEventListener('success', () => {
+        dbRq.result.close();
       });
     }
   }
@@ -239,20 +272,21 @@ export class IDBHelper {
    * 重置数据库
    */
   public async reSet() {
+    if (!this.dbRq) return false;
     try {
-      this.dbRq.result.close();
+      this.dbRq.result?.close();
     } catch (error) {
       console.log(error);
     }
     const close = indexedDB.deleteDatabase(this.name);
-    this.initPromise = new Promise((resolve, reject) => {
+    this.resetPromise = new Promise((resolve, reject) => {
       close.addEventListener("success", () => {
         this.version = 1;
-        this.dbRq = indexedDB.open(this.name, this.version); // 创建数据库
+        this.dbRq = this.getDb(this.name, this.version); // 创建数据库
         this.createTable(['check']);
         resolve(true);
       });
     })
-    return this.initPromise;
+    return this.resetPromise;
   }
 }

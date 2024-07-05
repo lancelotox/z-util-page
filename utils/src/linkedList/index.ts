@@ -1,7 +1,7 @@
 /**
  * 节点类
  */
-class LinkNode {
+export class LinkNode {
     before: LinkNode | null = null;
     param: any = '';
     index: number | null = null;
@@ -14,7 +14,7 @@ class LinkNode {
 /**
  * 链表操作类
  */
-class LinkedList {
+export class LinkedList {
     Length: number = 0;
     node: LinkNode | null = null;
     head: LinkNode | null = null;
@@ -124,9 +124,4 @@ class LinkedList {
     size() {
         return this.Length;
     }
-}
-
-export default {
-    LinkNode,
-    LinkedList
 }

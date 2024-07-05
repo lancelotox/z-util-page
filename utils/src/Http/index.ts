@@ -1,10 +1,12 @@
 import { getType } from '../deepClone/index';
 import * as FileHelper from '../FileHelper/index';
 import { Message, UploadMessage } from './message';
-
 import type { ResponseMessage } from './message';
 
-class Http {
+/**
+ * @category HTTTP请求封装类
+ */
+export class Http {
   public options: HttpOptions = {
     timeout: 10000,
     baseUrl: '',
@@ -319,6 +321,3 @@ type ContentType = "" |
   "application/json"
 
 type RequestBody = null | undefined | ArrayBuffer | ArrayBufferView | Blob | Document | FormData | String
-
-export default Http;
-

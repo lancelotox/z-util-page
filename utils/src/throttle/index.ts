@@ -12,13 +12,13 @@ const defaultConfig: throttleOptions = {
 }
 
 /**
- * 函数节流
+ * @category 辅助函数-函数节流
  * @param func 待处理函数
  * @param wait 函数执行最短间隔时间
  * @param option.leading 首次是否执行
  * @param option.trailing 结束是否执行
  */
-function throttle(func: Function, wait: number, option?: throttleOptions) {
+export function throttle(func: Function, wait: number, option?: throttleOptions) {
     let options = Object.assign(deepClone(defaultConfig), option || {});
     if (options.leading === false && options.trailing === false) throw ('leading, trailing不能同时为false');
     let timeout: NodeJS.Timeout | null = null, args: any[], content: any, res: any;
@@ -42,5 +42,3 @@ function throttle(func: Function, wait: number, option?: throttleOptions) {
     }
     return throttled;
 }
-
-export default throttle;

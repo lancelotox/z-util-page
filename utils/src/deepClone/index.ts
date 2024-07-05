@@ -1,8 +1,3 @@
-
-/**
- * 深拷贝
- * @param value 待克隆值
- */
 let cacheMap = new WeakMap<object, any>();
 interface HandleMap {
   [propName: string]: Function
@@ -48,27 +43,11 @@ const typeHandleMap: HandleMap = {
 }
 const baseTypeList = ['boolean', 'number', 'string', 'undefined', "function", "symbol", 'Null', "Math", "Json", "Global"];
 const simpleTypeList = ["Boolean", "Number", 'String', 'Date', "Regexp"];
-function deepClone(value: any) {
-  let type: string = typeof value;
-  if (type === 'object') type = getType(value);
-  if (value instanceof HTMLElement) type = 'HTMLElement';
-  if (baseTypeList.includes(type)) return value;
-  else if (simpleTypeList.includes(type)) return new value.constructor(value);
-  let cloneTarget = cacheMap.get(value);
-  if (cloneTarget === undefined) {
-    let handle = typeHandleMap[type];
-    if (handle) cloneTarget = handle(value);
-    else cloneTarget = value;
-    cacheMap.set(value, cloneTarget);
-  }
-  clear();
-  return cloneTarget;
-}
 
+let isFlush = false;
 /**
  * 清理缓存
  */
-let isFlush = false;
 function clear() {
   if (!isFlush) {
     isFlush = true;
@@ -96,11 +75,11 @@ function forEach(list: Array<any>, handle: Function) {
 }
 
 /**
- * 获取数据类型
+ * @category 辅助函数-获取数据类型
  * @param value 
  * @returns 类型字符串, 'String'、'Map'
  */
-function getType(value: any): string {
+export function getType(value: any): string {
   try {
     return Object.prototype.toString.call(value).match(/\[.+\s(.+)\]/)![1];
   } catch (e) {
@@ -108,8 +87,23 @@ function getType(value: any): string {
   }
 }
 
-export {
-  deepClone,
-  getType
+/**
+ * @category 辅助函数-深拷贝
+ * @param value 待克隆值
+ */
+export function deepClone(value: any) {
+  let type: string = typeof value;
+  if (type === 'object') type = getType(value);
+  if (value instanceof HTMLElement) type = 'HTMLElement';
+  if (baseTypeList.includes(type)) return value;
+  else if (simpleTypeList.includes(type)) return new value.constructor(value);
+  let cloneTarget = cacheMap.get(value);
+  if (cloneTarget === undefined) {
+    let handle = typeHandleMap[type];
+    if (handle) cloneTarget = handle(value);
+    else cloneTarget = value;
+    cacheMap.set(value, cloneTarget);
+  }
+  clear();
+  return cloneTarget;
 }
-

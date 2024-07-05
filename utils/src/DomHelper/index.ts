@@ -1,3 +1,9 @@
+/**
+ * @module DomHelper
+ * @category DOM操作辅助类
+ */
+
+
 export function scrollToTop(scroll: HTMLElement) {
   scroll.scrollTop = 0;
 }

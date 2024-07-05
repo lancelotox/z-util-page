@@ -17,11 +17,11 @@ interface URLWithParam {
 }
 
 /**
- * 解析统一资源定位符
+ * @category 辅助函数-解析URL
  * @param url 统一资源定位符
  * @returns URLWithParam
  */
-function parseUrl(url: string): URLWithParam | null {
+export function parseUrl(url: string): URLWithParam | null {
   let Url: URLWithParam | null = null
   const param: any = {}
   try {
@@ -52,5 +52,3 @@ function parseUrl(url: string): URLWithParam | null {
   })
   return Url
 }
-
-export default parseUrl

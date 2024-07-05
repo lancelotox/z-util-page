@@ -9,9 +9,7 @@ interface Bucket {
 }
 
 /**
- * 事件总线
- * on: 注册事件
- * emit: 触发事件
+ * @category 事件总线
  */
 export class EventBus {
   private static config: EventBusConfig = {}

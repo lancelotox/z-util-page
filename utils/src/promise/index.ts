@@ -8,7 +8,7 @@ type ForkPromiseNext = {
     reject: ForkPromiseResolveOrReject
 }
 
-class ForkPromise {
+export class ForkPromise {
     private value: any = null;
     private state: "pending" | "fulfilled" | "rejected" = "pending";
     private nexts: Array<ForkPromiseNext> = [];
@@ -83,5 +83,3 @@ class ForkPromise {
         this.nexts.forEach(next => this._handle(next));
     }
 }
-
-export default ForkPromise

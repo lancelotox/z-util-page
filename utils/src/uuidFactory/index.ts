@@ -1,10 +1,10 @@
 /**
- * 生成UUID4
+ * @category 辅助函数-生成UUID4
  * @param length 生成uuid的总长度，不传递则按照rfc4122标准生成uuid
  * @param radix uuid每个字符的基数 1-62
  * @returns uuid字符串
  */
-export default function generateUUID(length?: number, radix?: number){
+export function generateUUID(length?: number, radix?: number){
 	let chars: Array<string> = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
 	let uuid: Array<string> = [];
 	radix = radix || chars.length;

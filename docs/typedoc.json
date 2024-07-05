@@ -8,9 +8,10 @@
   "tsconfig": "../utils/tsconfig.json",
   "plugin": [],
   "readme": "../README.md",
-  "entryPointStrategy": "expand",
+  // "entryPointStrategy": "expand",
   "disableSources": true,
   "includeVersion": true,
   "excludePrivate": true,
-  "excludeProtected": true
+  "excludeProtected": true,
+  "outputFileStrategy": "modules"
 }
