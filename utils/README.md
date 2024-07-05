@@ -32,7 +32,7 @@ npm i z-util-page --save
 import { debounce, throttle, deepClone } from 'z-util-page';
 ```
 
-## 说明:
+## 说明: [DOCS](md/README.md)
 
 ### 1. 函数防抖
 
@@ -65,7 +65,7 @@ let throttle = throttle(function(){
 });
 ```
 
-### 3.  深拷贝
+### 3. 深拷贝
 
 ``` javascript
 import { deepClone } from 'z-util-page'
@@ -92,7 +92,7 @@ let newValue = deepClone({
 });
 ```
 
-### 4.  生成UUID
+### 4. 生成UUID
 
 ``` javascript
 import { generateUUID } from 'z-util-page'
@@ -198,6 +198,7 @@ b.text = "jack";
 //副作用函数执行改变了a对象属性值，输出值为'jack'
 console.log(a.text);
 ```
+
 ### 8. CookieHelper
 
 ```javascript
@@ -222,7 +223,7 @@ CookieHelper.exist('TEST');
 CookieHelper.clear('TEST');
 ```
 
-### 8. IDBHelper
+### 9. IDBHelper
 
 ```javascript
 import { IDBHelper } from 'z-util-page';

@@ -9,6 +9,7 @@ interface Bucket {
 }
 
 /**
+ * 事件总线
  * @category 事件总线
  */
 export class EventBus {

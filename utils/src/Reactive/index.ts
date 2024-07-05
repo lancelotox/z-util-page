@@ -1,5 +1,5 @@
 /**
- * 模块配置:
+ * 响应式数据API
  * @category 响应式数据API
  * @module Reactive
  */

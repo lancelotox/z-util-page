@@ -75,7 +75,8 @@ function forEach(list: Array<any>, handle: Function) {
 }
 
 /**
- * @category 辅助函数-获取数据类型
+ * 获取数据类型
+ * @category 辅助函数
  * @param value 
  * @returns 类型字符串, 'String'、'Map'
  */
@@ -88,7 +89,8 @@ export function getType(value: any): string {
 }
 
 /**
- * @category 辅助函数-深拷贝
+ * 深拷贝
+ * @category 辅助函数
  * @param value 待克隆值
  */
 export function deepClone(value: any) {

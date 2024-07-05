@@ -1,4 +1,5 @@
 /**
+ * indexedDB操作辅助类
  * @category indexedDB操作辅助类
  */
 export class IDBHelper {

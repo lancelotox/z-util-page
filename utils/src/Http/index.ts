@@ -4,7 +4,8 @@ import { Message, UploadMessage } from './message';
 import type { ResponseMessage } from './message';
 
 /**
- * @category HTTTP请求封装类
+ * HTTTP请求操作辅助类
+ * @category HTTTP请求操作辅助类
  */
 export class Http {
   public options: HttpOptions = {

@@ -17,7 +17,8 @@ interface URLWithParam {
 }
 
 /**
- * @category 辅助函数-解析URL
+ * 解析URL
+ * @category 辅助函数
  * @param url 统一资源定位符
  * @returns URLWithParam
  */

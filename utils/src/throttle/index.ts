@@ -12,7 +12,8 @@ const defaultConfig: throttleOptions = {
 }
 
 /**
- * @category 辅助函数-函数节流
+ * 函数节流
+ * @category 辅助函数
  * @param func 待处理函数
  * @param wait 函数执行最短间隔时间
  * @param option.leading 首次是否执行

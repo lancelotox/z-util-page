@@ -1,5 +1,6 @@
 /**
- * @category 辅助函数-函数防抖
+ * 函数防抖
+ * @category 辅助函数
  * @param func 待处理函数
  * @param wait 函数执行延迟时间
  * @param immediatel 是否立刻执行

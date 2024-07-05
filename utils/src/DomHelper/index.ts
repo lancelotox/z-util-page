@@ -1,4 +1,5 @@
 /**
+ * DOM操作辅助类
  * @module DomHelper
  * @category DOM操作辅助类
  */
