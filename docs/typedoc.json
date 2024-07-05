@@ -4,7 +4,7 @@
     "../utils/src/index.ts"
   ],
   "out": "html",
-  "name": "z-util-pages说明文档",
+  "name": "z-util-page",
   "theme": "default",
   "exclude": [
     "**/*.test.ts",
@@ -13,9 +13,9 @@
   ],
   "tsconfig": "../utils/tsconfig.json",
   "plugin": [],
-  "readme": "../utils/README.md",
+  "readme": "README.md",
   "disableSources": true,
-  "includeVersion": true,
+  "includeVersion": false,
   "excludePrivate": true,
   "excludeProtected": true,
   // markdown配置
@@ -26,6 +26,8 @@
   "hideBreadcrumbs": false,
   // 是否隐藏页面标题
   "hidePageTitle": false,
+  "excludeScopesInPaths": true,
+  "mergeReadme": true,
   "useCodeBlocks": true,
   "expandObjects": true,
   "expandParameters": true,
@@ -35,7 +37,7 @@
   "interfacePropertiesFormat": "htmlTable",
   "classPropertiesFormat": "htmlTable",
   "enumMembersFormat": "htmlTable",
-  "typeDeclarationFormat": "htmlTable",
+  "typeDeclarationFormat": "list",
   "propertyMembersFormat": "htmlTable",
   "tableColumnSettings": {
     "hideDefaults": false,

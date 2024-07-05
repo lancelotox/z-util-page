@@ -32,7 +32,7 @@ npm i z-util-page --save
 import { debounce, throttle, deepClone } from 'z-util-page';
 ```
 
-## 说明: [DOCS](md/README.md)
+## 说明: [DOCS](docs/md/README.md)
 
 ### 1. 函数防抖
 

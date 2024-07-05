@@ -10,7 +10,7 @@
     "test:unit": "cd tests/unit && npx jest --watchAll",
     "test:web": "cd tests/web && webpack serve",
     "docs": "cd docs && npx typedoc",
-    "md": "cd docs && npx typedoc --readme none --plugin typedoc-plugin-markdown --out ../utils/md",
+    "md": "cd docs && npx typedoc --plugin typedoc-plugin-markdown --out md",
     "publish:latest": "cd utils && npm publish --tag latest",
     "publish:beta": "cd utils && npm publish --tag beta"
   },
