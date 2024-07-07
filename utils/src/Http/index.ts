@@ -18,7 +18,7 @@ export class Http {
     Object.assign(this.options, options);
   }
   /**
-   * //XMLHttpRequest异步请求
+   * XMLHttpRequest异步请求
    * @param param 
    * @returns 
    */

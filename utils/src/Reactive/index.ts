@@ -330,7 +330,7 @@ function trigger(target: object, p: any, type: TriggerType, value?: any): boolea
  * @param isReadonly 是否只读
  * @returns T
  */
-function reactive<T extends object>(value: T, isShadow = false, isReadonly = false): T {
+export function reactive<T extends object>(value: T, isShadow = false, isReadonly = false): T {
   const proxy = new Proxy<T>(value, {
     get(target, p, reciver) {
       if (p === source) return target;
@@ -416,7 +416,7 @@ function reactive<T extends object>(value: T, isShadow = false, isReadonly = fal
  * @param isReadonly 是否只读
  * @returns { value: T }
  */
-function ref<T>(value: T, isReadonly = false): Ref<T> {
+export function ref<T>(value: T, isReadonly = false): Ref<T> {
   const wrapper = {
     value
   }
@@ -433,7 +433,7 @@ function ref<T>(value: T, isReadonly = false): Ref<T> {
  * @param key 键值
  * @returns Ref
  */
-function toRef(val: any, key: string | symbol) {
+export function toRef(val: any, key: string | symbol) {
   const wrapper = {
     get value() {
       return val[key];
@@ -452,9 +452,9 @@ function toRef(val: any, key: string | symbol) {
 /**
  * 将响应式对象的键值全部转换为Ref, 可解构使用
  * @param obj 响应式对象
- * @returns 
+ * @returns Refs
  */
-function toRefs(obj: any) {
+export function toRefs(obj: any) {
   const ret = {};
   for (const key in obj) {
     Reflect.set(ret, key, toRef(obj, key));
@@ -468,7 +468,7 @@ function toRefs(obj: any) {
  * @param options 配置
  * @returns effectFunc
  */
-function effect(func: Function, options: EffectOptions = {}) {
+export function effect(func: Function, options: EffectOptions = {}) {
   const effectFn = <Effect>function () {
     cleanup(effectFn);
     activeEffect = effectFn;
@@ -493,9 +493,9 @@ function effect(func: Function, options: EffectOptions = {}) {
 /**
  * 获取计算属性
  * @param getter 
- * @returns { value: any }
+ * @returns computed
  */
-function computed<T>(getter: () => {
+export function computed<T>(getter: () => {
   readonly value: T
 }) {
   let value: any;
@@ -529,7 +529,7 @@ function computed<T>(getter: () => {
  * @param cb 数据变化后回调函数
  * @param options 配置
  */
-function watch(source: Function | object, cb: Function, options: EffectOptions = {}) {
+export function watch(source: Function | object, cb: Function, options: EffectOptions = {}) {
   let getter: Function;
   if (typeof source === 'function') getter = source;
   else getter = () => traverse(source);
@@ -561,17 +561,6 @@ function watch(source: Function | object, cb: Function, options: EffectOptions =
 /**
  * 获取原始对象
  */
-function toRaw<T>(proxy: T): T{
+export function toRaw<T>(proxy: T): T{
   return Reflect.get((typeof proxy === 'object' && proxy !== null) ? proxy : {}, source) || proxy;
-}
-
-export {
-  reactive,
-  ref,
-  toRef,
-  toRefs,
-  effect,
-  computed,
-  watch,
-  toRaw,
 }

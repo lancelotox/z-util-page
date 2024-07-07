@@ -5,25 +5,26 @@
   ],
   "out": "html",
   "name": "z-util-page",
-  "theme": "default",
+  "theme": "oneTheme",
   "exclude": [
     "**/*.test.ts",
     "**/node_modules/**",
     "**/helper/**"
   ],
   "tsconfig": "../utils/tsconfig.json",
-  "plugin": [],
+  "plugin": ["typedoc-plugin-markdown", "./one-theme/index.js"],
   "readme": "README.md",
   "disableSources": true,
-  "includeVersion": false,
+  "includeVersion": true,
   "excludePrivate": true,
   "excludeProtected": true,
+  // "json": "project.json",
   // markdown配置
-  // "outputFileStrategy": "modules",
+  "outputFileStrategy": "modules",
   // 是否隐藏页眉
   "hidePageHeader": true,
   // 是否隐藏面包屑
-  "hideBreadcrumbs": false,
+  "hideBreadcrumbs": true,
   // 是否隐藏页面标题
   "hidePageTitle": false,
   "excludeScopesInPaths": true,

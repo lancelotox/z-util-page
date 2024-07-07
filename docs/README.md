@@ -1,8 +1,12 @@
-# __z-util-page__
+# z-util-page 说明文档
 
-# 引入:
+## 简介
 
-## 1. 全局引入
+z-util-page 是一个基于JavaScript的工具包，包含了一些常用的工具函数，如防抖、节流、深拷贝等。
+
+## 安装
+
+### 1. 全局引入
 
 拷贝包目录下dist文件夹内 [ zutilpage.min.js ] 文件到自己的项目里，在HTML里添加如下引用：
 
@@ -18,7 +22,7 @@ Utils.debounce(function(){
 }, 200);
 ```
 
-## 2. 按需引入
+### 2. 按需引入
 
 运行以下命令将工具包安装到本地
 
@@ -32,4 +36,4 @@ npm i z-util-page --save
 import { debounce, throttle, deepClone } from 'z-util-page';
 ```
 
-# 说明:
+## 说明

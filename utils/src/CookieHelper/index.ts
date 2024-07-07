@@ -1,5 +1,4 @@
 /**
- * Cookie操作辅助类
  * @module CookieHelper
  * @category Cookie操作辅助类
  */
