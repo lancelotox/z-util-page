@@ -147,6 +147,11 @@ export function read(file: File | Blob) {
   return new FileReaderDecorate(file);
 }
 
+const DirMap = new Map<string | symbol, Promise<FileSystemDirectoryHandle>>();
+type FileContent = ArrayBuffer | string | Uint8Array | Blob;
+const warnMessage = debounce((err: Error) => {
+  console.warn(err);
+}, 100);
 /**
  * 将文件写入目标文件夹
  * @param dirKey 文件夹唯一标识，自行定义string，用于后续向同一文件夹写入文件
@@ -154,12 +159,7 @@ export function read(file: File | Blob) {
  * @param fileContent 二进制文件流
  * @param overwrite 是否覆盖同名文件
  */
-const DirMap = new Map<string | symbol, Promise<FileSystemDirectoryHandle>>();
-type FileContent = ArrayBuffer | string | Uint8Array | Blob;
-const warnMessage = debounce((err: Error) => {
-  console.warn(err);
-}, 100);
-export async function saveFileToDir(dirKey: string, fileName: string, fileContent: Array<FileContent | Promise<FileContent>>, overwrite: boolean = true) {
+export async function saveFileToDir(dirKey: string, fileName: string, fileContent: Array<FileContent | Promise<FileContent>>, overwrite: boolean = true): Promise<{ success: boolean, message: string }> {
   try {
     let dirHandlePromise = DirMap.get(dirKey);
     if (!dirHandlePromise) throw new Error("请先选择文件夹");
@@ -221,7 +221,7 @@ function getName(list: string[], name: string, index: number = 1) {
  * @param dirKey 文件夹唯一标识，自行定义string，用于后续向同一文件夹写入文件
  * 与saveFileToDir共用缓存
  */
-export async function pickDir(dirKey: string, force: boolean = false) {
+export async function pickDir(dirKey: string, force: boolean = false): Promise<{ success: boolean, message: string, data: FileSystemDirectoryHandle | null}> {
   try {
     if (!self.showDirectoryPicker) throw new Error("该浏览器不支持showDirectoryPicker");
     let dirHandlePromise = DirMap.get(dirKey);

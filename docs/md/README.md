@@ -1217,15 +1217,9 @@ __Returns__
 
 computed
 
-###### value
-
-```ts
-get value(): any
-```
-
-__Returns__
-
-`any`
+| Name | Type |
+| ------ | ------ |
+| `get value` | `any` |
 
 ***
 
@@ -1598,40 +1592,10 @@ __Returns__
 
 Ref
 
-###### value
-
-```ts
-get value(): any
-```
-
-```ts
-set value(value: any): void
-```
-
-__Parameters__
-
-<table>
-<tr>
-<th>Parameter</th>
-<th>Type</th>
-</tr>
-<tr>
-<td>
-
-`value`
-
-</td>
-<td>
-
-`any`
-
-</td>
-</tr>
-</table>
-
-__Returns__
-
-`any`
+| Name | Type |
+| ------ | ------ |
+| `get value` | `any` |
+| `set value` | `void` |
 
 ***
 
@@ -1811,13 +1775,9 @@ __Returns__
 
 ```ts
 function pickDir(dirKey: string, force: boolean): Promise<{
-  data: dirHandle;
-  message: "获取成功";
-  success: true;
- } | {
-  data: null;
-  message: "获取失败";
-  success: false;
+  data: FileSystemDirectoryHandle | null;
+  message: string;
+  success: boolean;
 }>
 ```
 
@@ -1882,14 +1842,16 @@ __Parameters__
 __Returns__
 
 `Promise`\<\{
-  `data`: `dirHandle`;
-  `message`: `"获取成功"`;
-  `success`: `true`;
- \} \| \{
-  `data`: `null`;
-  `message`: `"获取失败"`;
-  `success`: `false`;
+  `data`: `FileSystemDirectoryHandle` \| `null`;
+  `message`: `string`;
+  `success`: `boolean`;
  \}\>
+
+| Name | Type |
+| ------ | ------ |
+| `data` | `FileSystemDirectoryHandle` \| `null` |
+| `message` | `string` |
+| `success` | `boolean` |
 
 ***
 
@@ -2003,10 +1965,12 @@ function saveFileToDir(
    fileName: string, 
    fileContent: (FileContent | Promise<FileContent>)[], 
    overwrite: boolean): Promise<{
-  message: "保存成功";
-  success: true;
+  message: string;
+  success: boolean;
 }>
 ```
+
+将文件写入目标文件夹
 
 __Parameters__
 
@@ -2015,6 +1979,7 @@ __Parameters__
 <th>Parameter</th>
 <th>Type</th>
 <th>Default value</th>
+<th>Description</th>
 </tr>
 <tr>
 <td>
@@ -2030,6 +1995,11 @@ __Parameters__
 <td>
 
 `undefined`
+
+</td>
+<td>
+
+文件夹唯一标识，自行定义string，用于后续向同一文件夹写入文件
 
 </td>
 </tr>
@@ -2049,6 +2019,11 @@ __Parameters__
 `undefined`
 
 </td>
+<td>
+
+文件名
+
+</td>
 </tr>
 <tr>
 <td>
@@ -2064,6 +2039,11 @@ __Parameters__
 <td>
 
 `undefined`
+
+</td>
+<td>
+
+二进制文件流
 
 </td>
 </tr>
@@ -2083,27 +2063,25 @@ __Parameters__
 `true`
 
 </td>
+<td>
+
+是否覆盖同名文件
+
+</td>
 </tr>
 </table>
 
 __Returns__
 
 `Promise`\<\{
-  `message`: `"保存成功"`;
-  `success`: `true`;
+  `message`: `string`;
+  `success`: `boolean`;
  \}\>
 
-###### message
-
-```ts
-message: string = "保存成功";
-```
-
-###### success
-
-```ts
-success: boolean = true;
-```
+| Name | Type |
+| ------ | ------ |
+| `message` | `string` |
+| `success` | `boolean` |
 
 ### 辅助函数
 
@@ -2220,38 +2198,10 @@ __Returns__
 
 `any`
 
-###### cancel()
-
-__Returns__
-
-`void`
-
-###### then()
-
-__Parameters__
-
-<table>
-<tr>
-<th>Parameter</th>
-<th>Type</th>
-</tr>
-<tr>
-<td>
-
-`callback`
-
-</td>
-<td>
-
-`Function`
-
-</td>
-</tr>
-</table>
-
-__Returns__
-
-\{ (this: any, ...args: any\[\]): any; cancel(): void; then(callback: Function): ...; \}
+| Name | Type |
+| ------ | ------ |
+| `cancel` | `void` |
+| `then` | \{ (this: any, ...args: any\[\]): any; cancel(): void; then(callback: Function): ...; \} |
 
 ***
 
@@ -2646,8 +2596,6 @@ __Returns__
 
 `any`
 
-###### cancel()
-
-__Returns__
-
-`void`
+| Name | Type |
+| ------ | ------ |
+| `cancel` | `void` |

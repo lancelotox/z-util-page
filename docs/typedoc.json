@@ -38,7 +38,7 @@
   "interfacePropertiesFormat": "htmlTable",
   "classPropertiesFormat": "htmlTable",
   "enumMembersFormat": "htmlTable",
-  "typeDeclarationFormat": "list",
+  "typeDeclarationFormat": "htmlTable",
   "propertyMembersFormat": "htmlTable",
   "tableColumnSettings": {
     "hideDefaults": false,
