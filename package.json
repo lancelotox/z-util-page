@@ -11,7 +11,6 @@
     "test:web": "cd tests/web && webpack serve",
     "docs": "cd docs && npx typedoc",
     "md": "cd docs && npx typedoc --out md",
-    "md1": "cd docs && npx api-extractor run --local --diagnostics && npx api-documenter markdown -i input -i output",
     "publish:latest": "cd utils && npm publish --tag latest",
     "publish:beta": "cd utils && npm publish --tag beta"
   },

@@ -5,12 +5,12 @@
 
 /**
  * 根据key值获取cookie数据
- * @param key - key值
- * @returns Cookie中key值为[key]的值
  * @example
  * ```ts
  * getItem('test');
  * ```
+ * @param key key值
+ * @returns Cookie中key值为key的值
  */
 export function getItem(key: string): string {
   return document.cookie.replace(new RegExp(`(?:(?:^|.*;\\s*)${key}\\s*=\\s*([^;]*).*$)|^.*$`), "$1");
@@ -18,12 +18,12 @@ export function getItem(key: string): string {
 
 /**
  * 根据key值获取cookie数据后删除Cookie中该键值对
- * @param key - key值
- * @returns Cookie中键值为key的值
  * @example
  * ```ts
  * getItemOnce('test');
  * ```
+ * @param key key值
+ * @returns Cookie中键值为key的值
  */
 export function getItemOnce(key: string): string {
   const val = getItem(key);
@@ -33,27 +33,26 @@ export function getItemOnce(key: string): string {
 
 /**
  * 设置cookie的键值对
- * @param key 键
- * @param val 值
- * @returns 无
  * @example
  * ```ts
  * setItem('test', '你好, 世界!');
  * ```
+ * @param key 键
+ * @param val 值
  */
 export function setItem(key: string, val: string) {
-  if (typeof val !== 'string') return;
+  if (typeof val !== 'string') return false;
   document.cookie = `${key}=${val};path=/`;
+  return true;
 }
 
 /**
  * 根据key值删除Cookie中键值对
- * @param key - key值
- * @returns 无
  * @example
  * ```ts
  * removeItem('test');
  * ```
+ * @param key key值
  */
 export function removeItem(key: string) {
   document.cookie = `${key}=;path=/;expires=${new Date(0).toUTCString()}`;
@@ -61,12 +60,11 @@ export function removeItem(key: string) {
 
 /**
  * 根据key值判断Cookie中是否存在键值对
- * @param key - key值
- * @returns true or false
  * @example
  * ```ts
  * exist('test');
  * ```
+ * @param key - key值
  */
 export function exist(key: string) {
   const keys: Array<string> = document.cookie.match(/[^ =;]+(?==)/g) || [];
@@ -75,7 +73,6 @@ export function exist(key: string) {
 
 /**
  * 清空cookie
- * @returns 无
  * @example
  * ```ts
  * clear();

@@ -77,8 +77,13 @@ function forEach(list: Array<any>, handle: Function) {
 /**
  * 获取数据类型
  * @category 辅助函数
- * @param value 
- * @returns 类型字符串, 'String'、'Map'
+ * @example
+ * ```ts
+ * const type = getType('你好');
+ * type === 'String';
+ * ```
+ * @param value 任意值
+ * @returns 类型字符串, 如'String'、'Map'等
  */
 export function getType(value: any): string {
   try {
@@ -91,7 +96,30 @@ export function getType(value: any): string {
 /**
  * 深拷贝
  * @category 辅助函数
+ * @example
+ * ```ts
+ * let newValue = deepClone({
+ *   a: '身体和心灵，总有一个在路上。',
+ *   b: {
+ *     c: new Date(),
+ *     d: [1, 3, 4],
+ *     e: Symbol(),
+ *     a: null,
+ *     b: undefined,
+ *     f: {
+ *       a: 1,
+ *       b: true,
+ *     }
+ *   },
+ *   c: document.createElement('div'),
+ *   d: new RegExp(/\d+/ig),
+ *   e: new Error('错误'),
+ *   f: function () {
+ *     console.log('身体和心灵，总有一个在路上。');
+ *   }
+ * ```
  * @param value 待克隆值
+ * @returns 克隆值
  */
 export function deepClone(value: any) {
   let type: string = typeof value;

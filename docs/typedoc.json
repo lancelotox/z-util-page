@@ -28,6 +28,7 @@
   // 是否隐藏页面标题
   "hidePageTitle": false,
   "excludeScopesInPaths": true,
+  "blockTagsPreserveOrder": ["@example"],
   "mergeReadme": true,
   "useCodeBlocks": true,
   "expandObjects": true,

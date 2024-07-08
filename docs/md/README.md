@@ -50,17 +50,15 @@ function clear(): void
 
 清空cookie
 
-__Returns__
-
-`void`
-
-无
-
 __Example__
 
 ```ts
 clear();
 ```
+
+__Returns__
+
+`void`
 
 ***
 
@@ -71,6 +69,12 @@ function exist(key: string): boolean
 ```
 
 根据key值判断Cookie中是否存在键值对
+
+__Example__
+
+```ts
+exist('test');
+```
 
 __Parameters__
 
@@ -103,14 +107,6 @@ __Returns__
 
 `boolean`
 
-true or false
-
-__Example__
-
-```ts
-exist('test');
-```
-
 ***
 
 ##### getItem()
@@ -120,6 +116,12 @@ function getItem(key: string): string
 ```
 
 根据key值获取cookie数据
+
+__Example__
+
+```ts
+getItem('test');
+```
 
 __Parameters__
 
@@ -152,13 +154,7 @@ __Returns__
 
 `string`
 
-Cookie中key值为[key]的值
-
-__Example__
-
-```ts
-getItem('test');
-```
+Cookie中key值为key的值
 
 ***
 
@@ -169,6 +165,12 @@ function getItemOnce(key: string): string
 ```
 
 根据key值获取cookie数据后删除Cookie中该键值对
+
+__Example__
+
+```ts
+getItemOnce('test');
+```
 
 __Parameters__
 
@@ -203,12 +205,6 @@ __Returns__
 
 Cookie中键值为key的值
 
-__Example__
-
-```ts
-getItemOnce('test');
-```
-
 ***
 
 ##### removeItem()
@@ -218,6 +214,12 @@ function removeItem(key: string): void
 ```
 
 根据key值删除Cookie中键值对
+
+__Example__
+
+```ts
+removeItem('test');
+```
 
 __Parameters__
 
@@ -250,23 +252,21 @@ __Returns__
 
 `void`
 
-无
-
-__Example__
-
-```ts
-removeItem('test');
-```
-
 ***
 
 ##### setItem()
 
 ```ts
-function setItem(key: string, val: string): void
+function setItem(key: string, val: string): boolean
 ```
 
 设置cookie的键值对
+
+__Example__
+
+```ts
+setItem('test', '你好, 世界!');
+```
 
 __Parameters__
 
@@ -314,21 +314,11 @@ __Parameters__
 
 __Returns__
 
-`void`
-
-无
-
-__Example__
-
-```ts
-setItem('test', '你好, 世界!');
-```
+`boolean`
 
 ### DOM操作辅助类
 
 #### DomHelper
-
-DOM操作辅助类
 
 ##### draggable()
 
@@ -339,6 +329,8 @@ function draggable(dom: HTMLElement): undefined | {
   wrap: void;
 }
 ```
+
+将一个元素处理为可拖动元素
 
 __Parameters__
 
@@ -377,12 +369,15 @@ __Returns__
 function scrollToBottom(scroll: HTMLElement): void
 ```
 
+将可滚动元素滚动到底部
+
 __Parameters__
 
 <table>
 <tr>
 <th>Parameter</th>
 <th>Type</th>
+<th>Description</th>
 </tr>
 <tr>
 <td>
@@ -393,6 +388,11 @@ __Parameters__
 <td>
 
 `HTMLElement`
+
+</td>
+<td>
+
+要滚动的元素
 
 </td>
 </tr>
@@ -410,12 +410,15 @@ __Returns__
 function scrollToLeft(scroll: HTMLElement): void
 ```
 
+将可滚动元素滚动到最左侧
+
 __Parameters__
 
 <table>
 <tr>
 <th>Parameter</th>
 <th>Type</th>
+<th>Description</th>
 </tr>
 <tr>
 <td>
@@ -426,6 +429,11 @@ __Parameters__
 <td>
 
 `HTMLElement`
+
+</td>
+<td>
+
+要滚动的元素
 
 </td>
 </tr>
@@ -443,12 +451,15 @@ __Returns__
 function scrollToRight(scroll: HTMLElement): void
 ```
 
+将可滚动元素滚动到最右侧
+
 __Parameters__
 
 <table>
 <tr>
 <th>Parameter</th>
 <th>Type</th>
+<th>Description</th>
 </tr>
 <tr>
 <td>
@@ -459,6 +470,11 @@ __Parameters__
 <td>
 
 `HTMLElement`
+
+</td>
+<td>
+
+要滚动的元素
 
 </td>
 </tr>
@@ -476,12 +492,15 @@ __Returns__
 function scrollToTop(scroll: HTMLElement): void
 ```
 
+将可滚动元素滚动到顶部
+
 __Parameters__
 
 <table>
 <tr>
 <th>Parameter</th>
 <th>Type</th>
+<th>Description</th>
 </tr>
 <tr>
 <td>
@@ -492,6 +511,11 @@ __Parameters__
 <td>
 
 `HTMLElement`
+
+</td>
+<td>
+
+要滚动的元素
 
 </td>
 </tr>
@@ -2094,7 +2118,21 @@ function debounce(
    immediatel?: boolean): (this: any, ...args: any[]) => any
 ```
 
-函数防抖
+将函数处理为防抖函数
+
+__Example__
+
+```ts
+let debounced = debounce(function () {
+  console.log('身体和心灵，总有一个在路上。');
+  return '身体和心灵，总有一个在路上。';
+}, 1000, true);
+debounced.then(function (res) {
+  console.log(res);
+});
+debounced();
+debounced.cancel();
+```
 
 __Parameters__
 
@@ -2161,12 +2199,15 @@ __Returns__
 
 `Function`
 
+处理好的防抖函数
+
 __Parameters__
 
 <table>
 <tr>
 <th>Parameter</th>
 <th>Type</th>
+<th>Description</th>
 </tr>
 <tr>
 <td>
@@ -2177,6 +2218,11 @@ __Parameters__
 <td>
 
 `any`
+
+</td>
+<td>
+
+执行上下文继承自传入函数
 
 </td>
 </tr>
@@ -2191,6 +2237,11 @@ __Parameters__
 `any`[]
 
 </td>
+<td>
+
+参数继承自传入函数
+
+</td>
 </tr>
 </table>
 
@@ -2198,10 +2249,10 @@ __Returns__
 
 `any`
 
-| Name | Type |
-| ------ | ------ |
-| `cancel` | `void` |
-| `then` | \{ (this: any, ...args: any\[\]): any; cancel(): void; then(callback: Function): ...; \} |
+| Name | Type | Description |
+| ------ | ------ | ------ |
+| `cancel` | `void` | 取消防抖函数执行 |
+| `then` | \{ (this: any, ...args: any\[\]): any; cancel(): void; then(callback: Function): ...; \} | 注册防抖函数执行后的回调 |
 
 ***
 
@@ -2212,6 +2263,30 @@ function deepClone(value: any): any
 ```
 
 深拷贝
+
+__Example__
+
+```ts
+let newValue = deepClone({
+  a: '身体和心灵，总有一个在路上。',
+  b: {
+    c: new Date(),
+    d: [1, 3, 4],
+    e: Symbol(),
+    a: null,
+    b: undefined,
+    f: {
+      a: 1,
+      b: true,
+    }
+  },
+  c: document.createElement('div'),
+  d: new RegExp(/\d+/ig),
+  e: new Error('错误'),
+  f: function () {
+    console.log('身体和心灵，总有一个在路上。');
+  }
+```
 
 __Parameters__
 
@@ -2243,6 +2318,8 @@ __Parameters__
 __Returns__
 
 `any`
+
+克隆值
 
 ***
 
@@ -2314,6 +2391,13 @@ function getType(value: any): string
 
 获取数据类型
 
+__Example__
+
+```ts
+const type = getType('你好');
+type === 'String';
+```
+
 __Parameters__
 
 <table>
@@ -2335,6 +2419,8 @@ __Parameters__
 </td>
 <td>
 
+任意值
+
 </td>
 </tr>
 </table>
@@ -2343,7 +2429,7 @@ __Returns__
 
 `string`
 
-类型字符串, 'String'、'Map'
+类型字符串, 如'String'、'Map'等
 
 ***
 
