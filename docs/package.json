@@ -5,7 +5,7 @@
   "description": "说明文档",
   "author": "zhoufeng",
   "devDependencies": {
-    "typedoc": "^0.26.3",
-    "typedoc-plugin-markdown": "^4.1.1"
+    "typedoc": "0.26.3",
+    "typedoc-plugin-markdown": "4.1.2"
   }
 }
