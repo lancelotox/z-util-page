@@ -4,7 +4,6 @@ import { Message, UploadMessage } from './message';
 import type { ResponseMessage } from './message';
 
 /**
- * HTTTP请求操作辅助类
  * @category HTTTP请求操作辅助类
  */
 export class Http {
@@ -14,6 +13,14 @@ export class Http {
     contentType: '',
     responseType: ''
   }
+  /**
+   * 构造函数
+   * @param options 
+   * 
+   * 
+   * 
+   * 
+   */
   public constructor(options: CustomHttpOptions = {}) {
     Object.assign(this.options, options);
   }

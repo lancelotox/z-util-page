@@ -9,14 +9,37 @@ interface Bucket {
 }
 
 /**
- * 事件总线
  * @category 事件总线
+ * @example
+ * ```ts
+ * // 总线
+ * let count = 0;
+ * EventBus.on('test', function (num, num1) {
+ *   count = num + num1;
+ * })
+ * EventBus.emit('test', 1, 2);
+ * expect(count).toBe(3);
+ * 
+ * // 分线
+ * let count = 0;
+ * const bus = new EventBus();
+ * bus.on('test', function (num, num1) {
+ *   count = num + num1;
+ * })
+ * bus.emit('test', 3, 4);
+ * expect(count).toBe(7);
+ * ```
  */
 export class EventBus {
   private static config: EventBusConfig = {}
 
   private static bucket: Bucket = {}
 
+  /**
+   * 监听事件
+   * @param key 事件名
+   * @param func 回调函数
+   */
   public static on(key: string, func: (...rest: any[]) => void) {
     let funcSet = this.bucket[key];
     if (!funcSet) funcSet = this.bucket[key] = [];
@@ -25,6 +48,11 @@ export class EventBus {
     funcSet.push(func);
   }
 
+  /**
+   * 触发事件
+   * @param key 事件名
+   * @param rest 传给回调函数的参数
+   */
   public static emit(key: string, ...rest: any[]) {
     const funcSet = this.bucket[key];
     if (!funcSet) return;

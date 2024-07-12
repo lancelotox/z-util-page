@@ -1,5 +1,4 @@
 /**
- * 文件操作辅助类
  * @module FileHelper
  * @category 文件操作辅助类
  */
@@ -9,33 +8,57 @@ import { debounce } from '../debounce/index';
 
 /**
  * 文件选择
+ * @example
+ * ```ts
+ * choose({
+ *  accept: [".doc",".docx","application/msword"],
+ *  capture: "user",
+ *  multiple: true
+ * }).then(files => {
+ *     console.log(files);
+ *   })
+ *   .catch(err => {
+ *     console.error(err);
+ *   });
+ * ```
  * @param options 文件选择配置
- * @param callback 回调函数, 参数为选择文件列表
+ * @param options.accept 以逗号为分隔的[唯一文件类型说明符]列表
+ * @param options.capture 尝试请求使用设备的媒体捕获设备（如：摄像机），而不是请求一个文件输入。camera–照相机；camcorder–摄像机；microphone–录音
+ * @param options.multiple 是否允许多选
  */
-interface chooseOption {
-  //以逗号为分隔的[唯一文件类型说明符]列表
-  accept?: Array<string>,
-  //尝试请求使用设备的媒体捕获设备（如：摄像机），而不是请求一个文件输入。
-  //camera–照相机；camcorder–摄像机；microphone–录音
-  capture?: "user" | "environment" | "camera" | "camcorder" | "microphone",
-  //是否允许多选
-  multiple?: boolean
-}
-export function choose(callback: (fileList: FileList | null) => void, options: chooseOption = {}) {
-  const input = document.createElement('input');
-  input.setAttribute('type', 'file');
-  input.setAttribute('accept', (options.accept || []).join(','));
-  input.setAttribute('capture', options.capture || '');
-  if (options.multiple) input.setAttribute('multiple', 'true');
-  input.addEventListener('change', function (e) {
-    callback(input.files);
-  });
-  clickElement(input);
+export function choose(options: {
+    accept?: Array<string>
+    capture?: "user" | "environment" | "camera" | "camcorder" | "microphone"
+    multiple?: boolean
+  } = {}) {
+  return new Promise<FileList>((resolve, reject) => {
+    const input = document.createElement('input');
+    input.setAttribute('type', 'file');
+    input.setAttribute('accept', (options.accept || []).join(','));
+    input.setAttribute('capture', options.capture || '');
+    if (options.multiple) input.setAttribute('multiple', 'true');
+    input.addEventListener('change', function (e) {
+      if (input.files) resolve(input.files);
+    });
+    function focus(e: FocusEvent) {
+      window.removeEventListener('focus', focus);
+      setTimeout(() => {
+        if (!input.files || input.files.length === 0) reject(new Error('用户取消选择'));
+      }, 60);
+    }
+    window.addEventListener('focus', focus);
+    clickElement(input);
+  })
 }
 
 /**
  * H5文件下载方法
- * @param url 资源链接或者blob对象
+ * @example
+ * ```ts
+ * save(new Blob(['你好世界'], { type: 'text/plain' }), 'test.txt');
+ * save('https://www.baidu.com/img/flexible/logo/pc/result@2.png', 'baidu.png');
+ * ```
+ * @param file 资源链接或者blob对象
  * @param saveFileName 保存文件名
  */
 export function save(file: string | Blob, saveFileName: string = '') {
@@ -59,10 +82,6 @@ export function save(file: string | Blob, saveFileName: string = '') {
   document.body.removeChild(alink);
 }
 
-/**
- * 文件读取
- * @param file File对象或Blob对象
- */
 type callback = (res: any) => void;
 class FileReaderDecorate {
   reader: FileReader
@@ -78,28 +97,28 @@ class FileReaderDecorate {
     });
     return this;
   }
-  //读取操作发生错误时触发。
+  //读取操作发生错误时触发
   error(fun: callback) {
     this.reader.addEventListener('error', () => {
       fun(this.reader.error);
     });
     return this;
   }
-  //读取操作完成时触发。
+  //读取操作完成时触发
   load(fun: callback) {
     this.reader.addEventListener('load', () => {
       fun(this.reader);
     });
     return this;
   }
-  //读取操作开始时触发。
+  //读取操作开始时触发
   loadstart(fun: callback) {
     this.reader.addEventListener('loadstart', () => {
       fun(this.reader);
     });
     return this;
   }
-  //读取操作结束时（要么成功，要么失败）触发。
+  //读取操作结束时（要么成功，要么失败）触发
   loadend(fun: callback) {
     this.reader.addEventListener('loadend', () => {
       fun(this.reader.result);
@@ -143,6 +162,61 @@ class FileReaderDecorate {
     return this;
   }
 }
+/**
+ * 文件读取
+ * @example
+ * ```ts
+ * const reader = read(file)
+ *  .loadend((res) => {
+ *    console.log(res);
+ *  })
+ *  //start方法参数类型："ArrayBuffer" | "BinaryString" | "DataURL" | "Text"
+ *  .start("ArrayBuffer");
+ * 
+ * //读取操作发生中断时触发
+ * reader.abort((abo) => {
+ *   console.log(abo);
+ * })
+ * 
+ * //读取操作发生错误时触发
+ * reader.error((err) => {
+ *   console.log(err);
+ * })
+ * 
+ * //读取操作完成时触发
+ * reader.load((res) => {
+ *   console.log(res);
+ * })
+ * 
+ * //读取操作开始时触发
+ * reader.loadstart((res) => {
+ *   console.log(res);
+ * })
+ * 
+ * //读取操作结束时（要么成功，要么失败）触发
+ * reader.loadstart((res) => {
+ *   console.log(res);
+ * })
+ * 
+ * //获取读取结果的promise
+ * const promise = reader.loadendPromise();
+ * 
+ * //在读取Blob时触发。
+ * reader.progress((res) => {
+ *   console.log(res);
+ * })
+ * 
+ * //获取状态
+ * const status = reader.getStatus();
+ * 
+ * //获取结果
+ * const result = reader.getResult();
+ * 
+ * //中断读取
+ * reader.stop();
+ * ```
+ * @param file File对象或Blob对象
+ */
 export function read(file: File | Blob) {
   return new FileReaderDecorate(file);
 }
@@ -154,10 +228,16 @@ const warnMessage = debounce((err: Error) => {
 }, 100);
 /**
  * 将文件写入目标文件夹
+ * @example
+ * ```ts
+ * //需要先调用pickDir选择文件夹
+ * saveFileToDir('key', 'file.txt', ['string', new Blob(['你好世界'], { type: 'text/plain' })]);
+ * ```
  * @param dirKey 文件夹唯一标识，自行定义string，用于后续向同一文件夹写入文件
  * @param fileName 文件名
- * @param fileContent 二进制文件流
+ * @param fileContent 二进制文件流或字符串数组
  * @param overwrite 是否覆盖同名文件
+ * @returns { success: boolean, message: string }
  */
 export async function saveFileToDir(dirKey: string, fileName: string, fileContent: Array<FileContent | Promise<FileContent>>, overwrite: boolean = true): Promise<{ success: boolean, message: string }> {
   try {
@@ -217,11 +297,19 @@ function getName(list: string[], name: string, index: number = 1) {
 }
 
 /**
- * 选择文件夹
+ * 选择文件夹(与saveFileToDir共用缓存)
+ * @example
+ * ```ts
+ * //选择文件夹，将其与key绑定
+ * pickDir('key');
+ * //强制重新选择
+ * pickDir('key', true);
+ * ```
  * @param dirKey 文件夹唯一标识，自行定义string，用于后续向同一文件夹写入文件
- * 与saveFileToDir共用缓存
+ * @param force 是否强制重新选择
+ * @returns { success: boolean, message: string, data: FileSystemDirectoryHandle | null }
  */
-export async function pickDir(dirKey: string, force: boolean = false): Promise<{ success: boolean, message: string, data: FileSystemDirectoryHandle | null}> {
+export async function pickDir(dirKey: string, force: boolean = false): Promise<{ success: boolean, message: string, data: FileSystemDirectoryHandle | null }> {
   try {
     if (!self.showDirectoryPicker) throw new Error("该浏览器不支持showDirectoryPicker");
     let dirHandlePromise = DirMap.get(dirKey);

@@ -323,7 +323,7 @@ __Returns__
 ##### draggable()
 
 ```ts
-function draggable(dom: HTMLElement): undefined | {
+function draggable(dom: HTMLElement): false | {
   close: void;
   open: void;
   wrap: void;
@@ -332,12 +332,25 @@ function draggable(dom: HTMLElement): undefined | {
 
 将一个元素处理为可拖动元素
 
+__Example__
+
+```ts
+const handle = draggable(dom: HTMLElement);
+// 关闭拖动功能
+handle.close();
+// 开启拖动功能
+handle.open();
+// 指定一个子元素，当该鼠标按下该元素时，关闭拖动功能，鼠标抬起后恢复拖动功能
+handle.wrap(dom: HTMLElement);
+```
+
 __Parameters__
 
 <table>
 <tr>
 <th>Parameter</th>
 <th>Type</th>
+<th>Description</th>
 </tr>
 <tr>
 <td>
@@ -350,12 +363,17 @@ __Parameters__
 `HTMLElement`
 
 </td>
+<td>
+
+要处理的元素
+
+</td>
 </tr>
 </table>
 
 __Returns__
 
-`undefined` \| \{
+`false` \| \{
   `close`: `void`;
   `open`: `void`;
   `wrap`: `void`;
@@ -370,6 +388,12 @@ function scrollToBottom(scroll: HTMLElement): void
 ```
 
 将可滚动元素滚动到底部
+
+__Example__
+
+```ts
+scrollToBottom(dom: HTMLElement);
+```
 
 __Parameters__
 
@@ -412,6 +436,12 @@ function scrollToLeft(scroll: HTMLElement): void
 
 将可滚动元素滚动到最左侧
 
+__Example__
+
+```ts
+scrollToLeft(dom: HTMLElement);
+```
+
 __Parameters__
 
 <table>
@@ -453,6 +483,12 @@ function scrollToRight(scroll: HTMLElement): void
 
 将可滚动元素滚动到最右侧
 
+__Example__
+
+```ts
+scrollToRight(dom: HTMLElement);
+```
+
 __Parameters__
 
 <table>
@@ -493,6 +529,12 @@ function scrollToTop(scroll: HTMLElement): void
 ```
 
 将可滚动元素滚动到顶部
+
+__Example__
+
+```ts
+scrollToTop(dom: HTMLElement);
+```
 
 __Parameters__
 
@@ -651,8 +693,6 @@ __Returns__
 
 #### IDBHelper
 
-indexedDB操作辅助类
-
 __Constructors__
 
 __new IDBHelper()__
@@ -661,12 +701,15 @@ __new IDBHelper()__
 new IDBHelper(name: string): IDBHelper
 ```
 
+构造函数
+
 __Parameters__
 
 <table>
 <tr>
 <th>Parameter</th>
 <th>Type</th>
+<th>Description</th>
 </tr>
 <tr>
 <td>
@@ -679,12 +722,24 @@ __Parameters__
 `string`
 
 </td>
+<td>
+
+数据库名称
+
+</td>
 </tr>
 </table>
 
 __Returns__
 
 `IDBHelper`
+
+IDBHelper实例
+***
+
+__Throws__
+
+Error 数据库名称不能为空
 
 __Methods__
 
@@ -696,9 +751,19 @@ close(): Promise<undefined | false>
 
 关闭数据库
 
+__Example__
+
+```ts
+const db = new IDBHelper('test');
+await db.close();
+```
+
 __Returns__
 
 `Promise`\<`undefined` \| `false`\>
+
+Promise<boolean>
+***
 
 __createTable()__
 
@@ -708,12 +773,20 @@ createTable(tableNameList: string | string[], keyPath?: string): Promise<boolean
 
 创建表
 
+__Example__
+
+```ts
+const db = new IDBHelper('test');
+await db.createTable('tn');
+```
+
 __Parameters__
 
 <table>
 <tr>
 <th>Parameter</th>
 <th>Type</th>
+<th>Description</th>
 </tr>
 <tr>
 <td>
@@ -724,6 +797,11 @@ __Parameters__
 <td>
 
 `string` \| `string`[]
+
+</td>
+<td>
+
+表名列表
 
 </td>
 </tr>
@@ -738,12 +816,20 @@ __Parameters__
 `string`
 
 </td>
+<td>
+
+主键
+
+</td>
 </tr>
 </table>
 
 __Returns__
 
 `Promise`\<`boolean`\>
+
+Promise<boolean>
+***
 
 __deleteAllTable()__
 
@@ -753,9 +839,19 @@ deleteAllTable(): Promise<boolean>
 
 删除所有表
 
+__Example__
+
+```ts
+const db = new IDBHelper('test');
+await db.deleteAllTable();
+```
+
 __Returns__
 
 `Promise`\<`boolean`\>
+
+Promise<boolean>
+***
 
 __deleteTable()__
 
@@ -765,12 +861,20 @@ deleteTable(tableNameList: string | string[]): Promise<boolean>
 
 删除表
 
+__Example__
+
+```ts
+const db = new IDBHelper('test');
+await db.deleteTable('tn');
+```
+
 __Parameters__
 
 <table>
 <tr>
 <th>Parameter</th>
 <th>Type</th>
+<th>Description</th>
 </tr>
 <tr>
 <td>
@@ -783,12 +887,20 @@ __Parameters__
 `string` \| `string`[]
 
 </td>
+<td>
+
+表名列表
+
+</td>
 </tr>
 </table>
 
 __Returns__
 
 `Promise`\<`boolean`\>
+
+Promise<boolean>
+***
 
 __deleteTableRow()__
 
@@ -798,12 +910,20 @@ deleteTableRow(tableName: string, key: string): Promise<undefined | false>
 
 删除表中某行数据
 
+__Example__
+
+```ts
+const db = new IDBHelper('test');
+await db.deleteTableRow('tn', 'key');
+```
+
 __Parameters__
 
 <table>
 <tr>
 <th>Parameter</th>
 <th>Type</th>
+<th>Description</th>
 </tr>
 <tr>
 <td>
@@ -816,6 +936,11 @@ __Parameters__
 `string`
 
 </td>
+<td>
+
+表名
+
+</td>
 </tr>
 <tr>
 <td>
@@ -826,6 +951,11 @@ __Parameters__
 <td>
 
 `string`
+
+</td>
+<td>
+
+键
 
 </td>
 </tr>
@@ -835,6 +965,9 @@ __Returns__
 
 `Promise`\<`undefined` \| `false`\>
 
+Promise<boolean>
+***
+
 __getAllTableName()__
 
 ```ts
@@ -843,9 +976,19 @@ getAllTableName(): Promise<false | DOMStringList>
 
 获取所有表名
 
+__Example__
+
+```ts
+const db = new IDBHelper('test');
+await db.getAllTableName();
+```
+
 __Returns__
 
 `Promise`\<`false` \| `DOMStringList`\>
+
+false 或 string[]
+***
 
 __getAllTableRow()__
 
@@ -855,12 +998,20 @@ getAllTableRow(tableName: string, range?: IDBKeyRange): Promise<unknown>
 
 获取表中所有数据
 
+__Example__
+
+```ts
+const db = new IDBHelper('test');
+await db.getAllTableRow('tn');
+```
+
 __Parameters__
 
 <table>
 <tr>
 <th>Parameter</th>
 <th>Type</th>
+<th>Description</th>
 </tr>
 <tr>
 <td>
@@ -871,6 +1022,11 @@ __Parameters__
 <td>
 
 `string`
+
+</td>
+<td>
+
+表名
 
 </td>
 </tr>
@@ -885,12 +1041,20 @@ __Parameters__
 `IDBKeyRange`
 
 </td>
+<td>
+
+&hyphen;
+
+</td>
 </tr>
 </table>
 
 __Returns__
 
 `Promise`\<`unknown`\>
+
+Promise<any[]>
+***
 
 __getTableRow()__
 
@@ -900,12 +1064,20 @@ getTableRow(tableName: string, key: string): Promise<unknown>
 
 获取表中某行数据
 
+__Example__
+
+```ts
+const db = new IDBHelper('test');
+await db.getTableRow('tn', 'key');
+```
+
 __Parameters__
 
 <table>
 <tr>
 <th>Parameter</th>
 <th>Type</th>
+<th>Description</th>
 </tr>
 <tr>
 <td>
@@ -916,6 +1088,11 @@ __Parameters__
 <td>
 
 `string`
+
+</td>
+<td>
+
+表名
 
 </td>
 </tr>
@@ -930,12 +1107,20 @@ __Parameters__
 `string`
 
 </td>
+<td>
+
+键
+
+</td>
 </tr>
 </table>
 
 __Returns__
 
 `Promise`\<`unknown`\>
+
+Promise<boolean>
+***
 
 __getTableRowCount()__
 
@@ -945,12 +1130,20 @@ getTableRowCount(tableName: string, range?: IDBKeyRange): Promise<unknown>
 
 获取表数据条数
 
+__Example__
+
+```ts
+const db = new IDBHelper('test');
+await db.getTableRowCount('tn');
+```
+
 __Parameters__
 
 <table>
 <tr>
 <th>Parameter</th>
 <th>Type</th>
+<th>Description</th>
 </tr>
 <tr>
 <td>
@@ -961,6 +1154,11 @@ __Parameters__
 <td>
 
 `string`
+
+</td>
+<td>
+
+表名
 
 </td>
 </tr>
@@ -975,12 +1173,20 @@ __Parameters__
 `IDBKeyRange`
 
 </td>
+<td>
+
+&hyphen;
+
+</td>
 </tr>
 </table>
 
 __Returns__
 
 `Promise`\<`unknown`\>
+
+Promise<number>
+***
 
 __reSet()__
 
@@ -990,9 +1196,19 @@ reSet(): Promise<false | Boolean>
 
 重置数据库
 
+__Example__
+
+```ts
+const db = new IDBHelper('test');
+await db.reSet();
+```
+
 __Returns__
 
 `Promise`\<`false` \| `Boolean`\>
+
+Promise<boolean>
+***
 
 __setTableRow()__
 
@@ -1002,12 +1218,20 @@ setTableRow(tableName: string, data: any): Promise<undefined | false>
 
 增加/修改表中某行数据
 
+__Example__
+
+```ts
+const db = new IDBHelper('test');
+await db.setTableRow('tn', '你好！');
+```
+
 __Parameters__
 
 <table>
 <tr>
 <th>Parameter</th>
 <th>Type</th>
+<th>Description</th>
 </tr>
 <tr>
 <td>
@@ -1018,6 +1242,11 @@ __Parameters__
 <td>
 
 `string`
+
+</td>
+<td>
+
+表名
 
 </td>
 </tr>
@@ -1032,6 +1261,11 @@ __Parameters__
 `any`
 
 </td>
+<td>
+
+数据
+
+</td>
 </tr>
 </table>
 
@@ -1039,11 +1273,33 @@ __Returns__
 
 `Promise`\<`undefined` \| `false`\>
 
+Promise<boolean>
+***
+
 ### 事件总线
 
 #### EventBus
 
-事件总线
+__Example__
+
+```ts
+// 总线
+let count = 0;
+EventBus.on('test', function (num, num1) {
+  count = num + num1;
+})
+EventBus.emit('test', 1, 2);
+expect(count).toBe(3);
+
+// 分线
+let count = 0;
+const bus = new EventBus();
+bus.on('test', function (num, num1) {
+  count = num + num1;
+})
+bus.emit('test', 3, 4);
+expect(count).toBe(7);
+```
 
 __Constructors__
 
@@ -1093,12 +1349,15 @@ __emit()__
 static emit(key: string, ...rest: any[]): void
 ```
 
+触发事件
+
 __Parameters__
 
 <table>
 <tr>
 <th>Parameter</th>
 <th>Type</th>
+<th>Description</th>
 </tr>
 <tr>
 <td>
@@ -1111,6 +1370,11 @@ __Parameters__
 `string`
 
 </td>
+<td>
+
+事件名
+
+</td>
 </tr>
 <tr>
 <td>
@@ -1121,6 +1385,11 @@ __Parameters__
 <td>
 
 `any`[]
+
+</td>
+<td>
+
+传给回调函数的参数
 
 </td>
 </tr>
@@ -1136,12 +1405,15 @@ __on()__
 static on(key: string, func: (...rest: any[]) => void): void
 ```
 
+监听事件
+
 __Parameters__
 
 <table>
 <tr>
 <th>Parameter</th>
 <th>Type</th>
+<th>Description</th>
 </tr>
 <tr>
 <td>
@@ -1154,6 +1426,11 @@ __Parameters__
 `string`
 
 </td>
+<td>
+
+事件名
+
+</td>
 </tr>
 <tr>
 <td>
@@ -1164,6 +1441,11 @@ __Parameters__
 <td>
 
 (...`rest`: `any`[]) => `void`
+
+</td>
+<td>
+
+回调函数
 
 </td>
 </tr>
@@ -1748,12 +2030,35 @@ __Returns__
 
 #### FileHelper
 
-文件操作辅助类
-
 ##### choose()
 
 ```ts
-function choose(callback: (fileList: null | FileList) => void, options: chooseOption): void
+function choose(options: {
+  accept: string[];
+  capture:   | "user"
+     | "environment"
+     | "camera"
+     | "camcorder"
+     | "microphone";
+  multiple: boolean;
+}): Promise<FileList>
+```
+
+文件选择
+
+__Example__
+
+```ts
+choose({
+ accept: [".doc",".docx","application/msword"],
+ capture: "user",
+ multiple: true
+}).then(files => {
+    console.log(files);
+  })
+  .catch(err => {
+    console.error(err);
+  });
 ```
 
 __Parameters__
@@ -1762,18 +2067,7 @@ __Parameters__
 <tr>
 <th>Parameter</th>
 <th>Type</th>
-</tr>
-<tr>
-<td>
-
-`callback`
-
-</td>
-<td>
-
-(`fileList`: `null` \| `FileList`) => `void`
-
-</td>
+<th>Description</th>
 </tr>
 <tr>
 <td>
@@ -1783,7 +2077,63 @@ __Parameters__
 </td>
 <td>
 
-`chooseOption`
+`object`
+
+</td>
+<td>
+
+文件选择配置
+
+</td>
+</tr>
+<tr>
+<td>
+
+`options.accept`?
+
+</td>
+<td>
+
+`string`[]
+
+</td>
+<td>
+
+以逗号为分隔的[唯一文件类型说明符]列表
+
+</td>
+</tr>
+<tr>
+<td>
+
+`options.capture`?
+
+</td>
+<td>
+
+ \| `"user"` \| `"environment"` \| `"camera"` \| `"camcorder"` \| `"microphone"`
+
+</td>
+<td>
+
+尝试请求使用设备的媒体捕获设备（如：摄像机），而不是请求一个文件输入。camera–照相机；camcorder–摄像机；microphone–录音
+
+</td>
+</tr>
+<tr>
+<td>
+
+`options.multiple`?
+
+</td>
+<td>
+
+`boolean`
+
+</td>
+<td>
+
+是否允许多选
 
 </td>
 </tr>
@@ -1791,7 +2141,7 @@ __Parameters__
 
 __Returns__
 
-`void`
+`Promise`\<`FileList`\>
 
 ***
 
@@ -1805,7 +2155,16 @@ function pickDir(dirKey: string, force: boolean): Promise<{
 }>
 ```
 
-选择文件夹
+选择文件夹(与saveFileToDir共用缓存)
+
+__Example__
+
+```ts
+//选择文件夹，将其与key绑定
+pickDir('key');
+//强制重新选择
+pickDir('key', true);
+```
 
 __Parameters__
 
@@ -1835,7 +2194,6 @@ __Parameters__
 <td>
 
 文件夹唯一标识，自行定义string，用于后续向同一文件夹写入文件
-与saveFileToDir共用缓存
 
 </td>
 </tr>
@@ -1857,7 +2215,7 @@ __Parameters__
 </td>
 <td>
 
-&hyphen;
+是否强制重新选择
 
 </td>
 </tr>
@@ -1885,12 +2243,68 @@ __Returns__
 function read(file: Blob | File): FileReaderDecorate
 ```
 
+文件读取
+
+__Example__
+
+```ts
+const reader = read(file)
+ .loadend((res) => {
+   console.log(res);
+ })
+ //start方法参数类型："ArrayBuffer" | "BinaryString" | "DataURL" | "Text"
+ .start("ArrayBuffer");
+
+//读取操作发生中断时触发
+reader.abort((abo) => {
+  console.log(abo);
+})
+
+//读取操作发生错误时触发
+reader.error((err) => {
+  console.log(err);
+})
+
+//读取操作完成时触发
+reader.load((res) => {
+  console.log(res);
+})
+
+//读取操作开始时触发
+reader.loadstart((res) => {
+  console.log(res);
+})
+
+//读取操作结束时（要么成功，要么失败）触发
+reader.loadstart((res) => {
+  console.log(res);
+})
+
+//获取读取结果的promise
+const promise = reader.loadendPromise();
+
+//在读取Blob时触发。
+reader.progress((res) => {
+  console.log(res);
+})
+
+//获取状态
+const status = reader.getStatus();
+
+//获取结果
+const result = reader.getResult();
+
+//中断读取
+reader.stop();
+```
+
 __Parameters__
 
 <table>
 <tr>
 <th>Parameter</th>
 <th>Type</th>
+<th>Description</th>
 </tr>
 <tr>
 <td>
@@ -1901,6 +2315,11 @@ __Parameters__
 <td>
 
 `Blob` \| `File`
+
+</td>
+<td>
+
+File对象或Blob对象
 
 </td>
 </tr>
@@ -1919,6 +2338,13 @@ function save(file: string | Blob, saveFileName: string): void
 ```
 
 H5文件下载方法
+
+__Example__
+
+```ts
+save(new Blob(['你好世界'], { type: 'text/plain' }), 'test.txt');
+save('https://www.baidu.com/img/flexible/logo/pc/result@2.png', 'baidu.png');
+```
 
 __Parameters__
 
@@ -1947,7 +2373,7 @@ __Parameters__
 </td>
 <td>
 
-&hyphen;
+资源链接或者blob对象
 
 </td>
 </tr>
@@ -1995,6 +2421,13 @@ function saveFileToDir(
 ```
 
 将文件写入目标文件夹
+
+__Example__
+
+```ts
+//需要先调用pickDir选择文件夹
+saveFileToDir('key', 'file.txt', ['string', new Blob(['你好世界'], { type: 'text/plain' })]);
+```
 
 __Parameters__
 
@@ -2067,7 +2500,7 @@ __Parameters__
 </td>
 <td>
 
-二进制文件流
+二进制文件流或字符串数组
 
 </td>
 </tr>
@@ -2331,6 +2764,13 @@ function generateUUID(length?: number, radix?: number): string
 
 生成UUID4
 
+__Example__
+
+```ts
+generateUUID();
+generateUUID(12, 32);
+```
+
 __Parameters__
 
 <table>
@@ -2444,6 +2884,15 @@ function mergeObject<T>(
 
 深度合并n个对象值
 
+__Example__
+
+```ts
+const a = { a: 1, b: { c: 2 } };
+const b = { b: { d: 3 } };
+const c = { c: 4 };
+mergeObject(a, b, c);
+```
+
 __Type Parameters__
 
 <table>
@@ -2534,6 +2983,13 @@ function parseUrl(url: string): URLWithParam | null
 
 解析URL
 
+__Example__
+
+```ts
+const url = 'https://www.baidu.com/s?wd=hello#world'
+const result = parseUrl(url)
+```
+
 __Parameters__
 
 <table>
@@ -2565,8 +3021,6 @@ __Returns__
 
 `URLWithParam` \| `null`
 
-URLWithParam
-
 ***
 
 #### throttle()
@@ -2579,6 +3033,26 @@ function throttle(
 ```
 
 函数节流
+
+__Example__
+
+```ts
+interface throttleOptions {
+  // 首次是否执行
+  leading: boolean,
+  // 结束是否执行
+  trailing: boolean
+}
+let throttle = throttle(function(){
+  console.log('身体和心灵，总有一个在路上。');
+  return '身体和心灵，总有一个在路上。';
+}, 1000, {
+  leading: true, 
+  trailing: true
+});
+throttle();
+throttle.cancel();
+```
 
 __Parameters__
 
@@ -2635,7 +3109,7 @@ __Parameters__
 </td>
 <td>
 
-&hyphen;
+函数执行配置
 
 </td>
 </tr>
@@ -2645,12 +3119,15 @@ __Returns__
 
 `Function`
 
+处理好的节流函数
+
 __Parameters__
 
 <table>
 <tr>
 <th>Parameter</th>
 <th>Type</th>
+<th>Description</th>
 </tr>
 <tr>
 <td>
@@ -2661,6 +3138,11 @@ __Parameters__
 <td>
 
 `any`
+
+</td>
+<td>
+
+执行上下文继承自传入函数
 
 </td>
 </tr>
@@ -2675,6 +3157,11 @@ __Parameters__
 `any`[]
 
 </td>
+<td>
+
+参数继承自传入函数
+
+</td>
 </tr>
 </table>
 
@@ -2682,6 +3169,6 @@ __Returns__
 
 `any`
 
-| Name | Type |
-| ------ | ------ |
-| `cancel` | `void` |
+| Name | Type | Description |
+| ------ | ------ | ------ |
+| `cancel` | `void` | 取消节流函数执行 |

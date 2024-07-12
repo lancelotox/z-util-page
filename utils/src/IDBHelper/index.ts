@@ -1,5 +1,4 @@
 /**
- * indexedDB操作辅助类
  * @category indexedDB操作辅助类
  */
 export class IDBHelper {
@@ -9,6 +8,13 @@ export class IDBHelper {
   private upgradePromise: Promise<Boolean> = Promise.resolve(true);
   private resetPromise: Promise<Boolean> = Promise.resolve(true);
 
+  /**
+   * 构造函数
+   * @param name 数据库名称
+   * @throws Error 数据库名称不能为空
+   * @returns IDBHelper实例
+   * ***
+   */
   constructor(name: string) {
     if (name === null || name === undefined) throw new Error("数据库名称不能为空");
     this.name = name;
@@ -59,7 +65,6 @@ export class IDBHelper {
 
   /**
    * 获取更新后的DB
-   * @returns 
    */
   private async updateDb() {
     await this.resetPromise;
@@ -69,8 +74,7 @@ export class IDBHelper {
   }
 
   /**
-   * 获取的DB
-   * @returns 
+   * 获取DB
    */
   private getDb(name: string, version?: number) {
     const dbRq = indexedDB.open(name, version);
@@ -85,6 +89,15 @@ export class IDBHelper {
 
   /**
    * 创建表
+   * @example
+   * ```ts
+   * const db = new IDBHelper('test');
+   * await db.createTable('tn');
+   * ```
+   * @param tableNameList 表名列表
+   * @param keyPath 主键
+   * @returns Promise<boolean>
+   * ***
    */
   public async createTable(tableNameList: string[] | string, keyPath?: string) {
     const { promise, resolve } = Promise.withResolvers<boolean>();
@@ -108,6 +121,14 @@ export class IDBHelper {
 
   /**
    * 删除表
+   * @example
+   * ```ts
+   * const db = new IDBHelper('test');
+   * await db.deleteTable('tn');
+   * ```
+   * @param tableNameList 表名列表
+   * @returns Promise<boolean>
+   * ***
    */
   public async deleteTable(tableNameList: string[] | string) {
     const { promise, resolve } = Promise.withResolvers<boolean>();
@@ -132,6 +153,13 @@ export class IDBHelper {
 
   /**
    * 删除所有表
+   * @example
+   * ```ts
+   * const db = new IDBHelper('test');
+   * await db.deleteAllTable();
+   * ```
+   * @returns Promise<boolean>
+   * ***
    */
   public async deleteAllTable() {
     const { promise, resolve } = Promise.withResolvers<boolean>();
@@ -155,6 +183,13 @@ export class IDBHelper {
 
   /**
    * 获取所有表名
+   * @example
+   * ```ts
+   * const db = new IDBHelper('test');
+   * await db.getAllTableName();
+   * ```
+   * @returns false 或 string[]
+   * ***
    */
   public async getAllTableName() {
     if (!this.dbRq) return false;
@@ -164,6 +199,15 @@ export class IDBHelper {
 
   /**
    * 增加/修改表中某行数据
+   * @example
+   * ```ts
+   * const db = new IDBHelper('test');
+   * await db.setTableRow('tn', '你好！');
+   * ```
+   * @param tableName 表名
+   * @param data 数据
+   * @returns Promise<boolean>
+   * ***
    */
   public async setTableRow(tableName: string, data: any) {
     if (!this.dbRq) return false;
@@ -180,6 +224,15 @@ export class IDBHelper {
 
   /**
    * 获取表中某行数据
+   * @example
+   * ```ts
+   * const db = new IDBHelper('test');
+   * await db.getTableRow('tn', 'key');
+   * ```
+   * @param tableName 表名
+   * @param key 键
+   * @returns Promise<boolean>
+   * ***
    */
   public async getTableRow(tableName: string, key: string) {
     if (!this.dbRq) return false;
@@ -199,6 +252,15 @@ export class IDBHelper {
 
   /**
    * 删除表中某行数据
+   * @example
+   * ```ts
+   * const db = new IDBHelper('test');
+   * await db.deleteTableRow('tn', 'key');
+   * ```
+   * @param tableName 表名
+   * @param key 键
+   * @returns Promise<boolean>
+   * ***
    */
   public async deleteTableRow(tableName: string, key: string) {
     if (!this.dbRq) return false;
@@ -215,6 +277,14 @@ export class IDBHelper {
 
   /**
    * 获取表中所有数据
+   * @example
+   * ```ts
+   * const db = new IDBHelper('test');
+   * await db.getAllTableRow('tn');
+   * ```
+   * @param tableName 表名
+   * @returns Promise<any[]>
+   * ***
    */
   public async getAllTableRow(tableName: string, range?: IDBKeyRange) {
     if (!this.dbRq) return false;
@@ -234,6 +304,14 @@ export class IDBHelper {
 
   /**
    * 获取表数据条数
+   * @example
+   * ```ts
+   * const db = new IDBHelper('test');
+   * await db.getTableRowCount('tn');
+   * ```
+   * @param tableName 表名
+   * @returns Promise<number>
+   * ***
    */
   public async getTableRowCount(tableName: string, range?: IDBKeyRange) {
     if (!this.dbRq) return false;
@@ -253,6 +331,13 @@ export class IDBHelper {
 
   /**
    * 关闭数据库
+   * @example
+   * ```ts
+   * const db = new IDBHelper('test');
+   * await db.close();
+   * ```
+   * @returns Promise<boolean>
+   * ***
    */
   public async close() {
     if (!this.dbRq) return false;
@@ -271,6 +356,13 @@ export class IDBHelper {
 
   /**
    * 重置数据库
+   * @example
+   * ```ts
+   * const db = new IDBHelper('test');
+   * await db.reSet();
+   * ```
+   * @returns Promise<boolean>
+   * ***
    */
   public async reSet() {
     if (!this.dbRq) return false;

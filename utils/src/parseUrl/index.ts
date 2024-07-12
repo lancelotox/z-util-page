@@ -19,8 +19,12 @@ interface URLWithParam {
 /**
  * 解析URL
  * @category 辅助函数
+ * @example
+ * ```ts
+ * const url = 'https://www.baidu.com/s?wd=hello#world'
+ * const result = parseUrl(url)
+ * ```
  * @param url 统一资源定位符
- * @returns URLWithParam
  */
 export function parseUrl(url: string): URLWithParam | null {
   let Url: URLWithParam | null = null

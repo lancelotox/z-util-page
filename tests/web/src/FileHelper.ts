@@ -17,3 +17,13 @@ const View = createView('FileHelper');
 View.addTestBtn('下载blob文件', () => {
   FileHelper.save(new Blob(['你好世界'], { type: 'text/plain' }), 'test.txt');
 });
+
+View.addTestBtn('文件选择', () => {
+  FileHelper.choose()
+    .then(files => {
+      console.log(files);
+    })
+    .catch(err => {
+      console.error(err);
+    });
+});
