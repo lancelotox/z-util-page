@@ -1,4 +1,4 @@
-[z-util-page v3.2.1](../../../index.md) / [FileHelper](../index.md) / choose
+[z-util-page v3.3.0](../../../index.md) / [FileHelper](../index.md) / choose
 
 # Function: choose()
 

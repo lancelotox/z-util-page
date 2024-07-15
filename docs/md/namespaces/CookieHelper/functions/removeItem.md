@@ -1,4 +1,4 @@
-[z-util-page v3.2.1](../../../index.md) / [CookieHelper](../index.md) / removeItem
+[z-util-page v3.3.0](../../../index.md) / [CookieHelper](../index.md) / removeItem
 
 # Function: removeItem()
 

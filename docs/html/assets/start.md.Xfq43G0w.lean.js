@@ -1,1 +1,0 @@
-import{_ as s,c as i,o as a,a2 as t}from"./chunks/framework.BLHWSx9w.js";const g=JSON.parse('{"title":"z-util-page 说明文档","description":"","frontmatter":{},"headers":[],"relativePath":"start.md","filePath":"start.md"}'),e={name:"start.md"},h=t("",14),l=[h];function n(p,k,r,d,o,c){return a(),i("div",null,l)}const u=s(e,[["render",n]]);export{g as __pageData,u as default};

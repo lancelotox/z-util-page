@@ -1,4 +1,4 @@
-[z-util-page v3.2.1](../../../index.md) / [DomHelper](../index.md) / draggable
+[z-util-page v3.3.0](../../../index.md) / [DomHelper](../index.md) / draggable
 
 # Function: draggable()
 
