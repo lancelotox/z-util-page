@@ -6,7 +6,7 @@ export default defineConfig({
   title: "z-util-page",
   description: "一个基于TS的WEB工具库",
   outDir: "html",
-  base: "/html/",
+  base: "/z-util-page/html/",
   themeConfig: {
     // https://vitepress.dev/reference/default-theme-config
     nav: [
