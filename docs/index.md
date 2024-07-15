@@ -15,10 +15,10 @@ hero:
 
 features:
   - title: Reactive
-    details: Lorem ipsum dolor sit amet, consectetur adipiscing elit
-  - title: Feature B
-    details: Lorem ipsum dolor sit amet, consectetur adipiscing elit
-  - title: Feature C
-    details: Lorem ipsum dolor sit amet, consectetur adipiscing elit
+    details: 响应式数据代理API，拥有简单易用的语法以及高效的变化侦测。
+  - title: EventBus
+    details: 事件中线API，支持自定义事件，支持全局事件和局部事件，支持事件监听和事件触发。
+  - title: CookieHelper
+    details: 便捷的Cookie操作API，支持设置、获取、删除Cookie。
 ---
 
