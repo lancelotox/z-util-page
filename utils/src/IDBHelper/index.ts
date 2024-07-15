@@ -96,7 +96,7 @@ export class IDBHelper {
    * ```
    * @param tableNameList 表名列表
    * @param keyPath 主键
-   * @returns Promise<boolean>
+   * @returns { Promise<boolean> }
    * ***
    */
   public async createTable(tableNameList: string[] | string, keyPath?: string) {
@@ -127,7 +127,7 @@ export class IDBHelper {
    * await db.deleteTable('tn');
    * ```
    * @param tableNameList 表名列表
-   * @returns Promise<boolean>
+   * @returns { Promise<boolean> }
    * ***
    */
   public async deleteTable(tableNameList: string[] | string) {
@@ -158,7 +158,7 @@ export class IDBHelper {
    * const db = new IDBHelper('test');
    * await db.deleteAllTable();
    * ```
-   * @returns Promise<boolean>
+   * @returns { Promise<boolean> }
    * ***
    */
   public async deleteAllTable() {
@@ -206,7 +206,7 @@ export class IDBHelper {
    * ```
    * @param tableName 表名
    * @param data 数据
-   * @returns Promise<boolean>
+   * @returns { Promise<boolean> }
    * ***
    */
   public async setTableRow(tableName: string, data: any) {
@@ -231,7 +231,7 @@ export class IDBHelper {
    * ```
    * @param tableName 表名
    * @param key 键
-   * @returns Promise<boolean>
+   * @returns { Promise<boolean> }
    * ***
    */
   public async getTableRow(tableName: string, key: string) {
@@ -259,7 +259,7 @@ export class IDBHelper {
    * ```
    * @param tableName 表名
    * @param key 键
-   * @returns Promise<boolean>
+   * @returns { Promise<boolean> }
    * ***
    */
   public async deleteTableRow(tableName: string, key: string) {
@@ -283,7 +283,8 @@ export class IDBHelper {
    * await db.getAllTableRow('tn');
    * ```
    * @param tableName 表名
-   * @returns Promise<any[]>
+   * @param range [范围](https://developer.mozilla.org/zh-CN/docs/Web/API/IDBKeyRange)
+   * @returns { Promise<any[]> }
    * ***
    */
   public async getAllTableRow(tableName: string, range?: IDBKeyRange) {
@@ -310,7 +311,8 @@ export class IDBHelper {
    * await db.getTableRowCount('tn');
    * ```
    * @param tableName 表名
-   * @returns Promise<number>
+   * @param range [范围](https://developer.mozilla.org/zh-CN/docs/Web/API/IDBKeyRange)
+   * @returns { Promise<number> }
    * ***
    */
   public async getTableRowCount(tableName: string, range?: IDBKeyRange) {
@@ -336,7 +338,7 @@ export class IDBHelper {
    * const db = new IDBHelper('test');
    * await db.close();
    * ```
-   * @returns Promise<boolean>
+   * @returns { Promise<boolean> }
    * ***
    */
   public async close() {
@@ -361,7 +363,7 @@ export class IDBHelper {
    * const db = new IDBHelper('test');
    * await db.reSet();
    * ```
-   * @returns Promise<boolean>
+   * @returns { Promise<boolean> }
    * ***
    */
   public async reSet() {

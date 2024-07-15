@@ -1,5 +1,4 @@
 /**
- * 响应式数据API
  * @category 响应式数据API
  * @module Reactive
  */
@@ -325,10 +324,16 @@ function trigger(target: object, p: any, type: TriggerType, value?: any): boolea
 
 /**
  * 代理对象值，返回响应式数据
+ * @example
+ * ```ts
+ * const obj = reactive({name:'张三'});
+ * obj.name = '李四';
+ * console.log(obj.name); //李四
+ * ```
  * @param value 对象值
  * @param isShadow true为深代理，false为浅代理
  * @param isReadonly 是否只读
- * @returns T
+ * @returns { Proxy<T> }
  */
 export function reactive<T extends object>(value: T, isShadow = false, isReadonly = false): T {
   const proxy = new Proxy<T>(value, {
@@ -412,6 +417,11 @@ export function reactive<T extends object>(value: T, isShadow = false, isReadonl
 
 /**
  * 代理基本类型值，返回响应式数据
+ * ```ts
+ * const obj = ref(3);
+ * obj.value = 4;
+ * console.log(obj.value); //4
+ * ```
  * @param value 基本类型值
  * @param isReadonly 是否只读
  * @returns { value: T }
@@ -429,6 +439,13 @@ export function ref<T>(value: T, isReadonly = false): Ref<T> {
 
 /**
  * 将响应式对象的某键值转为ref
+ * @example
+ * ```ts
+ * const obj = reactive({ a: 1 });
+ * const a = toRef(obj, 'a');
+ * a.value = 2;
+ * console.log(obj.a); //2
+ * ```
  * @param val 响应式对象
  * @param key 键值
  * @returns Ref
@@ -451,6 +468,13 @@ export function toRef(val: any, key: string | symbol) {
 
 /**
  * 将响应式对象的键值全部转换为Ref, 可解构使用
+ * @example
+ * ```ts
+ * const obj = reactive({ a: 1, b: 2 });
+ * const { a, b } = toRefs(obj);
+ * a.value = 2;
+ * console.log(obj.a); //2
+ * ```
  * @param obj 响应式对象
  * @returns Refs
  */
@@ -464,6 +488,15 @@ export function toRefs(obj: any) {
 
 /**
  * 创建副作用函数
+ * @example
+ * ```ts
+ * const count = ref(0);
+ * effect(() => {
+ *  console.log(count.value);
+ * })
+ * count.value = 1;
+ * // 打印1
+ * ```
  * @param func 函数
  * @param options 配置
  * @returns effectFunc
@@ -492,6 +525,14 @@ export function effect(func: Function, options: EffectOptions = {}) {
 
 /**
  * 获取计算属性
+ * @example
+ * ```ts
+ * const count = ref(0);
+ * const double = computed(() => count.value * 2);
+ * console.log(double.value); //0
+ * count.value = 1;
+ * console.log(double.value); //2
+ * ```
  * @param getter 
  * @returns computed
  */
@@ -525,6 +566,15 @@ export function computed<T>(getter: () => {
 
 /**
  * 监听响应式数据
+ * @example
+ * ```ts
+ * const count = ref(0);
+ * watch(count, (newVal, oldVal) => {
+ *  console.log(newVal, oldVal);
+ * })
+ * count.value = 1;
+ * // 打印1 0
+ * ```
  * @param source 副作用函数或者响应式对象
  * @param cb 数据变化后回调函数
  * @param options 配置
@@ -560,6 +610,13 @@ export function watch(source: Function | object, cb: Function, options: EffectOp
 
 /**
  * 获取原始对象
+ * @example
+ * ```ts
+ * const count = reactive({ a: 1 });
+ * console.log(toRaw(count)); //{ a: 1 }
+ * ```
+ * @param proxy 响应式对象
+ * @returns 原始对象
  */
 export function toRaw<T>(proxy: T): T{
   return Reflect.get((typeof proxy === 'object' && proxy !== null) ? proxy : {}, source) || proxy;

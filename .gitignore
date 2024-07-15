@@ -6,3 +6,5 @@ utils/cmd/
 utils/dist/
 utils/es/
 utils/types/
+docs/.vitepress/dist/
+docs/.vitepress/cache/

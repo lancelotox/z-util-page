@@ -9,8 +9,10 @@
     "tsc:watch": "cd utils && tsc --watch",
     "test:unit": "cd tests/unit && npx jest --watchAll",
     "test:web": "cd tests/web && webpack serve",
-    "docs": "cd docs && npx typedoc",
-    "md": "cd docs && npx typedoc --out md",
+    "docs:dev": "cd docs && npx typedoc && npx vitepress dev",
+    "docs:build": "cd docs && npx typedoc && npx vitepress build",
+    "docs:preview": "cd docs && npx vitepress preview",
+    "md": "cd docs && npx typedoc --options one/typedoc.json",
     "publish:latest": "cd utils && npm publish --tag latest",
     "publish:beta": "cd utils && npm publish --tag beta"
   },
