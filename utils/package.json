@@ -49,6 +49,7 @@
   "description": "web utils",
   "author": "zhou feng",
   "repository": "https://github.com/lancelotox/z-util-page",
+  "homepage": "https://lancelotox.github.io/z-util-page/html/",
   "license": "ISC",
   "keywords": [
     "js",
