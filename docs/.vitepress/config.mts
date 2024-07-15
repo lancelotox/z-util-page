@@ -3,10 +3,13 @@ import sidebar from '../md/typedoc-sidebar.json';
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
-  title: "z-util-page",
+  title: "z-util-page工具库",
   description: "一个基于TS的WEB工具库",
   outDir: "html",
   base: "/z-util-page/html/",
+  head: [
+    ['link', { rel: 'icon', href: '/z-util-page/html/favicon.ico' }]
+  ],
   themeConfig: {
     // https://vitepress.dev/reference/default-theme-config
     nav: [
