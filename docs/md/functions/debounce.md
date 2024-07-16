@@ -1,68 +1,13 @@
-[z-util-page v3.3.0](../index.md) / debounce
-
 # Function: debounce()
 
-> **debounce**(`func`, `wait`, `immediatel`?): (`this`, ...`args`) => `any`
+```ts
+function debounce(
+   func: Function, 
+   wait: number, 
+   immediatel?: boolean): (this: any, ...args: any[]) => any
+```
 
 将函数处理为防抖函数
-
-## Parameters
-
-• **func**: `Function`
-
-待处理函数
-
-• **wait**: `number`
-
-函数执行延迟时间
-
-• **immediatel?**: `boolean`
-
-是否立刻执行
-
-## Returns
-
-`Function`
-
-处理好的防抖函数
-
-### Parameters
-
-• **this**: `any`
-
-执行上下文继承自传入函数
-
-• ...**args**: `any`[]
-
-参数继承自传入函数
-
-### Returns
-
-`any`
-
-### cancel()
-
-取消防抖函数执行
-
-#### Returns
-
-`void`
-
-### then()
-
-注册防抖函数执行后的回调
-
-#### Parameters
-
-• **callback**: `Function`
-
-回调函数
-
-#### Returns
-
-\{ (this: any, ...args: any\[\]): any; cancel(): void; then(callback: Function): ...; \}
-
-处理好的防抖函数
 
 ## Example
 
@@ -77,3 +22,123 @@ debounced.then(function (res) {
 debounced();
 debounced.cancel();
 ```
+
+## Parameters
+
+<table>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+<tr>
+<td>
+
+`func`
+
+</td>
+<td>
+
+`Function`
+
+</td>
+<td>
+
+待处理函数
+
+</td>
+</tr>
+<tr>
+<td>
+
+`wait`
+
+</td>
+<td>
+
+`number`
+
+</td>
+<td>
+
+函数执行延迟时间
+
+</td>
+</tr>
+<tr>
+<td>
+
+`immediatel`?
+
+</td>
+<td>
+
+`boolean`
+
+</td>
+<td>
+
+是否立刻执行
+
+</td>
+</tr>
+</table>
+
+## Returns
+
+`Function`
+
+处理好的防抖函数
+
+### Parameters
+
+<table>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+<tr>
+<td>
+
+`this`
+
+</td>
+<td>
+
+`any`
+
+</td>
+<td>
+
+执行上下文继承自传入函数
+
+</td>
+</tr>
+<tr>
+<td>
+
+...`args`
+
+</td>
+<td>
+
+`any`[]
+
+</td>
+<td>
+
+参数继承自传入函数
+
+</td>
+</tr>
+</table>
+
+### Returns
+
+`any`
+
+| Name | Type | Description |
+| ------ | ------ | ------ |
+| `cancel` | `void` | 取消防抖函数执行 |
+| `then` | \{ (this: any, ...args: any\[\]): any; cancel(): void; then(callback: Function): ...; \} | 注册防抖函数执行后的回调 |

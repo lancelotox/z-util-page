@@ -1,24 +1,14 @@
-[z-util-page v3.3.0](../index.md) / Http
-
 # Class: Http
 
 ## Constructors
 
 ### new Http()
 
-> **new Http**(`options`): [`Http`](Http.md)
+```ts
+new Http(options: CustomHttpOptions): Http
+```
 
 构造函数
-
-#### Parameters
-
-• **options**: `CustomHttpOptions` = `{}`
-
-默认参数
-
-#### Returns
-
-[`Http`](Http.md)
 
 #### Example
 
@@ -35,39 +25,53 @@ const http = new Http({
 });
 ```
 
-## Properties
+#### Parameters
 
-### Interceptor
+<table>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+<tr>
+<td>
 
-> **Interceptor**: `Interceptor`
+`options`
 
-拦截器
+</td>
+<td>
 
-***
+`CustomHttpOptions`
 
-### options
-
-> **options**: `HttpOptions`
+</td>
+<td>
 
 默认参数
+
+</td>
+</tr>
+</table>
+
+#### Returns
+
+[`Http`](Http.md)
+
+## Properties
+
+| Property | Modifier | Type | Description |
+| ------ | ------ | ------ | ------ |
+| `Interceptor` | `public` | `Interceptor` | 拦截器 |
+| `options` | `public` | `HttpOptions` | 默认参数 |
 
 ## Methods
 
 ### ajax()
 
-> **ajax**(`param`): `PromiseHandle`
+```ts
+ajax(param: Param): PromiseHandle
+```
 
 XMLHttpRequest异步请求
-
-#### Parameters
-
-• **param**: `Param`
-
-请求参数
-
-#### Returns
-
-`PromiseHandle`
 
 #### Example
 
@@ -132,23 +136,46 @@ const req = http.ajax({
 req.abort();
 ```
 
+#### Parameters
+
+<table>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+<tr>
+<td>
+
+`param`
+
+</td>
+<td>
+
+`Param`
+
+</td>
+<td>
+
+请求参数
+
+</td>
+</tr>
+</table>
+
+#### Returns
+
+`PromiseHandle`
+
 ***
 
 ### ajaxAsync()
 
-> **ajaxAsync**(`param`): `any`
+```ts
+ajaxAsync(param: Param): any
+```
 
 XMLHttpRequest同步请求，绝大多数情况下只能在work进程内使用。
-
-#### Parameters
-
-• **param**: `Param`
-
-请求参数
-
-#### Returns
-
-`any`
 
 #### Example
 
@@ -190,3 +217,34 @@ const req = http.ajax({
 // 请求成功
 console.log(res);
 ```
+
+#### Parameters
+
+<table>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+<tr>
+<td>
+
+`param`
+
+</td>
+<td>
+
+`Param`
+
+</td>
+<td>
+
+请求参数
+
+</td>
+</tr>
+</table>
+
+#### Returns
+
+`any`

@@ -1,5 +1,3 @@
-[z-util-page v3.3.0](../index.md) / EventBus
-
 # Class: EventBus
 
 ## Example
@@ -27,11 +25,30 @@ expect(count).toBe(7);
 
 ### new EventBus()
 
-> **new EventBus**(`config`?): [`EventBus`](EventBus.md)
+```ts
+new EventBus(config?: EventBusConfig): EventBus
+```
 
 #### Parameters
 
-• **config?**: `EventBusConfig`
+<table>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+</tr>
+<tr>
+<td>
+
+`config`?
+
+</td>
+<td>
+
+`EventBusConfig`
+
+</td>
+</tr>
+</table>
 
 #### Returns
 
@@ -39,65 +56,64 @@ expect(count).toBe(7);
 
 ## Properties
 
-### emit()
-
-> **emit**: (`key`, ...`rest`) => `void`
-
-触发事件
-
-#### Parameters
-
-• **key**: `string`
-
-事件名
-
-• ...**rest**: `any`[]
-
-传给回调函数的参数
-
-#### Returns
-
-`void`
-
-***
-
-### on()
-
-> **on**: (`key`, `func`) => `void`
-
-监听事件
-
-#### Parameters
-
-• **key**: `string`
-
-事件名
-
-• **func**
-
-回调函数
-
-#### Returns
-
-`void`
+| Property | Modifier | Type |
+| ------ | ------ | ------ |
+| `emit` | `public` | (`key`: `string`, ...`rest`: `any`[]) => `void` |
+| `on` | `public` | (`key`: `string`, `func`: (...`rest`: `any`[]) => `void`) => `void` |
 
 ## Methods
 
 ### emit()
 
-> `static` **emit**(`key`, ...`rest`): `void`
+```ts
+static emit(key: string, ...rest: any[]): void
+```
 
 触发事件
 
 #### Parameters
 
-• **key**: `string`
+<table>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+<tr>
+<td>
+
+`key`
+
+</td>
+<td>
+
+`string`
+
+</td>
+<td>
 
 事件名
 
-• ...**rest**: `any`[]
+</td>
+</tr>
+<tr>
+<td>
+
+...`rest`
+
+</td>
+<td>
+
+`any`[]
+
+</td>
+<td>
 
 传给回调函数的参数
+
+</td>
+</tr>
+</table>
 
 #### Returns
 
@@ -107,19 +123,55 @@ expect(count).toBe(7);
 
 ### on()
 
-> `static` **on**(`key`, `func`): `void`
+```ts
+static on(key: string, func: (...rest: any[]) => void): void
+```
 
 监听事件
 
 #### Parameters
 
-• **key**: `string`
+<table>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+<tr>
+<td>
+
+`key`
+
+</td>
+<td>
+
+`string`
+
+</td>
+<td>
 
 事件名
 
-• **func**
+</td>
+</tr>
+<tr>
+<td>
+
+`func`
+
+</td>
+<td>
+
+(...`rest`: `any`[]) => `void`
+
+</td>
+<td>
 
 回调函数
+
+</td>
+</tr>
+</table>
 
 #### Returns
 

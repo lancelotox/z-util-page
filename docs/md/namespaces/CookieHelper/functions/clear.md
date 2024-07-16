@@ -1,17 +1,17 @@
-[z-util-page v3.3.0](../../../index.md) / [CookieHelper](../index.md) / clear
-
 # Function: clear()
 
-> **clear**(): `void`
+```ts
+function clear(): void
+```
 
 清空cookie
-
-## Returns
-
-`void`
 
 ## Example
 
 ```ts
 clear();
 ```
+
+## Returns
+
+`void`

@@ -1,20 +1,10 @@
-[z-util-page v3.3.0](../index.md) / parseUrl
-
 # Function: parseUrl()
 
-> **parseUrl**(`url`): `URLWithParam` \| `null`
+```ts
+function parseUrl(url: string): URLWithParam | null
+```
 
 解析URL
-
-## Parameters
-
-• **url**: `string`
-
-统一资源定位符
-
-## Returns
-
-`URLWithParam` \| `null`
 
 ## Example
 
@@ -22,3 +12,34 @@
 const url = 'https://www.baidu.com/s?wd=hello#world'
 const result = parseUrl(url)
 ```
+
+## Parameters
+
+<table>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+<tr>
+<td>
+
+`url`
+
+</td>
+<td>
+
+`string`
+
+</td>
+<td>
+
+统一资源定位符
+
+</td>
+</tr>
+</table>
+
+## Returns
+
+`URLWithParam` \| `null`

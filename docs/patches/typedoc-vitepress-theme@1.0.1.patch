@@ -1,0 +1,15 @@
+diff --git a/dist/sidebars/sidebar.vitepress.js b/dist/sidebars/sidebar.vitepress.js
+index e3ebefed026db82e042698fe35be482edc48e3d9..474ae503c0d2c22a7e595b4a65dfc5b2061c57ec 100644
+--- a/dist/sidebars/sidebar.vitepress.js
++++ b/dist/sidebars/sidebar.vitepress.js
+@@ -27,8 +27,8 @@ function getNavigationItem(navigationItem, basePath, options) {
+     const hasChildren = navigationItem?.children?.length;
+     return {
+         text: navigationItem.title,
+-        ...(Boolean(navigationItem?.path) && {
+-            link: `/${basePath}/${getParsedUrl(navigationItem.path).replace(/\\/g, '/')}`,
++        ...(Boolean(navigationItem?.path || (navigationItem?.url && !navigationItem?.children)) && {
++            link: `/${basePath}/${getParsedUrl(navigationItem.path || navigationItem.url).replace(/\\/g, '/')}`,
+         }),
+         ...(hasChildren && { collapsed: options.collapsed }),
+         ...(hasChildren && {

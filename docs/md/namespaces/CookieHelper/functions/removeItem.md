@@ -1,23 +1,44 @@
-[z-util-page v3.3.0](../../../index.md) / [CookieHelper](../index.md) / removeItem
-
 # Function: removeItem()
 
-> **removeItem**(`key`): `void`
+```ts
+function removeItem(key: string): void
+```
 
 根据key值删除Cookie中键值对
-
-## Parameters
-
-• **key**: `string`
-
-key值
-
-## Returns
-
-`void`
 
 ## Example
 
 ```ts
 removeItem('test');
 ```
+
+## Parameters
+
+<table>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+<tr>
+<td>
+
+`key`
+
+</td>
+<td>
+
+`string`
+
+</td>
+<td>
+
+key值
+
+</td>
+</tr>
+</table>
+
+## Returns
+
+`void`

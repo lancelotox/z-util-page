@@ -1,20 +1,10 @@
-[z-util-page v3.3.0](../../../index.md) / [FileHelper](../index.md) / read
-
 # Function: read()
 
-> **read**(`file`): `FileReaderDecorate`
+```ts
+function read(file: Blob | File): FileReaderDecorate
+```
 
 文件读取
-
-## Parameters
-
-• **file**: `Blob` \| `File`
-
-File对象或Blob对象
-
-## Returns
-
-`FileReaderDecorate`
 
 ## Example
 
@@ -68,3 +58,34 @@ const result = reader.getResult();
 //中断读取
 reader.stop();
 ```
+
+## Parameters
+
+<table>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+<tr>
+<td>
+
+`file`
+
+</td>
+<td>
+
+`Blob` \| `File`
+
+</td>
+<td>
+
+File对象或Blob对象
+
+</td>
+</tr>
+</table>
+
+## Returns
+
+`FileReaderDecorate`

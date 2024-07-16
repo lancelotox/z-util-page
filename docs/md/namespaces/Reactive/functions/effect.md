@@ -1,26 +1,10 @@
-[z-util-page v3.3.0](../../../index.md) / [Reactive](../index.md) / effect
-
 # Function: effect()
 
-> **effect**(`func`, `options`): `Effect`
+```ts
+function effect(func: Function, options: EffectOptions): Effect
+```
 
 创建副作用函数
-
-## Parameters
-
-• **func**: `Function`
-
-函数
-
-• **options**: `EffectOptions` = `{}`
-
-配置
-
-## Returns
-
-`Effect`
-
-effectFunc
 
 ## Example
 
@@ -32,3 +16,53 @@ effect(() => {
 count.value = 1;
 // 打印1
 ```
+
+## Parameters
+
+<table>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+<tr>
+<td>
+
+`func`
+
+</td>
+<td>
+
+`Function`
+
+</td>
+<td>
+
+函数
+
+</td>
+</tr>
+<tr>
+<td>
+
+`options`
+
+</td>
+<td>
+
+`EffectOptions`
+
+</td>
+<td>
+
+配置
+
+</td>
+</tr>
+</table>
+
+## Returns
+
+`Effect`
+
+effectFunc

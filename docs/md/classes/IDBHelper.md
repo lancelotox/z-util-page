@@ -1,20 +1,41 @@
-[z-util-page v3.3.0](../index.md) / IDBHelper
-
 # Class: IDBHelper
 
 ## Constructors
 
 ### new IDBHelper()
 
-> **new IDBHelper**(`name`): [`IDBHelper`](IDBHelper.md)
+```ts
+new IDBHelper(name: string): IDBHelper
+```
 
 构造函数
 
 #### Parameters
 
-• **name**: `string`
+<table>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+<tr>
+<td>
+
+`name`
+
+</td>
+<td>
+
+`string`
+
+</td>
+<td>
 
 数据库名称
+
+</td>
+</tr>
+</table>
 
 #### Returns
 
@@ -31,15 +52,11 @@ Error 数据库名称不能为空
 
 ### close()
 
-> **close**(): `Promise`\<`undefined` \| `false`\>
+```ts
+close(): Promise<undefined | false>
+```
 
 关闭数据库
-
-#### Returns
-
-`Promise`\<`undefined` \| `false`\>
-
-***
 
 #### Example
 
@@ -48,29 +65,21 @@ const db = new IDBHelper('test');
 await db.close();
 ```
 
+#### Returns
+
+`Promise`\<`undefined` \| `false`\>
+
+***
+
 ***
 
 ### createTable()
 
-> **createTable**(`tableNameList`, `keyPath`?): `Promise`\<`boolean`\>
+```ts
+createTable(tableNameList: string | string[], keyPath?: string): Promise<boolean>
+```
 
 创建表
-
-#### Parameters
-
-• **tableNameList**: `string` \| `string`[]
-
-表名列表
-
-• **keyPath?**: `string`
-
-主键
-
-#### Returns
-
-`Promise`\<`boolean`\>
-
-***
 
 #### Example
 
@@ -79,19 +88,65 @@ const db = new IDBHelper('test');
 await db.createTable('tn');
 ```
 
-***
+#### Parameters
 
-### deleteAllTable()
+<table>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+<tr>
+<td>
 
-> **deleteAllTable**(): `Promise`\<`boolean`\>
+`tableNameList`
 
-删除所有表
+</td>
+<td>
+
+`string` \| `string`[]
+
+</td>
+<td>
+
+表名列表
+
+</td>
+</tr>
+<tr>
+<td>
+
+`keyPath`?
+
+</td>
+<td>
+
+`string`
+
+</td>
+<td>
+
+主键
+
+</td>
+</tr>
+</table>
 
 #### Returns
 
 `Promise`\<`boolean`\>
 
 ***
+
+***
+
+### deleteAllTable()
+
+```ts
+deleteAllTable(): Promise<boolean>
+```
+
+删除所有表
 
 #### Example
 
@@ -100,25 +155,21 @@ const db = new IDBHelper('test');
 await db.deleteAllTable();
 ```
 
-***
-
-### deleteTable()
-
-> **deleteTable**(`tableNameList`): `Promise`\<`boolean`\>
-
-删除表
-
-#### Parameters
-
-• **tableNameList**: `string` \| `string`[]
-
-表名列表
-
 #### Returns
 
 `Promise`\<`boolean`\>
 
 ***
+
+***
+
+### deleteTable()
+
+```ts
+deleteTable(tableNameList: string | string[]): Promise<boolean>
+```
+
+删除表
 
 #### Example
 
@@ -127,29 +178,48 @@ const db = new IDBHelper('test');
 await db.deleteTable('tn');
 ```
 
+#### Parameters
+
+<table>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+<tr>
+<td>
+
+`tableNameList`
+
+</td>
+<td>
+
+`string` \| `string`[]
+
+</td>
+<td>
+
+表名列表
+
+</td>
+</tr>
+</table>
+
+#### Returns
+
+`Promise`\<`boolean`\>
+
+***
+
 ***
 
 ### deleteTableRow()
 
-> **deleteTableRow**(`tableName`, `key`): `Promise`\<`undefined` \| `false`\>
+```ts
+deleteTableRow(tableName: string, key: string): Promise<undefined | false>
+```
 
 删除表中某行数据
-
-#### Parameters
-
-• **tableName**: `string`
-
-表名
-
-• **key**: `string`
-
-键
-
-#### Returns
-
-`Promise`\<`undefined` \| `false`\>
-
-***
 
 #### Example
 
@@ -158,20 +228,65 @@ const db = new IDBHelper('test');
 await db.deleteTableRow('tn', 'key');
 ```
 
+#### Parameters
+
+<table>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+<tr>
+<td>
+
+`tableName`
+
+</td>
+<td>
+
+`string`
+
+</td>
+<td>
+
+表名
+
+</td>
+</tr>
+<tr>
+<td>
+
+`key`
+
+</td>
+<td>
+
+`string`
+
+</td>
+<td>
+
+键
+
+</td>
+</tr>
+</table>
+
+#### Returns
+
+`Promise`\<`undefined` \| `false`\>
+
+***
+
 ***
 
 ### getAllTableName()
 
-> **getAllTableName**(): `Promise`\<`false` \| `DOMStringList`\>
+```ts
+getAllTableName(): Promise<false | DOMStringList>
+```
 
 获取所有表名
-
-#### Returns
-
-`Promise`\<`false` \| `DOMStringList`\>
-
-false 或 string[]
-***
 
 #### Example
 
@@ -180,29 +295,22 @@ const db = new IDBHelper('test');
 await db.getAllTableName();
 ```
 
+#### Returns
+
+`Promise`\<`false` \| `DOMStringList`\>
+
+false 或 string[]
+***
+
 ***
 
 ### getAllTableRow()
 
-> **getAllTableRow**(`tableName`, `range`?): `Promise`\<`unknown`\>
+```ts
+getAllTableRow(tableName: string, range?: IDBKeyRange): Promise<unknown>
+```
 
 获取表中所有数据
-
-#### Parameters
-
-• **tableName**: `string`
-
-表名
-
-• **range?**: `IDBKeyRange`
-
-[范围](https://developer.mozilla.org/zh-CN/docs/Web/API/IDBKeyRange)
-
-#### Returns
-
-`Promise`\<`unknown`\>
-
-***
 
 #### Example
 
@@ -211,29 +319,65 @@ const db = new IDBHelper('test');
 await db.getAllTableRow('tn');
 ```
 
-***
-
-### getTableRow()
-
-> **getTableRow**(`tableName`, `key`): `Promise`\<`unknown`\>
-
-获取表中某行数据
-
 #### Parameters
 
-• **tableName**: `string`
+<table>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+<tr>
+<td>
+
+`tableName`
+
+</td>
+<td>
+
+`string`
+
+</td>
+<td>
 
 表名
 
-• **key**: `string`
+</td>
+</tr>
+<tr>
+<td>
 
-键
+`range`?
+
+</td>
+<td>
+
+`IDBKeyRange`
+
+</td>
+<td>
+
+[范围](https://developer.mozilla.org/zh-CN/docs/Web/API/IDBKeyRange)
+
+</td>
+</tr>
+</table>
 
 #### Returns
 
 `Promise`\<`unknown`\>
 
 ***
+
+***
+
+### getTableRow()
+
+```ts
+getTableRow(tableName: string, key: string): Promise<unknown>
+```
+
+获取表中某行数据
 
 #### Example
 
@@ -242,29 +386,65 @@ const db = new IDBHelper('test');
 await db.getTableRow('tn', 'key');
 ```
 
-***
-
-### getTableRowCount()
-
-> **getTableRowCount**(`tableName`, `range`?): `Promise`\<`unknown`\>
-
-获取表数据条数
-
 #### Parameters
 
-• **tableName**: `string`
+<table>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+<tr>
+<td>
+
+`tableName`
+
+</td>
+<td>
+
+`string`
+
+</td>
+<td>
 
 表名
 
-• **range?**: `IDBKeyRange`
+</td>
+</tr>
+<tr>
+<td>
 
-[范围](https://developer.mozilla.org/zh-CN/docs/Web/API/IDBKeyRange)
+`key`
+
+</td>
+<td>
+
+`string`
+
+</td>
+<td>
+
+键
+
+</td>
+</tr>
+</table>
 
 #### Returns
 
 `Promise`\<`unknown`\>
 
 ***
+
+***
+
+### getTableRowCount()
+
+```ts
+getTableRowCount(tableName: string, range?: IDBKeyRange): Promise<unknown>
+```
+
+获取表数据条数
 
 #### Example
 
@@ -273,19 +453,65 @@ const db = new IDBHelper('test');
 await db.getTableRowCount('tn');
 ```
 
+#### Parameters
+
+<table>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+<tr>
+<td>
+
+`tableName`
+
+</td>
+<td>
+
+`string`
+
+</td>
+<td>
+
+表名
+
+</td>
+</tr>
+<tr>
+<td>
+
+`range`?
+
+</td>
+<td>
+
+`IDBKeyRange`
+
+</td>
+<td>
+
+[范围](https://developer.mozilla.org/zh-CN/docs/Web/API/IDBKeyRange)
+
+</td>
+</tr>
+</table>
+
+#### Returns
+
+`Promise`\<`unknown`\>
+
+***
+
 ***
 
 ### reSet()
 
-> **reSet**(): `Promise`\<`false` \| `Boolean`\>
+```ts
+reSet(): Promise<false | Boolean>
+```
 
 重置数据库
-
-#### Returns
-
-`Promise`\<`false` \| `Boolean`\>
-
-***
 
 #### Example
 
@@ -294,29 +520,21 @@ const db = new IDBHelper('test');
 await db.reSet();
 ```
 
+#### Returns
+
+`Promise`\<`false` \| `Boolean`\>
+
+***
+
 ***
 
 ### setTableRow()
 
-> **setTableRow**(`tableName`, `data`): `Promise`\<`undefined` \| `false`\>
+```ts
+setTableRow(tableName: string, data: any): Promise<undefined | false>
+```
 
 增加/修改表中某行数据
-
-#### Parameters
-
-• **tableName**: `string`
-
-表名
-
-• **data**: `any`
-
-数据
-
-#### Returns
-
-`Promise`\<`undefined` \| `false`\>
-
-***
 
 #### Example
 
@@ -324,3 +542,53 @@ await db.reSet();
 const db = new IDBHelper('test');
 await db.setTableRow('tn', '你好！');
 ```
+
+#### Parameters
+
+<table>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+<tr>
+<td>
+
+`tableName`
+
+</td>
+<td>
+
+`string`
+
+</td>
+<td>
+
+表名
+
+</td>
+</tr>
+<tr>
+<td>
+
+`data`
+
+</td>
+<td>
+
+`any`
+
+</td>
+<td>
+
+数据
+
+</td>
+</tr>
+</table>
+
+#### Returns
+
+`Promise`\<`undefined` \| `false`\>
+
+***

@@ -1,32 +1,13 @@
-[z-util-page v3.3.0](../index.md) / mergeObject
-
 # Function: mergeObject()
 
-> **mergeObject**\<`T`\>(`origin`, `ob`, ...`more`): `T`
+```ts
+function mergeObject<T>(
+   origin: T, 
+   ob: undefined | StandardObject, ...
+   more: StandardObject[]): T
+```
 
 深度合并n个对象值
-
-## Type Parameters
-
-• **T** *extends* `StandardObject`
-
-## Parameters
-
-• **origin**: `T`
-
-将多个对象深度合并到该对象
-
-• **ob**: `undefined` \| `StandardObject`
-
-被合并对象
-
-• ...**more**: `StandardObject`[]
-
-其余被合并对象
-
-## Returns
-
-`T`
 
 ## Example
 
@@ -36,3 +17,83 @@ const b = { b: { d: 3 } };
 const c = { c: 4 };
 mergeObject(a, b, c);
 ```
+
+## Type Parameters
+
+<table>
+<tr>
+<th>Type Parameter</th>
+</tr>
+<tr>
+<td>
+
+`T` *extends* `StandardObject`
+
+</td>
+</tr>
+</table>
+
+## Parameters
+
+<table>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+<tr>
+<td>
+
+`origin`
+
+</td>
+<td>
+
+`T`
+
+</td>
+<td>
+
+将多个对象深度合并到该对象
+
+</td>
+</tr>
+<tr>
+<td>
+
+`ob`
+
+</td>
+<td>
+
+`undefined` \| `StandardObject`
+
+</td>
+<td>
+
+被合并对象
+
+</td>
+</tr>
+<tr>
+<td>
+
+...`more`
+
+</td>
+<td>
+
+`StandardObject`[]
+
+</td>
+<td>
+
+其余被合并对象
+
+</td>
+</tr>
+</table>
+
+## Returns
+
+`T`

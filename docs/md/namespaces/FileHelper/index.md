@@ -1,5 +1,3 @@
-[z-util-page v3.3.0](../../index.md) / FileHelper
-
 # FileHelper
 
 ## Index

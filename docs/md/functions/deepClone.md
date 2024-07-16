@@ -1,22 +1,10 @@
-[z-util-page v3.3.0](../index.md) / deepClone
-
 # Function: deepClone()
 
-> **deepClone**(`value`): `any`
+```ts
+function deepClone(value: any): any
+```
 
 深拷贝
-
-## Parameters
-
-• **value**: `any`
-
-待克隆值
-
-## Returns
-
-`any`
-
-克隆值
 
 ## Example
 
@@ -41,3 +29,36 @@ let newValue = deepClone({
     console.log('身体和心灵，总有一个在路上。');
   }
 ```
+
+## Parameters
+
+<table>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+<tr>
+<td>
+
+`value`
+
+</td>
+<td>
+
+`any`
+
+</td>
+<td>
+
+待克隆值
+
+</td>
+</tr>
+</table>
+
+## Returns
+
+`any`
+
+克隆值

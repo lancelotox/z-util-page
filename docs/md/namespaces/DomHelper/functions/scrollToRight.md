@@ -1,23 +1,44 @@
-[z-util-page v3.3.0](../../../index.md) / [DomHelper](../index.md) / scrollToRight
-
 # Function: scrollToRight()
 
-> **scrollToRight**(`scroll`): `void`
+```ts
+function scrollToRight(scroll: HTMLElement): void
+```
 
 将可滚动元素滚动到最右侧
-
-## Parameters
-
-• **scroll**: `HTMLElement`
-
-要滚动的元素
-
-## Returns
-
-`void`
 
 ## Example
 
 ```ts
 scrollToRight(dom: HTMLElement);
 ```
+
+## Parameters
+
+<table>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+<tr>
+<td>
+
+`scroll`
+
+</td>
+<td>
+
+`HTMLElement`
+
+</td>
+<td>
+
+要滚动的元素
+
+</td>
+</tr>
+</table>
+
+## Returns
+
+`void`

@@ -1,32 +1,14 @@
-[z-util-page v3.3.0](../../../index.md) / [Reactive](../index.md) / computed
-
 # Function: computed()
 
-> **computed**\<`T`\>(`getter`): `object`
+```ts
+function computed<T>(getter: () => {
+  value: T;
+ }): {
+  get value: any;
+}
+```
 
 获取计算属性
-
-## Type Parameters
-
-• **T**
-
-## Parameters
-
-• **getter**
-
-## Returns
-
-`object`
-
-computed
-
-### value
-
-> `get` **value**(): `any`
-
-#### Returns
-
-`any`
 
 ## Example
 
@@ -37,3 +19,57 @@ console.log(double.value); //0
 count.value = 1;
 console.log(double.value); //2
 ```
+
+## Type Parameters
+
+<table>
+<tr>
+<th>Type Parameter</th>
+</tr>
+<tr>
+<td>
+
+`T`
+
+</td>
+</tr>
+</table>
+
+## Parameters
+
+<table>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+<tr>
+<td>
+
+`getter`
+
+</td>
+<td>
+
+() => \{ `value`: `T`; \}
+
+</td>
+<td>
+
+</td>
+</tr>
+</table>
+
+## Returns
+
+```ts
+{
+  get value: any;
+}
+```
+
+computed
+
+| Name | Type |
+| ------ | ------ |
+| `get value` | `any` |

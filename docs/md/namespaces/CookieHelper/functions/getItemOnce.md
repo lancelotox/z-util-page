@@ -1,25 +1,46 @@
-[z-util-page v3.3.0](../../../index.md) / [CookieHelper](../index.md) / getItemOnce
-
 # Function: getItemOnce()
 
-> **getItemOnce**(`key`): `string`
+```ts
+function getItemOnce(key: string): string
+```
 
 根据key值获取cookie数据后删除Cookie中该键值对
-
-## Parameters
-
-• **key**: `string`
-
-key值
-
-## Returns
-
-`string`
-
-Cookie中键值为key的值
 
 ## Example
 
 ```ts
 getItemOnce('test');
 ```
+
+## Parameters
+
+<table>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+<tr>
+<td>
+
+`key`
+
+</td>
+<td>
+
+`string`
+
+</td>
+<td>
+
+key值
+
+</td>
+</tr>
+</table>
+
+## Returns
+
+`string`
+
+Cookie中键值为key的值

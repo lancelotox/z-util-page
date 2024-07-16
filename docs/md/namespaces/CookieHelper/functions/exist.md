@@ -1,23 +1,44 @@
-[z-util-page v3.3.0](../../../index.md) / [CookieHelper](../index.md) / exist
-
 # Function: exist()
 
-> **exist**(`key`): `boolean`
+```ts
+function exist(key: string): boolean
+```
 
 根据key值判断Cookie中是否存在键值对
-
-## Parameters
-
-• **key**: `string`
-
-key值
-
-## Returns
-
-`boolean`
 
 ## Example
 
 ```ts
 exist('test');
 ```
+
+## Parameters
+
+<table>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+<tr>
+<td>
+
+`key`
+
+</td>
+<td>
+
+`string`
+
+</td>
+<td>
+
+key值
+
+</td>
+</tr>
+</table>
+
+## Returns
+
+`boolean`
