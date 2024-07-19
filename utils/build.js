@@ -35,9 +35,31 @@ function bulidCmd() {
   })
 }
 
+function bulidEsm() {
+  return new Promise(resolve => {
+    config.output.path = path.resolve(__dirname, 'dist');
+    config.output.filename = 'zutilpage.esm.js';
+    config.output.library.type = 'module';
+    config.experiments = {
+      outputModule: true
+    };
+    delete config.output.library.name;
+    config.optimization = {
+      minimize: false
+    }
+    const compiler = webpack(config);
+    compiler.run(status => {
+      status && console.log(status);
+      resolve();
+    });
+  })
+}
+
 bulidUmd().then(() => {
   return bulidUmd(true);
 }).then(() => {
   return bulidCmd();
+}).then(() => {
+  return bulidEsm();
 });
 
