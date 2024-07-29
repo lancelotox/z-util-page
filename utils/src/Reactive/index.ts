@@ -3,7 +3,7 @@
  * @module Reactive
  */
 
-import { Ref, Effect, DepsMap, EffectOptions, TriggerType, Instrumentations, ReactiveOptions } from './type';
+import { TriggerType, Instrumentations } from './type';
 import { wrapValue, cleanup, traverse } from './util';
 import { getType } from '../deepClone/index';
 
@@ -322,6 +322,12 @@ function trigger(target: object, p: any, type: TriggerType, value?: any): boolea
   return true;
 }
 
+export type ReactiveOptions = {
+  value: any
+  isShadow: boolean
+  isReadonly: boolean
+}
+
 /**
  * 代理对象值，返回响应式数据
  * @example
@@ -415,6 +421,11 @@ export function reactive<T extends object>(value: T, isShadow = false, isReadonl
   return proxy;
 }
 
+// 原始值代理
+export interface Ref<T> {
+  value: T
+}
+
 /**
  * 代理基本类型值，返回响应式数据
  * ```ts
@@ -484,6 +495,21 @@ export function toRefs(obj: any) {
     Reflect.set(ret, key, toRef(obj, key));
   }
   return ret;
+}
+
+export type EffectOptions = {
+  schedule?: Function
+  lazy?: boolean
+  immediate?: boolean
+  flush?: 'post' | ''
+}
+export type DepsMap = Map<string | symbol, Set<Effect>>
+export interface Effect {
+  (): any
+  deps: Array<Set<Effect>>
+  childs: Array<Effect>
+  options: EffectOptions
+  shouldTrack: boolean
 }
 
 /**

@@ -1,4 +1,4 @@
-import { Effect } from './type';
+import { Effect } from './index';
 
 /**
  * 普通对象转代理对象, 原始值转换
