@@ -337,7 +337,7 @@ export type ReactiveOptions = {
  * console.log(obj.name); //李四
  * ```
  * @param value 对象值
- * @param isShadow true为深代理，false为浅代理
+ * @param isShadow true为浅代理，false为深代理
  * @param isReadonly 是否只读
  * @returns { Proxy<T> }
  */
@@ -445,7 +445,7 @@ export function ref<T>(value: T, isReadonly = false): Ref<T> {
   Object.defineProperty(wrapper, '__isRef', {
     value: true
   });
-  return reactive<Ref<T>>({ value }, true, isReadonly);
+  return reactive<Ref<T>>(wrapper, false, isReadonly);
 }
 
 /**
@@ -590,6 +590,10 @@ export function computed<T>(getter: () => {
   return obj;
 }
 
+export interface watchCallback {
+  (oldVal: any, newVal: any, onInvalidate: Function): void
+}
+
 /**
  * 监听响应式数据
  * @example
@@ -605,7 +609,7 @@ export function computed<T>(getter: () => {
  * @param cb 数据变化后回调函数
  * @param options 配置
  */
-export function watch(source: Function | object, cb: Function, options: EffectOptions = {}) {
+export function watch(source: Function | object, cb: watchCallback, options: EffectOptions = {}) {
   let getter: Function;
   if (typeof source === 'function') getter = source;
   else getter = () => traverse(source);

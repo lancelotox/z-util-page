@@ -5,3 +5,4 @@ if((module as any).hot){
 
 import './src/FileHelper';
 import './src/IDBHelper';
+import './src/Reactive';
