@@ -76,20 +76,21 @@ describe('函数节流', () => {
 })
 
 describe('对象深拷贝', () => {
+  const inner = {
+    c: new Date(),
+    d: [1, 3, 4],
+    e: Symbol(),
+    a: null,
+    b: undefined,
+    f: {
+      a: 1,
+      b: true,
+
+    }
+  }
   const targetVal = {
     a: '身体和心灵，总有一个在路上。',
-    b: {
-      c: new Date(),
-      d: [1, 3, 4],
-      e: Symbol(),
-      a: null,
-      b: undefined,
-      f: {
-        a: 1,
-        b: true,
-
-      }
-    },
+    b: inner,
     c: document.createElement('div'),
     d: new RegExp(/\d+/ig),
     e: new Error('错误'),
@@ -97,10 +98,12 @@ describe('对象深拷贝', () => {
       console.log('身体和心灵，总有一个在路上。');
     },
     g: new Map(),
-    h: new Set()
+    h: new Set(),
+    x: inner
   };
 
   const cloneVal = deepClone(targetVal);
+  const cloneVal2 = deepClone(targetVal);
 
   test('值相同', () => {
     expect(cloneVal).toEqual(targetVal);
@@ -108,6 +111,14 @@ describe('对象深拷贝', () => {
 
   test('引用不同', () => {
     expect(cloneVal.b).not.toBe(targetVal.b);
+  });
+
+  test('引用相同', () => {
+    expect(cloneVal.x).toBe(cloneVal.b);
+  });
+
+  test('不同对象', () => {
+    expect(cloneVal).not.toBe(cloneVal2);
   });
 
 })

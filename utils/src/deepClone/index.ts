@@ -6,28 +6,28 @@ const typeHandleMap: HandleMap = {
   'Object': function (value: any) {
     let cloneTarget = new value.constructor();
     forEach(Object.keys(value), function (val: any, key: number) {
-      cloneTarget[val] = deepClone(value[val]);
+      cloneTarget[val] = realDeepClone(value[val]);
     });
     return cloneTarget;
   },
   'Array': function (value: any) {
     let cloneTarget: Array<any> = [];
     forEach(value, function (val: any, key: number) {
-      cloneTarget[key] = deepClone(value[key]);
+      cloneTarget[key] = realDeepClone(value[key]);
     });
     return cloneTarget;
   },
   'Set': function (value: any) {
     let cloneTarget = new value.constructor();
     value.forEach(function (val: any) {
-      cloneTarget.add(deepClone(val));
+      cloneTarget.add(realDeepClone(val));
     });
     return cloneTarget;
   },
   'Map': function (value: any) {
     let cloneTarget = new value.constructor();
     value.forEach(function (val: any, key: any) {
-      cloneTarget.set(deepClone(key), deepClone(val));
+      cloneTarget.set(realDeepClone(key), realDeepClone(val));
     });
     return cloneTarget;
   },
@@ -44,23 +44,6 @@ const typeHandleMap: HandleMap = {
 const baseTypeList = ['boolean', 'number', 'string', 'undefined', "function", "symbol", 'Null', "Math", "Json", "Global"];
 const simpleTypeList = ["Boolean", "Number", 'String', 'Date', "Regexp"];
 
-let isFlush = false;
-/**
- * 清理缓存
- */
-function clear() {
-  if (!isFlush) {
-    isFlush = true;
-    let promise = Promise.resolve();
-    promise.then(function () {
-      cacheMap = new WeakMap<object, any>();
-    });
-    promise.finally(function () {
-      isFlush = false;
-    });
-  }
-}
-
 /**
  * while循环
  * @param list 待循环列表
@@ -72,6 +55,27 @@ function forEach(list: Array<any>, handle: Function) {
   while (++index < length) {
     handle(list[index], index);
   }
+}
+
+/**
+ * 循环深拷贝
+ * @param value 待克隆值
+ * @returns 克隆值
+ */
+function realDeepClone(value: any) {
+  let type: string = typeof value;
+  if (type === 'object') type = getType(value);
+  if (value instanceof HTMLElement) type = 'HTMLElement';
+  if (baseTypeList.includes(type)) return value;
+  else if (simpleTypeList.includes(type)) return new value.constructor(value);
+  let cloneTarget = cacheMap.get(value);
+  if (cloneTarget === undefined) {
+    let handle = typeHandleMap[type];
+    if (handle) cloneTarget = handle(value);
+    else cloneTarget = value;
+    cacheMap.set(value, cloneTarget);
+  }
+  return cloneTarget;
 }
 
 /**
@@ -122,18 +126,7 @@ export function getType(value: any): string {
  * @returns 克隆值
  */
 export function deepClone(value: any) {
-  let type: string = typeof value;
-  if (type === 'object') type = getType(value);
-  if (value instanceof HTMLElement) type = 'HTMLElement';
-  if (baseTypeList.includes(type)) return value;
-  else if (simpleTypeList.includes(type)) return new value.constructor(value);
-  let cloneTarget = cacheMap.get(value);
-  if (cloneTarget === undefined) {
-    let handle = typeHandleMap[type];
-    if (handle) cloneTarget = handle(value);
-    else cloneTarget = value;
-    cacheMap.set(value, cloneTarget);
-  }
-  clear();
-  return cloneTarget;
+  const result = realDeepClone(value);
+  cacheMap = new WeakMap<object, any>();
+  return result;
 }
